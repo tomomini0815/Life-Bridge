@@ -68,7 +68,7 @@ export function MynaPortalConnect({ isOpen, onClose, onConnect }: MynaPortalConn
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in p-4">
             <div className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl shadow-2xl overflow-hidden relative">
                 {/* Header with "Official" feel */}
                 <div className="bg-pink-500 p-4 flex items-center justify-between">
