@@ -2,34 +2,71 @@ import { lifeEvents } from '@/data/lifeEvents';
 import { Task, LifeEventType } from '@/types/lifeEvent';
 import { ProgressRing } from './ProgressRing';
 import { cn } from '@/lib/utils';
-import { 
-  TrendingUp, 
-  Calendar, 
-  Coins, 
-  CheckCircle2, 
-  Clock, 
+import {
+  TrendingUp,
+  Calendar,
+  Coins,
+  CheckCircle2,
+  Clock,
   AlertTriangle,
   ArrowRight,
   Sparkles,
   Trophy,
-  Target
+  Target,
+  Zap,
+  Heart,
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { LifeTimeline } from './LifeTimeline';
 
 interface DashboardHomeProps {
   onSelectEvent: (eventId: LifeEventType) => void;
   completedTasks: Record<string, string[]>;
 }
 
-const colorMap: Record<string, { bg: string; text: string; gradient: string }> = {
-  marriage: { bg: 'bg-pink-50', text: 'text-pink-600', gradient: 'from-pink-400 to-rose-500' },
-  birth: { bg: 'bg-orange-50', text: 'text-orange-600', gradient: 'from-orange-300 to-amber-500' },
-  job: { bg: 'bg-sky-50', text: 'text-sky-600', gradient: 'from-sky-400 to-blue-500' },
-  moving: { bg: 'bg-emerald-50', text: 'text-emerald-600', gradient: 'from-emerald-400 to-teal-500' },
-  care: { bg: 'bg-violet-50', text: 'text-violet-600', gradient: 'from-violet-400 to-purple-500' },
+const colorMap: Record<string, { bg: string; text: string; gradient: string; glass: string; border: string }> = {
+  marriage: {
+    bg: 'bg-pink-50',
+    text: 'text-pink-600',
+    gradient: 'from-pink-400 to-rose-500',
+    glass: 'bg-pink-50/40 dark:bg-pink-900/10',
+    border: 'border-pink-200/50 hover:border-pink-300/80'
+  },
+  birth: {
+    bg: 'bg-orange-50',
+    text: 'text-orange-600',
+    gradient: 'from-orange-300 to-amber-500',
+    glass: 'bg-orange-50/40 dark:bg-orange-900/10',
+    border: 'border-orange-200/50 hover:border-orange-300/80'
+  },
+  job: {
+    bg: 'bg-sky-50',
+    text: 'text-sky-600',
+    gradient: 'from-sky-400 to-blue-500',
+    glass: 'bg-sky-50/40 dark:bg-sky-900/10',
+    border: 'border-sky-200/50 hover:border-sky-300/80'
+  },
+  moving: {
+    bg: 'bg-emerald-50',
+    text: 'text-emerald-600',
+    gradient: 'from-emerald-400 to-teal-500',
+    glass: 'bg-emerald-50/40 dark:bg-emerald-900/10',
+    border: 'border-emerald-200/50 hover:border-emerald-300/80'
+  },
+  care: {
+    bg: 'bg-violet-50',
+    text: 'text-violet-600',
+    gradient: 'from-violet-400 to-purple-500',
+    glass: 'bg-violet-50/40 dark:bg-violet-900/10',
+    border: 'border-violet-200/50 hover:border-violet-300/80'
+  },
 };
 
 export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomeProps) {
+  const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
+
   // Calculate overall stats
   const allEvents = lifeEvents.map(event => {
     const completed = completedTasks[event.id] || [];
@@ -42,7 +79,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
       .filter(t => completed.includes(t.id) && t.benefitAmount)
       .reduce((sum, t) => sum + (t.benefitAmount || 0), 0);
     const urgentTasks = event.tasks.filter(t => !completed.includes(t.id) && t.priority === 'high');
-    
+
     return {
       ...event,
       completed: completed.length,
@@ -63,196 +100,267 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
   const allUrgentTasks = allEvents.flatMap(e => e.urgentTasks.map(t => ({ ...t, eventId: e.id, eventIcon: e.icon })));
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Welcome Banner */}
-      <div className="gradient-warm rounded-2xl p-6 text-primary-foreground">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">おかえりなさい！</h1>
-            <p className="text-primary-foreground/80">
-              今日も一歩ずつ、手続きを進めていきましょう。
-            </p>
-          </div>
-          <div className="hidden md:block">
-            <Sparkles className="w-16 h-16 text-primary-foreground/30" />
-          </div>
+    <div className="space-y-8 animate-fade-in max-w-7xl mx-auto pb-10">
+      {/* Welcome Section */}
+      {/* Welcome Section */}
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-teal-500 via-emerald-400 to-cyan-400 p-8 text-white shadow-xl shadow-teal-500/20">
+        <div className="absolute top-0 right-0 p-12 opacity-5">
+          <Sparkles className="w-64 h-64" />
         </div>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-card rounded-2xl p-5 shadow-soft border border-border/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Target className="w-5 h-5 text-primary" />
-            </div>
-            <span className="text-sm text-muted-foreground">全体進捗</span>
+        <div className="relative z-10 max-w-2xl">
+          <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur-sm mb-4 border border-white/20">
+            <Sparkles className="h-3 w-3" />
+            <span>AIパートナーと連携中</span>
           </div>
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">{Math.round(overallProgress)}%</span>
-            <span className="text-sm text-muted-foreground mb-1">完了</span>
-          </div>
-          <div className="mt-2 h-2 bg-muted rounded-full overflow-hidden">
-            <div 
-              className="h-full gradient-warm rounded-full transition-all duration-500"
-              style={{ width: `${overallProgress}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="bg-card rounded-2xl p-5 shadow-soft border border-border/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
-            </div>
-            <span className="text-sm text-muted-foreground">完了タスク</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">{totalCompleted}</span>
-            <span className="text-sm text-muted-foreground mb-1">/ {totalTasks}件</span>
-          </div>
-        </div>
-
-        <div className="bg-card rounded-2xl p-5 shadow-soft border border-border/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center">
-              <Coins className="w-5 h-5 text-amber-600" />
-            </div>
-            <span className="text-sm text-muted-foreground">獲得済み給付金</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">¥{totalClaimedBenefits.toLocaleString()}</span>
-          </div>
-          <p className="text-xs text-muted-foreground mt-1">
-            残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
-          </p>
-        </div>
-
-        <div className="bg-card rounded-2xl p-5 shadow-soft border border-border/50">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-red-600" />
-            </div>
-            <span className="text-sm text-muted-foreground">要対応</span>
-          </div>
-          <div className="flex items-end gap-2">
-            <span className="text-3xl font-bold">{allUrgentTasks.length}</span>
-            <span className="text-sm text-muted-foreground mb-1">件</span>
-          </div>
-          <p className="text-xs text-destructive mt-1">
-            優先度の高いタスクがあります
+          <h1 className="text-3xl font-bold mb-3 tracking-tight">こんにちは、Tomomiさん</h1>
+          <p className="text-white/80 text-lg leading-relaxed font-light">
+            人生の転機は、新しい物語の始まりです。<br />
+            複雑な手続きは私に任せて、あなたらしい毎日を過ごしましょう。
           </p>
         </div>
       </div>
 
-      {/* Urgent Tasks */}
-      {allUrgentTasks.length > 0 && (
-        <div className="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-5 border border-red-200/50">
-          <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-            優先度の高いタスク
-          </h2>
-          <div className="space-y-3">
-            {allUrgentTasks.slice(0, 3).map((task) => (
-              <div 
-                key={task.id}
-                className="bg-card/80 rounded-xl p-4 flex items-center gap-4 hover:shadow-soft transition-shadow cursor-pointer"
-                onClick={() => onSelectEvent(task.eventId as LifeEventType)}
-              >
-                <span className="text-2xl">{task.eventIcon}</span>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-foreground truncate">{task.title}</h3>
-                  <p className="text-sm text-muted-foreground flex items-center gap-2">
-                    {task.deadline && (
-                      <>
-                        <Clock className="w-3 h-3" />
-                        {task.deadline}
-                      </>
-                    )}
-                  </p>
+      {/* Tab Switcher */}
+      <div className="flex justify-center">
+        <div className="bg-muted/50 p-1 rounded-full flex gap-1 border border-border/50">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={cn(
+              "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300",
+              activeTab === 'overview' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            ダッシュボード
+          </button>
+          <button
+            onClick={() => setActiveTab('timeline')}
+            className={cn(
+              "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
+              activeTab === 'timeline' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <span className="text-xs">✨</span>
+            人生のタイムライン
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'overview' ? (
+        <>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="group glass-medium rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-primary/10 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                  <Target className="w-6 h-6" />
                 </div>
-                <ArrowRight className="w-5 h-5 text-muted-foreground" />
+                <span className="text-sm font-medium text-muted-foreground">全体進捗</span>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+              <div className="flex items-end gap-3 mb-3">
+                <span className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent">{Math.round(overallProgress)}%</span>
+                <span className="text-sm text-muted-foreground mb-1.5 font-medium">完了</span>
+              </div>
+              <div className="h-3 bg-muted/50 rounded-full overflow-hidden p-[2px]">
+                <div
+                  className="h-full gradient-warm rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,100,50,0.3)]"
+                  style={{ width: `${overallProgress}%` }}
+                />
+              </div>
+            </div>
 
-      {/* Life Events Progress */}
-      <div>
-        <h2 className="font-semibold text-foreground mb-4">ライフイベント別進捗</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {lifeEvents.map((event) => {
-            const stats = allEvents.find(e => e.id === event.id)!;
-            const colors = colorMap[event.id];
-            
-            return (
-              <button
-                key={event.id}
-                onClick={() => onSelectEvent(event.id)}
-                className={cn(
-                  "p-5 rounded-2xl text-left transition-all duration-300",
-                  "border border-border/50 shadow-soft hover:shadow-card",
-                  "group",
-                  colors.bg
-                )}
-              >
-                <div className="flex items-start gap-4">
-                  <div 
+            <div className="group glass-medium rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-green-500/10 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-600 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                  <CheckCircle2 className="w-6 h-6" />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">完了タスク</span>
+              </div>
+              <div className="flex items-end gap-3">
+                <span className="text-4xl font-bold text-foreground">{totalCompleted}</span>
+                <span className="text-sm text-muted-foreground mb-1.5 font-medium">/ {totalTasks}件</span>
+              </div>
+            </div>
+
+            <div className="group glass-medium rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-amber-500/10 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-600 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                  <Coins className="w-6 h-6" />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">獲得済み給付金</span>
+              </div>
+              <div className="flex items-end gap-3">
+                <span className="text-4xl font-bold text-foreground">¥{totalClaimedBenefits.toLocaleString()}</span>
+              </div>
+              <p className="text-xs font-medium text-amber-600/80 mt-2 bg-amber-50/50 px-2 py-1 rounded-lg inline-block">
+                残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
+              </p>
+            </div>
+
+            <div className="group glass-medium rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-red-500/10 transition-all duration-300">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center text-red-600 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                  <AlertTriangle className="w-6 h-6" />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">要対応</span>
+              </div>
+              <div className="flex items-end gap-3">
+                <span className="text-4xl font-bold text-foreground">{allUrgentTasks.length}</span>
+                <span className="text-sm text-muted-foreground mb-1.5 font-medium">件</span>
+              </div>
+              <p className="text-xs font-medium text-red-600/80 mt-2 bg-red-50/50 px-2 py-1 rounded-lg inline-block">
+                期限が迫っています
+              </p>
+            </div>
+          </div>
+
+          {/* Urgent Tasks */}
+          {allUrgentTasks.length > 0 && (
+            <div className="glass-medium rounded-3xl p-8 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
+              <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                </span>
+                優先度の高いタスク
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {allUrgentTasks.slice(0, 3).map((task) => (
+                  <div
+                    key={task.id}
+                    className="group bg-card/60 backdrop-blur-sm rounded-2xl p-5 border border-red-100 dark:border-red-900/30 hover:border-red-300 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    onClick={() => onSelectEvent(task.eventId as LifeEventType)}
+                  >
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-red-500/10 transition-colors" />
+                    <div className="flex items-start gap-4 relative z-10">
+                      <span className="text-3xl bg-white dark:bg-card rounded-xl p-2 shadow-sm group-hover:scale-110 transition-transform duration-300">{task.eventIcon}</span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-foreground truncate mb-1 group-hover:text-red-600 transition-colors">{task.title}</h3>
+                        <p className="text-sm text-muted-foreground flex items-center gap-2 font-medium">
+                          {task.deadline && (
+                            <span className="inline-flex items-center gap-1.5 text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded-md text-xs">
+                              <Clock className="w-3 h-3" />
+                              {task.deadline}
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      <div className="w-8 h-8 rounded-full bg-red-100/50 dark:bg-red-900/20 flex items-center justify-center group-hover:bg-red-500 group-hover:text-white transition-all duration-300">
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Life Events Progress */}
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+                <Zap className="w-5 h-5" />
+              </div>
+              <h2 className="text-2xl font-bold font-display">ライフイベント別進捗</h2>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {lifeEvents.map((event) => {
+                const stats = allEvents.find(e => e.id === event.id)!;
+                const colors = colorMap[event.id];
+
+                return (
+                  <button
+                    key={event.id}
+                    onClick={() => onSelectEvent(event.id)}
                     className={cn(
-                      "w-12 h-12 rounded-xl flex items-center justify-center text-xl",
-                      "bg-gradient-to-br shadow-md",
-                      colors.gradient
+                      "p-6 rounded-3xl text-left transition-all duration-500",
+                      "backdrop-blur-xl border-2",
+                      "shadow-soft hover:shadow-xl group relative overflow-hidden",
+                      colors.glass,
+                      colors.border
                     )}
                   >
-                    {event.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {event.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {stats.completed}/{stats.total}件完了
-                    </p>
-                    {stats.totalBenefits > 0 && (
-                      <p className={cn("text-xs mt-2", colors.text)}>
-                        💰 ¥{stats.totalBenefits.toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <ProgressRing progress={stats.progress} size={50} strokeWidth={4} />
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+                    {/* Shimmer Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out z-0" />
 
-      {/* Tips Section */}
-      <div className="bg-card rounded-2xl p-5 shadow-soft border border-border/50">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Trophy className="w-5 h-5 text-primary" />
+                    <div className="flex items-start gap-4 relative z-10 w-full">
+                      <div
+                        className={cn(
+                          "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl",
+                          "bg-gradient-to-br shadow-lg",
+                          "group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
+                          colors.gradient
+                        )}
+                      >
+                        {event.icon}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                          {event.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-2">
+                          <span className="text-xs font-medium text-muted-foreground bg-background/50 px-2 py-1 rounded-lg backdrop-blur-sm">
+                            {stats.completed}/{stats.total}完了
+                          </span>
+                        </div>
+                        {stats.totalBenefits > 0 && (
+                          <p className={cn("text-xs font-bold mt-2 flex items-center gap-1", colors.text)}>
+                            <span>💰</span> ¥{stats.totalBenefits.toLocaleString()}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <div className="relative group-hover:scale-110 transition-transform duration-300">
+                          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <ProgressRing progress={stats.progress} size={56} strokeWidth={5} />
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <h2 className="font-semibold text-foreground">今日のヒント</h2>
+
+          {/* Tips Section */}
+          <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-12 rounded-2xl gradient-warm flex items-center justify-center shadow-colored-primary">
+                <Trophy className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold font-display">今日のヒント</h2>
+                <p className="text-sm text-muted-foreground">スムーズな手続きのためのアドバイス</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-xl mr-2">📋</span>
+                  <strong className="text-foreground">書類の準備</strong>は前日までに！
+                  当日焦らないように、必要書類は事前に確認しておきましょう。
+                </p>
+              </div>
+              <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  <span className="text-xl mr-2">💡</span>
+                  <strong className="text-foreground">オンライン申請</strong>が可能なものは、
+                  窓口の待ち時間なしで手続きできます。積極的に活用しましょう。
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="min-h-[500px]">
+          <div className="text-center mb-8 animate-fade-in">
+            <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+              Your Life Journey
+            </h2>
+            <p className="text-muted-foreground">あなたとLifeBridgeが歩んだ軌跡</p>
+          </div>
+          <LifeTimeline />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 rounded-xl bg-secondary/50">
-            <p className="text-sm text-muted-foreground">
-              📋 <strong className="text-foreground">書類の準備</strong>は前日までに！
-              当日焦らないように、必要書類は事前に確認しておきましょう。
-            </p>
-          </div>
-          <div className="p-4 rounded-xl bg-secondary/50">
-            <p className="text-sm text-muted-foreground">
-              💡 <strong className="text-foreground">オンライン申請</strong>が可能なものは、
-              窓口の待ち時間なしで手続きできます。
-            </p>
-          </div>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
