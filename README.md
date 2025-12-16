@@ -1,73 +1,100 @@
-# Welcome to your Lovable project
+# Life-Bridge
 
-## Project info
+人生の重要なイベント（結婚、出産、転職、引越し、介護）をサポートするWebアプリケーション
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 主な機能
 
-## How can I edit this code?
+- **ライフイベント管理**: 各イベントに必要な手続きをチェックリスト形式で管理
+- **AIコンシェルジュ**: Gemini APIを活用した質問応答システム
+- **期限リマインダー**: ブラウザ通知でタスクの期限をお知らせ
+- **メモ帳**: Google Keepスタイルのメモ管理機能
+- **給付金シミュレーター**: 収入・家族構成に基づく給付金試算
 
-There are several ways of editing your application.
+## 技術スタック
 
-**Use Lovable**
+- **フレームワーク**: Vite + React 18
+- **言語**: TypeScript
+- **UI**: shadcn/ui + Tailwind CSS
+- **AI**: Google Gemini API
+- **状態管理**: React Hooks
+- **ルーティング**: React Router
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 開発環境のセットアップ
 
-Changes made via Lovable will be committed automatically to this repo.
+### 必要要件
 
-**Use your preferred IDE**
+- Node.js 18以上
+- npm または yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### インストール
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# リポジトリをクローン
+git clone https://github.com/tomomini0815/Life-Bridge.git
 
-Follow these steps:
+# ディレクトリに移動
+cd Life-Bridge
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# 依存関係をインストール
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# 環境変数を設定
+cp .env.example .env
+# .envファイルを編集してGemini APIキーを設定
+```
 
-# Step 3: Install the necessary dependencies.
-npm i
+### 環境変数
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+`.env`ファイルに以下を設定：
+
+```
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Gemini APIキーは[Google AI Studio](https://makersuite.google.com/app/apikey)で取得できます。
+
+### 開発サーバーの起動
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+ブラウザで `http://localhost:8080` を開きます。
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### ビルド
 
-**Use GitHub Codespaces**
+```bash
+npm run build
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## デプロイ
 
-## What technologies are used for this project?
+このプロジェクトはVercelにデプロイできます。
 
-This project is built with:
+### Vercelへのデプロイ手順
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. [Vercel](https://vercel.com)にログイン
+2. GitHubリポジトリを接続
+3. 環境変数`VITE_GEMINI_API_KEY`を設定
+4. デプロイ
 
-## How can I deploy this project?
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tomomini0815/Life-Bridge)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+## プロジェクト構成
 
-## Can I connect a custom domain to my Lovable project?
+```
+src/
+├── components/     # Reactコンポーネント
+├── services/       # ビジネスロジック・API連携
+├── types/          # TypeScript型定義
+├── data/           # 静的データ
+└── lib/            # ユーティリティ関数
+```
 
-Yes, you can!
+## ライセンス
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+MIT License
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 作者
+
+[@tomomini0815](https://github.com/tomomini0815)
