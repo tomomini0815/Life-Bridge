@@ -2,7 +2,7 @@ import { LifeEvent } from '@/types/lifeEvent';
 import { EventCard } from './EventCard';
 import { Button } from '@/components/ui/button';
 import { Heart, Shield, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
-
+import { useNavigate } from 'react-router-dom';
 interface LandingPageProps {
   events: LifeEvent[];
   onSelectEvent: (event: LifeEvent) => void;
@@ -33,6 +33,7 @@ const stats = [
 ];
 
 export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -75,7 +76,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             </p>
 
             <div className="flex items-center justify-center gap-4 mb-12 animate-slide-up" style={{ animationDelay: '0.2s' }}>
-              <Button variant="gradient" size="xl">
+              <Button variant="gradient" size="xl" onClick={() => navigate('/dashboard')}>
                 無料で始める
                 <ArrowRight className="w-5 h-5" />
               </Button>
@@ -153,7 +154,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
               120万円以上の給付金を見逃している人も。
               LifeBridgeで、あなたが受け取れるすべてを確認しましょう。
             </p>
-            <Button variant="glass" size="xl" className="text-foreground">
+            <Button variant="glass" size="xl" className="text-foreground" onClick={() => navigate('/dashboard')}>
               今すぐ無料で始める
               <ArrowRight className="w-5 h-5" />
             </Button>

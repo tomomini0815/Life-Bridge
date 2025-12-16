@@ -1,28 +1,18 @@
-import { useState } from 'react';
-import { LifeEvent } from '@/types/lifeEvent';
 import { lifeEvents } from '@/data/lifeEvents';
 import { LandingPage } from '@/components/LandingPage';
-import { Dashboard } from '@/components/Dashboard';
 import { ChatWidget } from '@/components/ChatWidget';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const [selectedEvent, setSelectedEvent] = useState<LifeEvent | null>(null);
+  const navigate = useNavigate();
 
-  const handleSelectEvent = (event: LifeEvent) => {
-    setSelectedEvent(event);
-  };
-
-  const handleBack = () => {
-    setSelectedEvent(null);
+  const handleSelectEvent = () => {
+    navigate('/dashboard');
   };
 
   return (
     <>
-      {selectedEvent ? (
-        <Dashboard event={selectedEvent} onBack={handleBack} />
-      ) : (
-        <LandingPage events={lifeEvents} onSelectEvent={handleSelectEvent} />
-      )}
+      <LandingPage events={lifeEvents} onSelectEvent={handleSelectEvent} />
       <ChatWidget />
     </>
   );
