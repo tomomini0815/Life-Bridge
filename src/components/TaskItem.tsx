@@ -14,6 +14,7 @@ interface TaskItemProps {
   task: Task;
   onToggle: (taskId: string) => void;
   eventColor: string;
+  onOpenMynaModal: () => void;
 }
 
 const priorityStyles = {
@@ -40,10 +41,10 @@ const categoryStyles = {
   private: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
 };
 
-export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
+export function TaskItem({ task, onToggle, eventColor, onOpenMynaModal }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
-  const [showMynaConnect, setShowMynaConnect] = useState(false);
+  // const [showMynaConnect, setShowMynaConnect] = useState(false); // Removed
   const [showPrintModal, setShowPrintModal] = useState(false);
   const [mynaConnected, setMynaConnected] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -75,7 +76,7 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
     e.stopPropagation();
 
     if (!mynaConnected) {
-      setShowMynaConnect(true);
+      onOpenMynaModal(); // Use prop from parent
       return;
     }
 
@@ -345,11 +346,7 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
         onScanComplete={handleScanComplete}
       />
 
-      <MynaPortalConnect
-        isOpen={showMynaConnect}
-        onClose={() => setShowMynaConnect(false)}
-        onConnect={handleMynaConnect}
-      />
+      {/* MynaPortalConnect removed from here */}
 
       <KonbiniPrintModal
         isOpen={showPrintModal}

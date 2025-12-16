@@ -3,16 +3,18 @@ import { LifeEvent, Task } from '@/types/lifeEvent';
 import { TaskItem } from './TaskItem';
 import { ProgressRing } from './ProgressRing';
 import { Button } from '@/components/ui/button';
+import { MynaPortalConnect } from './MynaPortalConnect';
 import { cn } from '@/lib/utils';
-import { 
-  ArrowLeft, 
-  Filter, 
-  Trophy, 
-  Coins, 
-  Clock, 
+import {
+  ArrowLeft,
+  Filter,
+  Trophy,
+  Coins,
+  Clock,
   CheckCircle2,
   Sparkles
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface DashboardProps {
   event: LifeEvent;
@@ -24,13 +26,27 @@ type FilterType = 'all' | 'government' | 'benefit' | 'private';
 export function Dashboard({ event, onBack }: DashboardProps) {
   const [tasks, setTasks] = useState<Task[]>(event.tasks);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [showMynaModal, setShowMynaModal] = useState(false);
+  const [currentMynaTaskId, setCurrentMynaTaskId] = useState<string | null>(null);
 
   const toggleTask = (taskId: string) => {
-    setTasks(prev => 
-      prev.map(task => 
+    setTasks(prev =>
+      prev.map(task =>
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
+  };
+
+  const handleOpenMynaModal = (taskId: string) => {
+    setCurrentMynaTaskId(taskId);
+    setShowMynaModal(true);
+  };
+
+  const handleMynaConnect = () => {
+    toast.success("マイナポータルと連携しました", {
+      icon: <span className="text-xl">🐰</span>,
+    });
+    // Here you could update the task state if needed, e.g. marking it as ready for one-tap
   };
 
   const filteredTasks = useMemo(() => {
@@ -40,11 +56,11 @@ export function Dashboard({ event, onBack }: DashboardProps) {
 
   const completedCount = tasks.filter(t => t.completed).length;
   const progress = (completedCount / tasks.length) * 100;
-  
+
   const totalBenefits = tasks
     .filter(t => t.benefitAmount)
     .reduce((sum, t) => sum + (t.benefitAmount || 0), 0);
-  
+
   const claimedBenefits = tasks
     .filter(t => t.completed && t.benefitAmount)
     .reduce((sum, t) => sum + (t.benefitAmount || 0), 0);
@@ -136,8 +152,8 @@ export function Dashboard({ event, onBack }: DashboardProps) {
             <div>
               <p className="font-semibold text-foreground">素晴らしい進捗です！</p>
               <p className="text-sm text-muted-foreground">
-                {progress >= 100 
-                  ? 'すべての手続きが完了しました！お疲れ様でした 🎉' 
+                {progress >= 100
+                  ? 'すべての手続きが完了しました！お疲れ様でした 🎉'
                   : `あなたは上位${Math.round(100 - progress)}%の効率で手続きを進めています`}
               </p>
             </div>
@@ -175,6 +191,7 @@ export function Dashboard({ event, onBack }: DashboardProps) {
                 task={task}
                 onToggle={toggleTask}
                 eventColor={event.color}
+                onOpenMynaModal={() => handleOpenMynaModal(task.id)}
               />
             </div>
           ))}
@@ -186,6 +203,12 @@ export function Dashboard({ event, onBack }: DashboardProps) {
           </div>
         )}
       </main>
+
+      <MynaPortalConnect
+        isOpen={showMynaModal}
+        onClose={() => setShowMynaModal(false)}
+        onConnect={handleMynaConnect}
+      />
     </div>
   );
 }
