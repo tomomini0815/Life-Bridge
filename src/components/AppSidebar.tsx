@@ -22,7 +22,10 @@ import {
   Settings,
   HelpCircle,
   LogOut,
-  ChevronRight
+  ChevronRight,
+  StickyNote,
+  Calculator,
+  Bell,
 } from 'lucide-react';
 import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
@@ -31,22 +34,31 @@ import { Button } from './ui/button';
 interface AppSidebarProps {
   activeEvent: LifeEventType | null;
   onSelectEvent: (eventId: LifeEventType | null) => void;
+  onSelectPage?: (page: string) => void;
+  activePage?: string;
 }
 
-export function AppSidebar({ activeEvent, onSelectEvent }: AppSidebarProps) {
+export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePage }: AppSidebarProps) {
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
 
   const menuItems = [
-    { title: 'ホーム', icon: Home, id: null },
-    { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100' },
-    { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100' },
-    { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100' },
-    { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100' },
-    { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100' },
+    { title: 'ホーム', icon: Home, id: null, type: 'event' as const },
+    { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
+    { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
+    { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
+    { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
+    { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
   ];
 
-  const activeIndex = menuItems.findIndex((item) => item.id === activeEvent);
+  const toolItems = [
+    { title: 'メモ帳', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
+    { title: '給付金試算', icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
+    { title: 'リマインダー', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
+  ];
+
+  const activeIndex = menuItems.findIndex((item) => item.id === activeEvent && !activePage);
+  const activeToolIndex = toolItems.findIndex((item) => item.id === activePage);
 
   const settingsItems = [
     { title: '設定', icon: Settings },
@@ -106,8 +118,79 @@ export function AppSidebar({ activeEvent, onSelectEvent }: AppSidebarProps) {
               )}
 
               {menuItems.map((item) => {
-                const isActive = activeEvent === item.id;
+                const isActive = activeEvent === item.id && !activePage;
                 const handleSelect = () => onSelectEvent(item.id as LifeEventType | null);
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={handleSelect}
+                      tooltip={isCollapsed ? item.title : undefined}
+                      className={cn(
+                        "w-full justify-start h-12 pl-4 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        isActive
+                          ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent"
+                      )}
+                      style={{
+                        borderRadius: isActive && !isCollapsed ? "30px 0 0 30px" : "16px"
+                      }}
+                    >
+                      <item.icon className={cn("w-5 h-5 mr-3 transition-transform duration-300 flex-shrink-0", isActive ? "scale-110" : "group-hover:scale-110", item.color && !isActive && "opacity-90")} />
+
+                      {!isCollapsed && (
+                        <>
+                          <span className="relative z-10">{item.title}</span>
+                          {isActive && <ChevronRight className="ml-auto w-5 h-5 opacity-50" />}
+                        </>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className={cn("px-4 text-xs font-semibold text-primary-foreground/60 uppercase tracking-wider mb-2", isCollapsed && "sr-only")}>
+            Tools
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="relative gap-1.5">
+              {/* Sliding Active Indicator for Tools */}
+              {activeToolIndex !== -1 && (
+                <div
+                  className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
+                  style={{
+                    top: `${activeToolIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
+                    borderRadius: "30px 0 0 30px",
+                    marginRight: "-1.5rem",
+                    paddingRight: "1.5rem",
+                  }}
+                >
+                  {/* Top Curve */}
+                  <div className="absolute -top-[23px] right-0 w-6 h-6 bg-transparent">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M24 24H0C14 24 24 14 24 0V24Z" fill="white" />
+                    </svg>
+                  </div>
+                  {/* Bottom Curve */}
+                  <div className="absolute -bottom-[23px] right-0 w-6 h-6 bg-transparent">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M24 0H0C14 0 24 10 24 24V0Z" fill="white" />
+                    </svg>
+                  </div>
+                </div>
+              )}
+
+              {toolItems.map((item) => {
+                const isActive = activePage === item.id;
+                const handleSelect = () => {
+                  if (onSelectPage) {
+                    onSelectPage(item.id);
+                  }
+                };
 
                 return (
                   <SidebarMenuItem key={item.title}>

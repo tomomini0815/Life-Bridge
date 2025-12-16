@@ -22,6 +22,7 @@ export interface Task {
   benefitAmount?: number;
   completed: boolean;
   priority: 'high' | 'medium' | 'low';
+  officialUrl?: string; // Link to actual government site or PDF
 }
 
 export interface UserProgress {

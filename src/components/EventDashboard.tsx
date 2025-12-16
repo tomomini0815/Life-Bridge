@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react';
 import { LifeEvent, Task, LifeEventType } from '@/types/lifeEvent';
 import { TaskItem } from './TaskItem';
 import { ProgressRing } from './ProgressRing';
-import { MynaPortalConnect } from './MynaPortalConnect';
 import { cn } from '@/lib/utils';
 import {
   Filter,
@@ -16,7 +15,6 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
 
 interface EventDashboardProps {
   event: LifeEvent;
@@ -30,19 +28,6 @@ type ViewType = 'list' | 'timeline';
 export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventDashboardProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [view, setView] = useState<ViewType>('list');
-  const [showMynaModal, setShowMynaModal] = useState(false);
-  const [currentMynaTaskId, setCurrentMynaTaskId] = useState<string | null>(null);
-
-  const handleOpenMynaModal = (taskId: string) => {
-    setCurrentMynaTaskId(taskId);
-    setShowMynaModal(true);
-  };
-
-  const handleMynaConnect = () => {
-    toast.success("マイナポータルと連携しました", {
-      icon: <span className="text-xl">🐰</span>,
-    });
-  };
 
   const tasksWithStatus = useMemo(() => {
     return event.tasks.map(task => ({
@@ -159,7 +144,7 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
             <p className="text-muted-foreground">
               {progress >= 100
                 ? 'すべての手続きが完了しました！お疲れ様でした 🎉'
-                : `あなたは上位${Math.round(100 - progress)}%の効率で手続きを進めています`}
+                : `あなたは上位${Math.round(100 - progress)}% の効率で手続きを進めています`}
             </p>
           </div>
         </div>
@@ -223,7 +208,6 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
               task={task}
               onToggle={onToggleTask}
               eventColor={event.color}
-              onOpenMynaModal={() => handleOpenMynaModal(task.id)}
             />
           </div>
         ))}
@@ -238,12 +222,6 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
           <p className="text-muted-foreground text-sm">条件を変更して再度お試しください</p>
         </div>
       )}
-
-      <MynaPortalConnect
-        isOpen={showMynaModal}
-        onClose={() => setShowMynaModal(false)}
-        onConnect={handleMynaConnect}
-      />
     </div>
   );
 }

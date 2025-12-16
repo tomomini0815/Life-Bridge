@@ -3,7 +3,6 @@ import { LifeEvent, Task } from '@/types/lifeEvent';
 import { TaskItem } from './TaskItem';
 import { ProgressRing } from './ProgressRing';
 import { Button } from '@/components/ui/button';
-import { MynaPortalConnect } from './MynaPortalConnect';
 import { cn } from '@/lib/utils';
 import {
   ArrowLeft,
@@ -14,7 +13,6 @@ import {
   CheckCircle2,
   Sparkles
 } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface DashboardProps {
   event: LifeEvent;
@@ -26,8 +24,6 @@ type FilterType = 'all' | 'government' | 'benefit' | 'private';
 export function Dashboard({ event, onBack }: DashboardProps) {
   const [tasks, setTasks] = useState<Task[]>(event.tasks);
   const [filter, setFilter] = useState<FilterType>('all');
-  const [showMynaModal, setShowMynaModal] = useState(false);
-  const [currentMynaTaskId, setCurrentMynaTaskId] = useState<string | null>(null);
 
   const toggleTask = (taskId: string) => {
     setTasks(prev =>
@@ -35,18 +31,6 @@ export function Dashboard({ event, onBack }: DashboardProps) {
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
-  };
-
-  const handleOpenMynaModal = (taskId: string) => {
-    setCurrentMynaTaskId(taskId);
-    setShowMynaModal(true);
-  };
-
-  const handleMynaConnect = () => {
-    toast.success("マイナポータルと連携しました", {
-      icon: <span className="text-xl">🐰</span>,
-    });
-    // Here you could update the task state if needed, e.g. marking it as ready for one-tap
   };
 
   const filteredTasks = useMemo(() => {
@@ -191,7 +175,6 @@ export function Dashboard({ event, onBack }: DashboardProps) {
                 task={task}
                 onToggle={toggleTask}
                 eventColor={event.color}
-                onOpenMynaModal={() => handleOpenMynaModal(task.id)}
               />
             </div>
           ))}
@@ -203,12 +186,6 @@ export function Dashboard({ event, onBack }: DashboardProps) {
           </div>
         )}
       </main>
-
-      <MynaPortalConnect
-        isOpen={showMynaModal}
-        onClose={() => setShowMynaModal(false)}
-        onConnect={handleMynaConnect}
-      />
     </div>
   );
 }

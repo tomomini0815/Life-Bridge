@@ -1,20 +1,13 @@
 import { Task } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
-import { Check, Clock, FileText, MapPin, Wifi, AlertCircle, ChevronDown, Coins, Briefcase, Landmark, ScanLine, Sparkles, Send, Printer } from 'lucide-react';
+import { Check, Clock, FileText, MapPin, Wifi, AlertCircle, ChevronDown, Coins, Briefcase, Landmark, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
-import { DocumentScanner } from './DocumentScanner';
-import { MynaPortalConnect } from './MynaPortalConnect';
-import { KonbiniPrintModal } from './KonbiniPrintModal';
 import { Button } from './ui/button';
-import { ExtractedData } from '@/services/OCRService';
-import { MynaService } from '@/services/MynaService';
-import { toast } from 'sonner';
 
 interface TaskItemProps {
   task: Task;
   onToggle: (taskId: string) => void;
   eventColor: string;
-  onOpenMynaModal: () => void;
 }
 
 const priorityStyles = {
@@ -41,63 +34,16 @@ const categoryStyles = {
   private: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
 };
 
-export function TaskItem({ task, onToggle, eventColor, onOpenMynaModal }: TaskItemProps) {
+export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [showScanner, setShowScanner] = useState(false);
-  // const [showMynaConnect, setShowMynaConnect] = useState(false); // Removed
-  const [showPrintModal, setShowPrintModal] = useState(false);
-  const [mynaConnected, setMynaConnected] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const CategoryIcon = categoryIcons[task.category];
 
-  const handleScanComplete = (data: ExtractedData) => {
-    console.log("Scanned data:", data);
-
-    // Simulate "Magic" auto-fill effect
-    toast.success("書類を認識しました！", {
-      description: "タスク情報を自動入力しました",
-      icon: <Sparkles className="w-5 h-5 text-amber-400" />,
-      duration: 4000
-    });
-
-    // In a real app, this would update the task state
-    // For now we just complete it to show impact
-    // onToggle(task.id); 
-  };
-
-  const handleMynaConnect = () => {
-    setMynaConnected(true);
-    toast.success("マイナポータルと連携しました", {
-      icon: <span className="text-xl">🐰</span>,
-    });
-  };
-
-  const handleOneTapApply = async (e: React.MouseEvent) => {
+  const handleExternalLink = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    if (!mynaConnected) {
-      onOpenMynaModal(); // Use prop from parent
-      return;
-    }
-
-    if (confirm("マイナポータルを通じて電子申請を行いますか？")) {
-      setIsSubmitting(true);
-      const result = await MynaService.submitApplication(task.id, {});
-      setIsSubmitting(false);
-
-      if (result.success) {
-        toast.success("申請が完了しました！", {
-          description: "行政手続きが正常に受理されました",
-          icon: <Send className="w-5 h-5 text-blue-500" />,
-        });
-        onToggle(task.id);
-      }
+    if (task.officialUrl) {
+      window.open(task.officialUrl, '_blank');
     }
   };
-
-  const isGovernmentTask = task.category === 'government' || task.category === 'benefit';
-  // Assume private tasks or offline tasks need paper
-  const isPaperTask = !task.isOnline || task.category === 'private';
 
   return (
     <>
@@ -165,54 +111,6 @@ export function TaskItem({ task, onToggle, eventColor, onOpenMynaModal }: TaskIt
                   {task.title}
                 </h4>
                 <div className="flex items-center gap-2">
-                  {/* Quick Action Buttons */}
-                  {!task.completed && !isExpanded && (
-                    <>
-                      {isGovernmentTask && (
-                        <Button
-                          size="sm"
-                          onClick={handleOneTapApply}
-                          disabled={isSubmitting}
-                          className={cn(
-                            "h-8 px-3 text-xs font-semibold rounded-full shadow-sm transition-all animate-fade-in",
-                            mynaConnected
-                              ? "bg-blue-500 hover:bg-blue-600 text-white"
-                              : "bg-pink-500 hover:bg-pink-600 text-white"
-                          )}
-                        >
-                          {isSubmitting ? (
-                            <span className="flex items-center gap-1">
-                              <div className="w-3 h-3 rounded-full border-2 border-white/50 border-t-white animate-spin" />
-                              送信中...
-                            </span>
-                          ) : mynaConnected ? (
-                            <span className="flex items-center gap-1">
-                              <Send className="w-3 h-3" />
-                              ワンタップ申請
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1">
-                              <span className="text-sm">🐰</span>
-                              マイナ申請
-                            </span>
-                          )}
-                        </Button>
-                      )}
-                      {isPaperTask && (
-                        <Button
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setShowPrintModal(true);
-                          }}
-                          className="h-8 px-3 text-xs font-semibold rounded-full shadow-sm bg-emerald-600 hover:bg-emerald-700 text-white animate-fade-in"
-                        >
-                          <Printer className="w-3 h-3 mr-1" />
-                          申請書作成
-                        </Button>
-                      )}
-                    </>
-                  )}
                   <ChevronDown
                     className={cn(
                       "w-5 h-5 text-muted-foreground transition-transform duration-300 flex-shrink-0",
@@ -262,66 +160,16 @@ export function TaskItem({ task, onToggle, eventColor, onOpenMynaModal }: TaskIt
                   ))}
                 </ul>
 
-                {/* Action Buttons */}
-                {!task.completed && (
-                  <div className="mt-4 flex flex-col gap-2">
-                    {/* Magic Scan Button */}
+                {/* External Link Button */}
+                {task.officialUrl && !task.completed && (
+                  <div className="mt-4">
                     <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowScanner(true);
-                      }}
-                      className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white shadow-md hover:shadow-cyan-500/25 group/scan"
+                      onClick={handleExternalLink}
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all group/link"
                     >
-                      <ScanLine className="w-4 h-4 mr-2 group-hover/scan:animate-pulse" />
-                      書類をスキャンして自動入力
-                      <Sparkles className="w-3.5 h-3.5 ml-2 text-yellow-300 animate-pulse" />
+                      <ExternalLink className="w-4 h-4 mr-2 group-hover/link:translate-x-1 transition-transform" />
+                      {task.isOnline ? "オンライン申請サイトへ" : "公式サイトで確認"}
                     </Button>
-
-                    {/* Myna Portal Button (for Gov tasks) */}
-                    {isGovernmentTask && (
-                      <Button
-                        onClick={handleOneTapApply}
-                        disabled={isSubmitting}
-                        className={cn(
-                          "w-full text-white shadow-md transition-all group/myna",
-                          mynaConnected
-                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-blue-500/25"
-                            : "bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-pink-500/25"
-                        )}
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <div className="w-4 h-4 mr-2 rounded-full border-2 border-white/50 border-t-white animate-spin" />
-                            申請データを送信中...
-                          </>
-                        ) : mynaConnected ? (
-                          <>
-                            <Send className="w-4 h-4 mr-2 group-hover/myna:translate-x-1 transition-transform" />
-                            マイナポータルで電子申請（ワンタップ）
-                          </>
-                        ) : (
-                          <>
-                            <span className="mr-2 text-lg">🐰</span>
-                            マイナポータルと連携して申請
-                          </>
-                        )}
-                      </Button>
-                    )}
-
-                    {/* Print Button (for Paper tasks) */}
-                    {isPaperTask && (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowPrintModal(true);
-                        }}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white shadow-md hover:shadow-emerald-500/25 group/print"
-                      >
-                        <Printer className="w-4 h-4 mr-2 group-hover/print:scale-110 transition-transform" />
-                        申請書を自動作成・コンビニ印刷
-                      </Button>
-                    )}
                   </div>
                 )}
               </div>
@@ -339,20 +187,6 @@ export function TaskItem({ task, onToggle, eventColor, onOpenMynaModal }: TaskIt
           </div>
         </div>
       </div>
-
-      <DocumentScanner
-        isOpen={showScanner}
-        onClose={() => setShowScanner(false)}
-        onScanComplete={handleScanComplete}
-      />
-
-      {/* MynaPortalConnect removed from here */}
-
-      <KonbiniPrintModal
-        isOpen={showPrintModal}
-        onClose={() => setShowPrintModal(false)}
-        taskTitle={task.title}
-      />
     </>
   );
 }

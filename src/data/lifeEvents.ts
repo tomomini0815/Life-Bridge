@@ -39,6 +39,7 @@ export const marriageTasks: Task[] = [
     isOnline: true,
     completed: false,
     priority: 'medium',
+    officialUrl: 'https://myna.go.jp/',
   },
   {
     id: 'marriage-4',
@@ -105,6 +106,7 @@ export const birthTasks: Task[] = [
     benefitAmount: 500000,
     completed: false,
     priority: 'high',
+    officialUrl: 'https://myna.go.jp/',
   },
   {
     id: 'birth-3',
@@ -119,6 +121,7 @@ export const birthTasks: Task[] = [
     benefitAmount: 180000,
     completed: false,
     priority: 'high',
+    officialUrl: 'https://myna.go.jp/',
   },
   {
     id: 'birth-4',
@@ -243,6 +246,7 @@ export const movingTasks: Task[] = [
     isOnline: true,
     completed: false,
     priority: 'high',
+    officialUrl: 'https://myna.go.jp/',
   },
   {
     id: 'moving-2',
@@ -269,6 +273,7 @@ export const movingTasks: Task[] = [
     isOnline: true,
     completed: false,
     priority: 'high',
+    officialUrl: 'https://welcometown.post.japanpost.jp/etn/',
   },
   {
     id: 'moving-4',

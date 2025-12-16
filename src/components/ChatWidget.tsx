@@ -15,9 +15,9 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
     {
       id: 'init',
       role: 'assistant',
-      content: 'こんにちは！LifeBridgeコンシェルジュです。お手伝いできることはありますか？',
+      content: 'こんにちは！LifeBridgeコンシェルジュです。\nどのようなライフイベントについてお手伝いしましょうか？',
       timestamp: new Date(),
-      actions: ['引越しの手続き', '出産・育児', 'その他'],
+      actions: ['💒 結婚', '👶 出産', '💼 転職', '🏠 引越し', '🤝 介護', 'その他'],
     }
   ]);
   const [input, setInput] = useState('');
@@ -70,33 +70,44 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
       let responseContent = '';
       const mode = isEmpathyMode ? 'empathy' : 'normal';
 
-      // Hybrid Logic: Try Gemini (Smart) -> Fallback to Concierge (Rule)
+      // Try Gemini first if enabled
       if (GeminiService.isEnabled()) {
         try {
           responseContent = await GeminiService.sendMessage(
             userMsg.content,
-            messages, // send history excluding current msg (handled in service) or including? Service handles it.
+            messages,
             currentContext,
             mode
           );
-        } catch (err) {
-          console.warn("Gemini Failed, falling back", err);
-          // Fallback content handled below if empty
+        } catch (err: any) {
+          const errorMsg = err?.message || '';
+          console.warn("Gemini error:", errorMsg);
+
+          // If it's a rate limit or specific error, show it to user
+          if (errorMsg.includes('RATE_LIMIT:') || errorMsg.includes('AUTH_ERROR:') ||
+            errorMsg.includes('NETWORK_ERROR:') || errorMsg.includes('SAFETY_BLOCK:')) {
+            // Extract the user-friendly message after the error code
+            const userMessage = errorMsg.split(': ')[1] || errorMsg;
+            throw new Error(userMessage);
+          }
+
+          // Otherwise, use fallback
+          responseContent = '';
         }
       }
 
+      // Use Gemini response or fallback to rule-based
       if (responseContent) {
         const geminiMsg: AiMessage = {
           id: Date.now().toString(),
           role: 'assistant',
           content: responseContent,
           timestamp: new Date(),
-          // Gemini currently doesn't return structured actions, we can infer keywords or keep empty
           actions: []
         };
         setMessages(prev => [...prev, geminiMsg]);
       } else {
-        // Fallback to Rule-Based
+        // Fallback to Rule-Based AI Concierge
         const response = await AiConciergeService.processMessage(
           userMsg.content,
           currentContext,
@@ -105,69 +116,90 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
         );
         setMessages(prev => [...prev, response]);
       }
-    } catch (e) {
-      console.error(e);
-      setMessages(prev => [...prev, {
+    } catch (e: any) {
+      console.error('Chat error:', e);
+      const errorMessage = e?.message || '';
+
+      // Show specific error message or generic fallback
+      const fallbackMsg: AiMessage = {
         id: Date.now().toString(),
         role: 'assistant',
-        content: '申し訳ありません。エラーが発生しました。',
-        timestamp: new Date()
-      }]);
+        content: errorMessage || 'ご質問ありがとうございます。具体的にどのようなことをお知りになりたいですか？',
+        timestamp: new Date(),
+        actions: errorMessage.includes('制限') ? [] : ['手続きの流れ', '必要書類', '期限について', '給付金について']
+      };
+      setMessages(prev => [...prev, fallbackMsg]);
     } finally {
       setIsTyping(false);
     }
   };
 
   const handleActionClick = (action: string) => {
-    // Treat action click as user sending that text
-    setInput(action);
-    // Hack to trigger send immediately after state update would require effect, 
-    // but for simplicity we just call logic directly or use timeout
-    setTimeout(() => {
-      // We can't reuse handleSend easily because valid input state is needed
-      // Simpler to just process directly
-      const userMsg: AiMessage = {
-        id: Date.now().toString(),
-        role: 'user',
-        content: action,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, userMsg]);
-      setIsTyping(true);
+    const userMsg: AiMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: action,
+      timestamp: new Date(),
+    };
 
-      // Async wrapper
-      (async () => {
-        try {
-          let responseContent = '';
-          const mode = isEmpathyMode ? 'empathy' : 'normal';
+    setMessages(prev => [...prev, userMsg]);
+    setInput('');
+    setIsTyping(true);
 
-          if (GeminiService.isEnabled()) {
-            try {
-              responseContent = await GeminiService.sendMessage(action, messages, currentContext, mode);
-            } catch (e) { console.warn("Gemini Action Failed", e); }
+    (async () => {
+      try {
+        let responseContent = '';
+        const mode = isEmpathyMode ? 'empathy' : 'normal';
+
+        if (GeminiService.isEnabled()) {
+          try {
+            responseContent = await GeminiService.sendMessage(action, messages, currentContext, mode);
+          } catch (err: any) {
+            const errorMsg = err?.message || '';
+            console.warn("Gemini error for action:", errorMsg);
+
+            // If it's a specific error, show it to user
+            if (errorMsg.includes('RATE_LIMIT:') || errorMsg.includes('AUTH_ERROR:') ||
+              errorMsg.includes('NETWORK_ERROR:') || errorMsg.includes('SAFETY_BLOCK:')) {
+              const userMessage = errorMsg.split(': ')[1] || errorMsg;
+              throw new Error(userMessage);
+            }
+
+            responseContent = '';
           }
+        }
 
-          if (responseContent) {
-            setMessages(prev => [...prev, {
-              id: Date.now().toString(),
-              role: 'assistant',
-              content: responseContent,
-              timestamp: new Date(),
-              actions: []
-            }]);
-          } else {
-            const res = await AiConciergeService.processMessage(
-              action,
-              currentContext,
-              mode,
-              [...messages, userMsg]
-            );
-            setMessages(prev => [...prev, res]);
-          }
-        } catch (e) { console.error(e); }
-        finally { setIsTyping(false); }
-      })();
-    }, 0);
+        if (responseContent) {
+          setMessages(prev => [...prev, {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: responseContent,
+            timestamp: new Date(),
+            actions: []
+          }]);
+        } else {
+          const res = await AiConciergeService.processMessage(
+            action,
+            currentContext,
+            mode,
+            [...messages, userMsg]
+          );
+          setMessages(prev => [...prev, res]);
+        }
+      } catch (e: any) {
+        console.error('Action error:', e);
+        const errorMessage = e?.message || '';
+        const fallbackMsg: AiMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: errorMessage || `${action}についてですね。具体的にどのようなことをお知りになりたいですか？`,
+          timestamp: new Date(),
+          actions: errorMessage.includes('制限') ? [] : ['手続きの流れ', '必要書類', '期限について']
+        };
+        setMessages(prev => [...prev, fallbackMsg]);
+      }
+      finally { setIsTyping(false); }
+    })();
   };
 
   return (
@@ -280,7 +312,7 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
 
               <div
                 className={cn(
-                  "px-4 py-3 shadow-sm relative text-sm leading-relaxed",
+                  "px-4 py-3 shadow-sm relative text-sm leading-relaxed group/message",
                   message.role === 'assistant'
                     ? "bg-white dark:bg-zinc-800 rounded-2xl rounded-tl-sm border border-border/50 text-foreground"
                     : cn(
@@ -292,6 +324,51 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
                 )}
               >
                 <p className="whitespace-pre-line">{message.content}</p>
+
+                {/* Action buttons for AI messages */}
+                {message.role === 'assistant' && (
+                  <div className="flex gap-1 mt-2 pt-2 border-t border-border/30">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigator.clipboard.writeText(message.content);
+                        import('sonner').then(({ toast }) => {
+                          toast.success('コピーしました', {
+                            description: 'メッセージをクリップボードにコピーしました',
+                          });
+                        });
+                      }}
+                      className="text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors flex items-center gap-1"
+                      title="コピー"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      コピー
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Import memoService dynamically to avoid circular deps
+                        import('@/services/MemoService').then(({ memoService }) => {
+                          memoService.createMemoFromChat(message.content);
+                          import('sonner').then(({ toast }) => {
+                            toast.success('メモに保存しました', {
+                              description: 'メモ帳から確認できます',
+                            });
+                          });
+                        });
+                      }}
+                      className="text-xs px-2 py-1 rounded-md hover:bg-muted transition-colors flex items-center gap-1"
+                      title="メモに保存"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      メモ保存
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Suggested Actions (Bot only) */}

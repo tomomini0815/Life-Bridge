@@ -4,6 +4,9 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { DashboardHome } from '@/components/DashboardHome';
 import { EventDashboard } from '@/components/EventDashboard';
+import { MemoManager } from '@/components/MemoManager';
+import { BenefitSimulator } from '@/components/BenefitSimulator';
+import { ReminderSettings } from '@/components/ReminderSettings';
 import { Search, Bell, User, ScanLine, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
@@ -15,6 +18,7 @@ import { Separator } from '@/components/ui/separator';
 
 export function DashboardLayout() {
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
+  const [activePage, setActivePage] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<Record<string, string[]>>({
     marriage: [],
     birth: ['birth-2'], // Example: Some tasks already completed
@@ -26,6 +30,12 @@ export function DashboardLayout() {
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
+    setActivePage(null); // Clear page when selecting event
+  }, []);
+
+  const handleSelectPage = useCallback((page: string) => {
+    setActivePage(page);
+    setActiveEvent(null); // Clear event when selecting page
   }, []);
 
   const handleToggleTask = useCallback((eventId: LifeEventType, taskId: string) => {
@@ -51,10 +61,43 @@ export function DashboardLayout() {
 
   const selectedEvent = activeEvent ? lifeEvents.find(e => e.id === activeEvent) : null;
 
+  // Render current page content
+  const renderContent = () => {
+    if (activePage === 'memo') {
+      return <MemoManager />;
+    }
+    if (activePage === 'simulator') {
+      return <BenefitSimulator />;
+    }
+    if (activePage === 'reminders') {
+      return <ReminderSettings />;
+    }
+    if (selectedEvent) {
+      return (
+        <EventDashboard
+          event={selectedEvent}
+          completedTaskIds={completedTasks[selectedEvent.id] || []}
+          onToggleTask={(taskId) => handleToggleTask(selectedEvent.id, taskId)}
+        />
+      );
+    }
+    return (
+      <DashboardHome
+        onSelectEvent={handleSelectEvent}
+        completedTasks={completedTasks}
+      />
+    );
+  };
+
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full bg-white"> {/* Pure white background */}
-        <AppSidebar activeEvent={activeEvent} onSelectEvent={handleSelectEvent} />
+        <AppSidebar
+          activeEvent={activeEvent}
+          onSelectEvent={handleSelectEvent}
+          onSelectPage={handleSelectPage}
+          activePage={activePage || undefined}
+        />
 
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-transparent"> {/* Allow parent bg to show through */}
           {/* Top Header */}
@@ -72,7 +115,12 @@ export function DashboardLayout() {
             </div>
 
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                onClick={() => handleSelectPage('reminders')}
+              >
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
               </Button>
@@ -84,18 +132,7 @@ export function DashboardLayout() {
 
           {/* Main Content */}
           <main className="p-6">
-            {selectedEvent ? (
-              <EventDashboard
-                event={selectedEvent}
-                completedTaskIds={completedTasks[selectedEvent.id] || []}
-                onToggleTask={(taskId) => handleToggleTask(selectedEvent.id, taskId)}
-              />
-            ) : (
-              <DashboardHome
-                onSelectEvent={handleSelectEvent}
-                completedTasks={completedTasks}
-              />
-            )}
+            {renderContent()}
           </main>
 
           {/* Global Magic Scan FAB */}
