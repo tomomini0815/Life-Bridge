@@ -3,6 +3,7 @@ import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight } from 'lucide-reac
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AiConciergeService, AiMessage, UserContext } from '@/services/AiConciergeService';
+import { GeminiService } from '@/services/GeminiService';
 
 interface ChatWidgetProps {
   currentContext?: UserContext;
@@ -66,15 +67,52 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
     setIsTyping(true);
 
     try {
-      const response = await AiConciergeService.processMessage(
-        userMsg.content,
-        currentContext,
-        isEmpathyMode ? 'empathy' : 'normal',
-        [...messages, userMsg] // Pass full history including new user msg
-      );
-      setMessages(prev => [...prev, response]);
+      let responseContent = '';
+      const mode = isEmpathyMode ? 'empathy' : 'normal';
+
+      // Hybrid Logic: Try Gemini (Smart) -> Fallback to Concierge (Rule)
+      if (GeminiService.isEnabled()) {
+        try {
+          responseContent = await GeminiService.sendMessage(
+            userMsg.content,
+            messages, // send history excluding current msg (handled in service) or including? Service handles it.
+            currentContext,
+            mode
+          );
+        } catch (err) {
+          console.warn("Gemini Failed, falling back", err);
+          // Fallback content handled below if empty
+        }
+      }
+
+      if (responseContent) {
+        const geminiMsg: AiMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: responseContent,
+          timestamp: new Date(),
+          // Gemini currently doesn't return structured actions, we can infer keywords or keep empty
+          actions: []
+        };
+        setMessages(prev => [...prev, geminiMsg]);
+      } else {
+        // Fallback to Rule-Based
+        const response = await AiConciergeService.processMessage(
+          userMsg.content,
+          currentContext,
+          mode,
+          [...messages, userMsg]
+        );
+        setMessages(prev => [...prev, response]);
+      }
     } catch (e) {
       console.error(e);
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: '申し訳ありません。エラーが発生しました。',
+        timestamp: new Date()
+      }]);
     } finally {
       setIsTyping(false);
     }
@@ -96,15 +134,39 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
       };
       setMessages(prev => [...prev, userMsg]);
       setIsTyping(true);
-      AiConciergeService.processMessage(
-        action,
-        currentContext,
-        isEmpathyMode ? 'empathy' : 'normal',
-        [...messages, userMsg]
-      ).then(res => {
-        setMessages(prev => [...prev, res]);
-        setIsTyping(false);
-      });
+
+      // Async wrapper
+      (async () => {
+        try {
+          let responseContent = '';
+          const mode = isEmpathyMode ? 'empathy' : 'normal';
+
+          if (GeminiService.isEnabled()) {
+            try {
+              responseContent = await GeminiService.sendMessage(action, messages, currentContext, mode);
+            } catch (e) { console.warn("Gemini Action Failed", e); }
+          }
+
+          if (responseContent) {
+            setMessages(prev => [...prev, {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: responseContent,
+              timestamp: new Date(),
+              actions: []
+            }]);
+          } else {
+            const res = await AiConciergeService.processMessage(
+              action,
+              currentContext,
+              mode,
+              [...messages, userMsg]
+            );
+            setMessages(prev => [...prev, res]);
+          }
+        } catch (e) { console.error(e); }
+        finally { setIsTyping(false); }
+      })();
     }, 0);
   };
 
