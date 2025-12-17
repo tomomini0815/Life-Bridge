@@ -1,68 +1,103 @@
+import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Baby, Briefcase, GraduationCap, Heart, Home, Star } from 'lucide-react';
-
-interface TimelineEvent {
-    year: string;
-    title: string;
-    icon: React.ElementType;
-    status: 'completed' | 'active' | 'future';
-    description: string;
-}
-
-const timelineData: TimelineEvent[] = [
-    {
-        year: '2019',
-        title: '大学卒業',
-        icon: GraduationCap,
-        status: 'completed',
-        description: '希望を胸に、社会への第一歩を踏み出しました。', // Gratuation
-    },
-    {
-        year: '2019',
-        title: '新卒入社',
-        icon: Briefcase,
-        status: 'completed',
-        description: '株式会社テックフューチャーに入社。エンジニアとしてのキャリアをスタート。', // First Job
-    },
-    {
-        year: '2023',
-        title: '結婚',
-        icon: Heart,
-        status: 'completed',
-        description: 'パートナーと共に歩む新しい人生の幕開け。', // Marriage
-    },
-    {
-        year: '2025',
-        title: '引越し',
-        icon: Home,
-        status: 'active',
-        description: '家族が増える未来を見据えて、広めのマンションへ。', // Moving (Current)
-    },
-    {
-        year: '2026 (予想)',
-        title: '第一子誕生',
-        icon: Baby,
-        status: 'future',
-        description: '新しい家族の誕生。パパ・ママとしての生活が始まります。', // Baby
-    },
-];
+import { Star, Plus, Pencil, Trash2, Calendar, FileText, Type } from 'lucide-react';
+import { TimelineEvent, TimelineStatus, timelineService, ICON_MAP } from '@/services/TimelineService';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 export function LifeTimeline() {
+    const [events, setEvents] = useState<TimelineEvent[]>([]);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
+    const [formData, setFormData] = useState<Partial<TimelineEvent>>({});
+
+    useEffect(() => {
+        loadEvents();
+    }, []);
+
+    const loadEvents = () => {
+        setEvents(timelineService.getEvents());
+    };
+
+    const handleOpenAdd = () => {
+        setEditingEvent(null);
+        setFormData({
+            year: new Date().getFullYear().toString(),
+            status: 'future',
+            iconName: 'star'
+        });
+        setIsDialogOpen(true);
+    };
+
+    const handleOpenEdit = (event: TimelineEvent) => {
+        setEditingEvent(event);
+        setFormData({ ...event });
+        setIsDialogOpen(true);
+    };
+
+    const handleSave = () => {
+        if (!formData.year || !formData.title || !formData.description || !formData.status || !formData.iconName) {
+            // Simple validation
+            return;
+        }
+
+        if (editingEvent) {
+            timelineService.updateEvent(editingEvent.id, formData);
+        } else {
+            timelineService.addEvent(formData as Omit<TimelineEvent, 'id'>);
+        }
+        loadEvents();
+        setIsDialogOpen(false);
+    };
+
+    const handleDelete = (id: string) => {
+        if (confirm('このイベントを削除してもよろしいですか？')) {
+            timelineService.deleteEvent(id);
+            loadEvents();
+        }
+    };
+
     return (
         <div className="relative py-10 px-6">
+            {/* Header Actions */}
+            <div className="mb-10 flex justify-end">
+                <Button onClick={handleOpenAdd} className="shadow-lg hover:shadow-xl transition-all">
+                    <Plus className="w-4 h-4 mr-2" />
+                    イベントを追加
+                </Button>
+            </div>
+
             {/* Central Line */}
-            <div className="absolute left-[29px] md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-indigo-200 via-purple-300 to-indigo-100 dark:from-indigo-900 dark:via-purple-900 dark:to-indigo-900" />
+            <div className="absolute left-[29px] md:left-1/2 top-24 bottom-0 w-0.5 bg-gradient-to-b from-indigo-200 via-purple-300 to-indigo-100 dark:from-indigo-900 dark:via-purple-900 dark:to-indigo-900" />
 
             <div className="space-y-12">
-                {timelineData.map((event, index) => {
+                {events.map((event, index) => {
                     const isLeft = index % 2 === 0;
+                    const IconComponent = ICON_MAP[event.iconName] || Star;
+
                     return (
                         <div
-                            key={index}
+                            key={event.id}
                             className={cn(
                                 "relative flex items-center md:justify-center group",
-                                // Mobile: always left aligned with line on left
-                                // Desktop: alternating
                             )}
                         >
                             {/* Dot on Line */}
@@ -75,15 +110,27 @@ export function LifeTimeline() {
 
                             {/* Content Card */}
                             <div className={cn(
-                                "ml-16 md:ml-0 w-full md:w-[42%] bg-white/60 dark:bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/40 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-300 animate-slide-up",
+                                "ml-16 md:ml-0 w-full md:w-[42%] bg-white/60 dark:bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/40 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-300 group/card",
                                 "md:absolute",
-                                // Desktop positioning
                                 isLeft ? "md:right-[50%] md:mr-10" : "md:left-[50%] md:ml-10",
-                                // Active state styling
                                 event.status === 'active' && "border-yellow-400/50 bg-yellow-50/30 dark:bg-yellow-900/10 ring-1 ring-yellow-400/30"
                             )}
-                                style={{ animationDelay: `${index * 150}ms` }}
                             >
+                                <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleOpenEdit(event); }}
+                                        className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                                    >
+                                        <Pencil className="w-3.5 h-3.5 text-muted-foreground" />
+                                    </button>
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); handleDelete(event.id); }}
+                                        className="p-1.5 rounded-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                                    >
+                                        <Trash2 className="w-3.5 h-3.5 text-red-500" />
+                                    </button>
+                                </div>
+
                                 <div className="flex items-start justify-between mb-2">
                                     <span className={cn(
                                         "text-sm font-bold px-2 py-0.5 rounded-md",
@@ -92,15 +139,15 @@ export function LifeTimeline() {
                                         {event.year}
                                     </span>
                                     {event.status === 'active' && (
-                                        <span className="flex items-center text-xs font-bold text-yellow-600 dark:text-yellow-400 animate-pulse">
+                                        <span className="flex items-center text-xs font-bold text-yellow-600 dark:text-yellow-400 animate-pulse mr-8">
                                             <Star className="w-3 h-3 mr-1 fill-yellow-400" />
                                             NOW
                                         </span>
                                     )}
                                 </div>
 
-                                <h3 className="text-lg font-bold flex items-center gap-2 mb-2 text-foreground">
-                                    <event.icon className={cn(
+                                <h3 className="text-lg font-bold flex items-center gap-2 mb-2 text-foreground pr-8">
+                                    <IconComponent className={cn(
                                         "w-5 h-5",
                                         event.status === 'future' ? "text-muted-foreground" : "text-purple-500"
                                     )} />
@@ -116,12 +163,109 @@ export function LifeTimeline() {
                 })}
             </div>
 
-            {/* Footer / Future hint */}
-            <div className="text-center mt-12 animate-fade-in" style={{ animationDelay: '800ms' }}>
+            {/* Footer */}
+            <div className="text-center mt-12 animate-fade-in">
                 <p className="text-sm text-muted-foreground italic font-medium">
                     To be continued... and LifeBridge is always with you.
                 </p>
             </div>
+
+            {/* Edit/Add Dialog */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>{editingEvent ? 'イベントを編集' : '新しいイベントを追加'}</DialogTitle>
+                        <DialogDescription>
+                            あなたの人生のタイムラインに新しいページを追加しましょう。
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 py-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="year" className="flex items-center gap-2">
+                                <Calendar className="w-4 h-4" /> 年
+                            </Label>
+                            <Input
+                                id="year"
+                                value={formData.year || ''}
+                                onChange={(e) => setFormData({ ...formData, year: e.target.value })}
+                                placeholder="例: 2025"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="title" className="flex items-center gap-2">
+                                <Type className="w-4 h-4" /> タイトル
+                            </Label>
+                            <Input
+                                id="title"
+                                value={formData.title || ''}
+                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                placeholder="例: 引越し"
+                            />
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="status" className="flex items-center gap-2">
+                                <Star className="w-4 h-4" /> ステータス
+                            </Label>
+                            <Select
+                                value={formData.status}
+                                onValueChange={(value: TimelineStatus) => setFormData({ ...formData, status: value })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="ステータスを選択" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="completed">完了 (Completed)</SelectItem>
+                                    <SelectItem value="active">現在 (Active)</SelectItem>
+                                    <SelectItem value="future">未来 (Future)</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="icon" className="flex items-center gap-2">
+                                <Star className="w-4 h-4" /> アイコン
+                            </Label>
+                            <Select
+                                value={formData.iconName}
+                                onValueChange={(value) => setFormData({ ...formData, iconName: value })}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="アイコンを選択" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {Object.keys(ICON_MAP).map((key) => (
+                                        <SelectItem key={key} value={key}>
+                                            <div className="flex items-center gap-2">
+                                                {(() => {
+                                                    const Icon = ICON_MAP[key];
+                                                    return <Icon className="w-4 h-4" />;
+                                                })()}
+                                                <span className="capitalize">{key}</span>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="description" className="flex items-center gap-2">
+                                <FileText className="w-4 h-4" /> 詳細
+                            </Label>
+                            <Textarea
+                                id="description"
+                                value={formData.description || ''}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                placeholder="詳細を入力してください..."
+                                className="h-20"
+                            />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit" onClick={handleSave} className="w-full">
+                            保存する
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
