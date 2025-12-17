@@ -103,10 +103,10 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
     <div className="space-y-8 animate-fade-in max-w-7xl mx-auto pb-10">
       {/* Welcome Section */}
       {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-2xl py-6 px-8">
+      <div className="relative overflow-hidden rounded-xl py-2 px-8">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-2xl font-bold mb-2 tracking-tight text-foreground">こんにちは、Tomomiさん</h1>
-          <p className="text-muted-foreground text-base leading-relaxed">
+          <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、Tomomiさん</h1>
+          <p className="text-muted-foreground text-sm leading-relaxed">
             人生の転機は、新しい物語の始まりです。複雑な手続きは私に任せて、あなたらしい毎日を過ごしましょう。
           </p>
         </div>
@@ -141,18 +141,18 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
         <>
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-teal-200 dark:hover:border-teal-700 transition-all duration-300 bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 shadow-lg shadow-teal-100/50 dark:shadow-teal-900/20 hover:shadow-xl hover:shadow-teal-200/60 dark:hover:shadow-teal-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-teal-300 dark:hover:border-teal-700 transition-all duration-300 bg-teal-50 dark:bg-teal-900/20 shadow-lg shadow-teal-100/50 dark:shadow-teal-900/20 hover:shadow-xl hover:shadow-teal-200/60 dark:hover:shadow-teal-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-teal-100 dark:bg-teal-800/50 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Target className="w-6 h-6" />
                 </div>
                 <span className="text-sm font-medium text-teal-700 dark:text-teal-300">全体進捗</span>
               </div>
               <div className="flex items-end gap-3 mb-3">
-                <span className="text-4xl font-bold text-teal-600 dark:text-teal-400">{Math.round(overallProgress)}%</span>
-                <span className="text-sm text-teal-600/70 dark:text-teal-400/70 mb-1.5 font-medium">完了</span>
+                <span className="text-4xl font-bold text-teal-700 dark:text-teal-400">{Math.round(overallProgress)}%</span>
+                <span className="text-sm text-teal-600/80 dark:text-teal-400/80 mb-1.5 font-medium">完了</span>
               </div>
-              <div className="h-3 bg-teal-100/50 dark:bg-teal-800/30 rounded-full overflow-hidden p-[2px]">
+              <div className="h-3 bg-white/60 dark:bg-teal-800/30 rounded-full overflow-hidden p-[2px]">
                 <div
                   className="h-full bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(20,184,166,0.3)]"
                   style={{ width: `${overallProgress}%` }}
@@ -160,46 +160,46 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               </div>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-green-200 dark:hover:border-green-700 transition-all duration-300 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 hover:shadow-xl hover:shadow-green-200/60 dark:hover:shadow-green-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-green-300 dark:hover:border-green-700 transition-all duration-300 bg-green-50 dark:bg-green-900/20 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 hover:shadow-xl hover:shadow-green-200/60 dark:hover:shadow-green-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-green-100 dark:bg-green-800/50 flex items-center justify-center text-green-600 dark:text-green-400 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-green-800 flex items-center justify-center text-green-600 dark:text-green-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <span className="text-sm font-medium text-green-700 dark:text-green-300">完了タスク</span>
               </div>
               <div className="flex items-end gap-3">
-                <span className="text-4xl font-bold text-green-600 dark:text-green-400">{totalCompleted}</span>
-                <span className="text-sm text-green-600/70 dark:text-green-400/70 mb-1.5 font-medium">/ {totalTasks}件</span>
+                <span className="text-4xl font-bold text-green-700 dark:text-green-400">{totalCompleted}</span>
+                <span className="text-sm text-green-600/80 dark:text-green-400/80 mb-1.5 font-medium">/ {totalTasks}件</span>
               </div>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-amber-200 dark:hover:border-amber-700 transition-all duration-300 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-200/60 dark:hover:shadow-amber-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 bg-amber-50 dark:bg-amber-900/20 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-200/60 dark:hover:shadow-amber-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-100 dark:bg-amber-800/50 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-amber-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Coins className="w-6 h-6" />
                 </div>
                 <span className="text-sm font-medium text-amber-700 dark:text-amber-300">獲得済み給付金</span>
               </div>
               <div className="flex items-end gap-3">
-                <span className="text-4xl font-bold text-amber-600 dark:text-amber-400">¥{totalClaimedBenefits.toLocaleString()}</span>
+                <span className="text-4xl font-bold text-amber-700 dark:text-amber-400">¥{totalClaimedBenefits.toLocaleString()}</span>
               </div>
-              <p className="text-xs font-medium text-amber-700 dark:text-amber-300 mt-2 bg-amber-100/50 dark:bg-amber-800/30 px-2 py-1 rounded-lg inline-block">
+              <p className="text-xs font-medium text-amber-800 dark:text-amber-300 mt-2 bg-white/60 dark:bg-amber-800/30 px-2 py-1 rounded-lg inline-block">
                 残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
               </p>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-red-200 dark:hover:border-red-700 transition-all duration-300 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 shadow-lg shadow-red-100/50 dark:shadow-red-900/20 hover:shadow-xl hover:shadow-red-200/60 dark:hover:shadow-red-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-red-300 dark:hover:border-red-700 transition-all duration-300 bg-red-50 dark:bg-red-900/20 shadow-lg shadow-red-100/50 dark:shadow-red-900/20 hover:shadow-xl hover:shadow-red-200/60 dark:hover:shadow-red-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-800/50 flex items-center justify-center text-red-600 dark:text-red-400 shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-white dark:bg-red-800 flex items-center justify-center text-red-600 dark:text-red-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <AlertTriangle className="w-6 h-6" />
                 </div>
                 <span className="text-sm font-medium text-red-700 dark:text-red-300">要対応</span>
               </div>
               <div className="flex items-end gap-3">
-                <span className="text-4xl font-bold text-red-600 dark:text-red-400">{allUrgentTasks.length}</span>
-                <span className="text-sm text-red-600/70 dark:text-red-400/70 mb-1.5 font-medium">件</span>
+                <span className="text-4xl font-bold text-red-700 dark:text-red-400">{allUrgentTasks.length}</span>
+                <span className="text-sm text-red-600/80 dark:text-red-400/80 mb-1.5 font-medium">件</span>
               </div>
-              <p className="text-xs font-medium text-red-700 dark:text-red-300 mt-2 bg-red-100/50 dark:bg-red-800/30 px-2 py-1 rounded-lg inline-block">
+              <p className="text-xs font-medium text-red-800 dark:text-red-300 mt-2 bg-white/60 dark:bg-red-800/30 px-2 py-1 rounded-lg inline-block">
                 期限が迫っています
               </p>
             </div>
