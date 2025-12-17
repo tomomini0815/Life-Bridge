@@ -1,6 +1,9 @@
 import { Baby, Briefcase, GraduationCap, Heart, Home, Star, Trophy, Users, Plane, Car, Building, LucideIcon } from 'lucide-react';
 
+import { GeminiService } from './GeminiService';
+
 export type TimelineStatus = 'completed' | 'active' | 'future';
+export type TimelineScenario = 'current' | 'ideal';
 
 export interface TimelineEvent {
     id: string;
@@ -9,6 +12,7 @@ export interface TimelineEvent {
     iconName: string;
     status: TimelineStatus;
     description: string;
+    scenario: TimelineScenario;
 }
 
 export const ICON_MAP: Record<string, LucideIcon> = {
@@ -35,6 +39,7 @@ const DEFAULT_EVENTS: TimelineEvent[] = [
         iconName: 'graduation',
         status: 'completed',
         description: '希望を胸に、社会への第一歩を踏み出しました。',
+        scenario: 'current',
     },
     {
         id: '2',
@@ -43,6 +48,7 @@ const DEFAULT_EVENTS: TimelineEvent[] = [
         iconName: 'job',
         status: 'completed',
         description: '株式会社テックフューチャーに入社。エンジニアとしてのキャリアをスタート。',
+        scenario: 'current',
     },
     {
         id: '3',
@@ -51,6 +57,7 @@ const DEFAULT_EVENTS: TimelineEvent[] = [
         iconName: 'marriage',
         status: 'completed',
         description: 'パートナーと共に歩む新しい人生の幕開け。',
+        scenario: 'current',
     },
     {
         id: '4',
@@ -59,6 +66,7 @@ const DEFAULT_EVENTS: TimelineEvent[] = [
         iconName: 'home',
         status: 'active',
         description: '家族が増える未来を見据えて、広めのマンションへ。',
+        scenario: 'current',
     },
     {
         id: '5',
@@ -67,8 +75,16 @@ const DEFAULT_EVENTS: TimelineEvent[] = [
         iconName: 'baby',
         status: 'future',
         description: '新しい家族の誕生。パパ・ママとしての生活が始まります。',
+        scenario: 'current',
     },
 ];
+
+export interface UserInputForAI {
+    age: number;
+    job: string;
+    currentStatus: string;
+    goals: string;
+}
 
 export class TimelineService {
     private static instance: TimelineService;
@@ -89,6 +105,10 @@ export class TimelineService {
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
             this.events = JSON.parse(stored);
+            // Migration: Add scenario if missing
+            if (this.events.length > 0 && !this.events[0].scenario) {
+                this.events = this.events.map(e => ({ ...e, scenario: 'current' }));
+            }
         } else {
             this.events = [...DEFAULT_EVENTS];
             this.saveEvents();
@@ -99,20 +119,14 @@ export class TimelineService {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(this.events));
     }
 
-    getEvents(): TimelineEvent[] {
-        return [...this.events];
+    getEvents(scenario: TimelineScenario = 'current'): TimelineEvent[] {
+        return this.events.filter(e => e.scenario === scenario);
     }
 
     addEvent(event: Omit<TimelineEvent, 'id'>): TimelineEvent {
         const newEvent = { ...event, id: crypto.randomUUID() };
         this.events.push(newEvent);
-        // Sort by year (numeric check if possible, else string sort)
-        this.events.sort((a, b) => {
-            const yearA = parseInt(a.year) || 9999;
-            const yearB = parseInt(b.year) || 9999;
-            if (yearA !== yearB) return yearA - yearB;
-            return a.year.localeCompare(b.year);
-        });
+        this.sortEvents();
         this.saveEvents();
         return newEvent;
     }
@@ -122,12 +136,7 @@ export class TimelineService {
         if (index === -1) return null;
 
         this.events[index] = { ...this.events[index], ...updates };
-        this.events.sort((a, b) => {
-            const yearA = parseInt(a.year) || 9999;
-            const yearB = parseInt(b.year) || 9999;
-            if (yearA !== yearB) return yearA - yearB;
-            return a.year.localeCompare(b.year);
-        });
+        this.sortEvents();
         this.saveEvents();
         return this.events[index];
     }
@@ -135,6 +144,71 @@ export class TimelineService {
     deleteEvent(id: string) {
         this.events = this.events.filter(e => e.id !== id);
         this.saveEvents();
+    }
+
+    private sortEvents() {
+        this.events.sort((a, b) => {
+            const yearA = parseInt(a.year) || 9999;
+            const yearB = parseInt(b.year) || 9999;
+            if (yearA !== yearB) return yearA - yearB;
+            return a.year.localeCompare(b.year);
+        });
+    }
+
+    async generateAiEvents(input: UserInputForAI): Promise<void> {
+        if (!GeminiService.isEnabled()) throw new Error("AI Service Unavailable");
+
+        const prompt = `
+        Create two life timelines for a user based on the following input:
+        Age: ${input.age}
+        Job: ${input.job}
+        Current Status: ${input.currentStatus}
+        Goals: ${input.goals}
+
+        Timeline 1 (Current Path): Realistic future based on current status.
+        Timeline 2 (Ideal Path): Future where all goals are achieved successfully.
+
+        Return ONLY a JSON array of objects with these fields:
+        - year: string (YYYY format)
+        - title: string (Short event title in Japanese)
+        - description: string (1-2 sentences in Japanese)
+        - iconName: string (one of: graduation, job, marriage, home, baby, star, trophy, users, travel, car, building)
+        - status: 'future'
+        - scenario: 'current' or 'ideal'
+
+        Generate about 3-5 future events for EACH scenario (total 6-10 events).
+        Start from next year.
+        `;
+
+        try {
+            const jsonStr = await GeminiService.generateText(prompt, "You are a JSON generator. Output valid JSON only, no markdown code blocks.");
+            // Clean markdown if present
+            const cleanJson = jsonStr.replace(/```json/g, '').replace(/```/g, '').trim();
+            const newEvents = JSON.parse(cleanJson);
+
+            // Filter out existing future events to replace them, or just append?
+            // Let's replace 'future' events for simplicity, or maybe just add them.
+            // For now, let's keep existing 'completed'/'active' events and remove all 'future' events to avoid duplicates
+            // before adding new ones. But user might have manually added future events.
+            // Let's just ADD new events for now.
+            // Actually, best strictly to clear previous AI generated stuff... but we don't track 'isAiGenerated'.
+            // Let's just append. User can delete.
+
+            newEvents.forEach((e: any) => {
+                this.addEvent({
+                    year: e.year,
+                    title: e.title,
+                    description: e.description,
+                    iconName: e.iconName,
+                    status: 'future',
+                    scenario: e.scenario
+                });
+            });
+
+        } catch (e) {
+            console.error("AI Generation Failed", e);
+            throw e;
+        }
     }
 }
 

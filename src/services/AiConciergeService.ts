@@ -6,7 +6,7 @@ export interface AiMessage {
     actions?: string[];
 }
 
-export type UserContext = 'moving' | 'baby' | 'marriage' | 'retirement' | 'general';
+export type UserContext = 'general' | 'marriage' | 'birth' | 'job' | 'moving' | 'care' | 'startup' | 'baby' | 'retirement';
 export type ChatMode = 'normal' | 'empathy';
 export type Intent = 'greeting' | 'baby_tired' | 'distress' | 'gratitude' | 'moving_deadline' | 'moving_general' | 'baby_money' | 'baby_general' | 'general_help';
 

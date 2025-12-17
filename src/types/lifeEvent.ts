@@ -1,4 +1,4 @@
-export type LifeEventType = 'marriage' | 'birth' | 'job' | 'moving' | 'care';
+export type LifeEventType = 'marriage' | 'birth' | 'job' | 'startup' | 'moving' | 'care';
 
 export interface LifeEvent {
   id: LifeEventType;

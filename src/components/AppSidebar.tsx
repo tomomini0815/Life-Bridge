@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   Sidebar,
   SidebarContent,
@@ -16,6 +17,7 @@ import {
   Heart,
   Baby,
   Briefcase,
+  Rocket,
   Truck,
   HandHeart,
   Sparkles,
@@ -42,20 +44,67 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
 
+  // Initialize state from localStorage to avoid flash of incorrect content
+  const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('lifebridge_menu_visibility');
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error('Failed to parse menu visibility settings:', e);
+        }
+      }
+    }
+    return {}; // Default fallbacks (all visible imply true if not explicitly false)
+  });
+
+  // Listen for settings changes from Settings component
+  useEffect(() => {
+    const handleSettingsChange = (event: CustomEvent) => {
+      setMenuVisibility(event.detail);
+    };
+
+    window.addEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+
+    // Also handle storage events for cross-tab synchronization
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'lifebridge_menu_visibility' && event.newValue) {
+        try {
+          setMenuVisibility(JSON.parse(event.newValue));
+        } catch (e) {
+          console.error('Storage sync error:', e);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   const menuItems = [
     { title: 'ホーム', icon: Home, id: null, type: 'event' as const },
     { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
     { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
     { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
+    { title: '起業', icon: Rocket, id: 'startup', color: 'text-purple-100', type: 'event' as const },
     { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
     { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
-  ];
+  ].filter(item => item.id === null || menuVisibility[item.id] !== false); // Explicitly check for false to default to true
 
   const toolItems = [
     { title: 'メモ帳', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
     { title: '給付金試算', icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
     { title: 'リマインダー', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
-  ];
+  ].filter(item => {
+    // Map tool IDs to settings keys if they differ (currently 'memo' maps to 'memos' in settings)
+    const settingsKey = item.id === 'memo' ? 'memos' : (item.id === 'simulator' ? 'benefits' : item.id);
+    return menuVisibility[settingsKey] !== false;
+  });
 
   const activeIndex = menuItems.findIndex((item) => item.id === activeEvent && !activePage);
   const activeToolIndex = toolItems.findIndex((item) => item.id === activePage);
@@ -241,17 +290,31 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    className={cn("text-primary-foreground/80 hover:bg-white/10 hover:text-white transition-colors duration-200 rounded-2xl h-11 pl-4", isCollapsed && "justify-center pl-0")}
-                    tooltip={isCollapsed ? item.title : undefined}
-                  >
-                    <item.icon className="w-5 h-5 mr-3" />
-                    {!isCollapsed && <span>{item.title}</span>}
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {settingsItems.map((item) => {
+                const isSettingsPage = item.title === '設定';
+                const isActive = activePage === 'settings' && isSettingsPage;
+
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      onClick={() => {
+                        if (isSettingsPage && onSelectPage) {
+                          handleMenuClick(() => onSelectPage('settings'));
+                        }
+                      }}
+                      className={cn(
+                        "text-primary-foreground/80 hover:bg-white/10 hover:text-white transition-colors duration-200 rounded-2xl h-11 pl-4",
+                        isCollapsed && "justify-center pl-0",
+                        isActive && "bg-white/10 text-white"
+                      )}
+                      tooltip={isCollapsed ? item.title : undefined}
+                    >
+                      <item.icon className="w-5 h-5 mr-3 flex-shrink-0" />
+                      {!isCollapsed && <span>{item.title}</span>}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

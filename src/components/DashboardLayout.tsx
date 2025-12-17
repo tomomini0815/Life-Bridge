@@ -4,14 +4,17 @@ import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { DashboardHome } from '@/components/DashboardHome';
 import { EventDashboard } from '@/components/EventDashboard';
+import { BusinessStartup } from '@/components/BusinessStartup';
 import { MemoManager } from '@/components/MemoManager';
 import { BenefitSimulator } from '@/components/BenefitSimulator';
 import { ReminderSettings } from '@/components/ReminderSettings';
+import { Settings } from '@/components/Settings';
 import { Search, Bell, User, ScanLine, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
 import { DocumentScanner } from '@/components/DocumentScanner';
 import { ChatWidget } from '@/components/ChatWidget';
+import { UserContext } from '@/services/AiConciergeService';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
@@ -23,6 +26,7 @@ export function DashboardLayout() {
     marriage: [],
     birth: ['birth-2'], // Example: Some tasks already completed
     job: [],
+    startup: [],
     moving: ['moving-3'],
     care: [],
   });
@@ -72,7 +76,21 @@ export function DashboardLayout() {
     if (activePage === 'reminders') {
       return <ReminderSettings />;
     }
+    if (activePage === 'settings') {
+      return <Settings />;
+    }
     if (selectedEvent) {
+      // Use BusinessStartup component for startup event
+      if (selectedEvent.id === 'startup') {
+        return (
+          <BusinessStartup
+            event={selectedEvent}
+            completedTaskIds={completedTasks[selectedEvent.id] || []}
+            onToggleTask={(taskId) => handleToggleTask(selectedEvent.id, taskId)}
+          />
+        );
+      }
+      // Use regular EventDashboard for other events
       return (
         <EventDashboard
           event={selectedEvent}
@@ -100,38 +118,73 @@ export function DashboardLayout() {
         />
 
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-transparent"> {/* Allow parent bg to show through */}
-          {/* Top Header */}
-          <header className="sticky top-0 z-40 h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 border-b border-black/5 bg-white/80 backdrop-blur-md flex">
-            <div className="flex items-center gap-2">
-              <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800" />
-              <Separator orientation="vertical" className="mr-2 h-4" />
-              <div className="relative hidden md:block w-96">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="知りたいこと、やりたいことは何ですか..."
-                  className="pl-10 h-10 w-full rounded-full bg-white border-slate-200 focus:border-teal-400 focus:ring-teal-400/20 shadow-sm transition-all duration-300"
-                />
-              </div>
-            </div>
+          {/* Top Header - Fixed on scroll */}
+          <header className="fixed md:sticky top-0 left-0 right-0 z-50 h-16 shrink-0 border-b border-black/5 bg-white/95 backdrop-blur-md shadow-sm">
+            <div className="h-full px-4 flex items-center justify-between gap-2">
+              {/* Left: Site Name (Mobile) / Sidebar Trigger + Search (Desktop) */}
+              <div className="flex items-center gap-2 flex-1">
+                {/* Mobile: Site Name */}
+                <div className="md:hidden flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600">
+                    LifeBridge
+                  </span>
+                </div>
 
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
-                onClick={() => handleSelectPage('reminders')}
-              >
-                <Bell className="w-5 h-5" />
-                <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
-              </Button>
-              <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
-                <User className="w-5 h-5" />
-              </Button>
+                {/* Desktop: Sidebar Trigger + Search */}
+                <div className="hidden md:flex items-center gap-2 flex-1">
+                  <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800" />
+                  <Separator orientation="vertical" className="mr-2 h-4" />
+                  <div className="relative w-96">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Input
+                      placeholder="知りたいこと、やりたいことは何ですか..."
+                      className="pl-10 h-10 w-full rounded-full bg-white border-slate-200 focus:border-teal-400 focus:ring-teal-400/20 shadow-sm transition-all duration-300"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right: Hamburger Menu + Icons (Mobile) / Action Buttons (Desktop) */}
+              <div className="flex items-center gap-2">
+                {/* Mobile: Notification + Account + Hamburger Menu */}
+                <div className="md:hidden flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    onClick={() => handleSelectPage('reminders')}
+                  >
+                    <Bell className="w-5 h-5" />
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive border border-background" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
+                    <User className="w-5 h-5" />
+                  </Button>
+                  <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" />
+                </div>
+
+                {/* Desktop: Action Buttons */}
+                <div className="hidden md:flex items-center gap-3">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    onClick={() => handleSelectPage('reminders')}
+                  >
+                    <Bell className="w-5 h-5" />
+                    <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
+                    <User className="w-5 h-5" />
+                  </Button>
+                </div>
+              </div>
             </div>
           </header>
 
           {/* Main Content */}
-          <main className="p-6">
+          <main className="p-6 pt-20 md:pt-6">
             {renderContent()}
           </main>
 
@@ -156,7 +209,7 @@ export function DashboardLayout() {
         </div>
       </div>
 
-      <ChatWidget currentContext={activeEvent as any} />
+      <ChatWidget currentContext={(activeEvent || 'general') as UserContext} />
     </SidebarProvider>
   );
 }

@@ -48,6 +48,13 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     glass: 'bg-sky-50/40 dark:bg-sky-900/10',
     border: 'border-sky-200/50 hover:border-sky-300/80'
   },
+  startup: {
+    bg: 'bg-purple-50',
+    text: 'text-purple-600',
+    gradient: 'from-purple-500 to-indigo-600',
+    glass: 'bg-purple-50/40 dark:bg-purple-900/10',
+    border: 'border-purple-200/50 hover:border-purple-300/80'
+  },
   moving: {
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
