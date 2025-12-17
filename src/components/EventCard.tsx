@@ -14,6 +14,7 @@ const colorMap: Record<string, string> = {
   'event-job': 'from-sky-500/90 to-blue-600/90',
   'event-moving': 'from-emerald-500/90 to-teal-600/90',
   'event-care': 'from-violet-500/90 to-purple-600/90',
+  'event-startup': 'from-orange-500/90 to-red-600/90',
 };
 
 const glassColorMap: Record<string, string> = {
@@ -22,6 +23,7 @@ const glassColorMap: Record<string, string> = {
   'event-job': 'bg-gradient-to-br from-sky-50/80 to-blue-50/80 dark:from-sky-950/30 dark:to-blue-950/30',
   'event-moving': 'bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/30 dark:to-teal-950/30',
   'event-care': 'bg-gradient-to-br from-violet-50/80 to-purple-50/80 dark:from-violet-950/30 dark:to-purple-950/30',
+  'event-startup': 'bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-950/30 dark:to-red-950/30',
 };
 
 const borderColorMap: Record<string, string> = {
@@ -30,6 +32,7 @@ const borderColorMap: Record<string, string> = {
   'event-job': 'border-sky-200/50 hover:border-sky-300/80',
   'event-moving': 'border-emerald-200/50 hover:border-emerald-300/80',
   'event-care': 'border-violet-200/50 hover:border-violet-300/80',
+  'event-startup': 'border-orange-200/50 hover:border-orange-300/80',
 };
 
 export function EventCard({ event, onClick, index }: EventCardProps) {

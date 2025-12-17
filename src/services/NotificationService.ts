@@ -80,7 +80,7 @@ export class NotificationService {
   // Calculate deadline date from task deadline string
   private parseDeadline(deadlineStr: string, eventDate?: Date): Date | null {
     const now = eventDate || new Date();
-    
+
     // Handle relative deadlines like "出生から14日以内", "引越し後14日以内"
     const daysMatch = deadlineStr.match(/(\d+)日/);
     if (daysMatch) {
@@ -117,7 +117,7 @@ export class NotificationService {
       reminderDate.setDate(reminderDate.getDate() - daysBefore);
 
       // Set specific time if configured
-      if (this.settings.notificationTime) {
+      if (this.settings.notificationTime && this.settings.notificationTime.includes(':')) {
         const [hours, minutes] = this.settings.notificationTime.split(':');
         reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
       }
@@ -253,21 +253,22 @@ export class NotificationService {
 
   // Storage methods
   private loadSettings(): ReminderSettings {
+    const defaultSettings: ReminderSettings = {
+      enabled: true,
+      daysBeforeDeadline: [1, 3, 7],
+      notificationTime: '09:00',
+    };
+
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        return { ...defaultSettings, ...JSON.parse(stored) };
       }
     } catch (e) {
       console.error('Failed to load reminder settings', e);
     }
 
-    // Default settings
-    return {
-      enabled: true,
-      daysBeforeDeadline: [1, 3, 7],
-      notificationTime: '09:00',
-    };
+    return defaultSettings;
   }
 
   private saveSettings(): void {
