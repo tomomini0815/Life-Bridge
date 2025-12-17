@@ -65,8 +65,18 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
     { title: 'ヘルプ', icon: HelpCircle },
   ];
 
+  const { setOpenMobile } = useSidebar();
+
+  const handleMenuClick = (callback: () => void) => {
+    callback();
+    // Close sidebar on mobile after selection
+    if (window.innerWidth < 768) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
-    <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30">
+    <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30" style={{ background: 'var(--sidebar-gradient)' }}>
       <SidebarHeader className="p-6 pb-2">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/20 shadow-inner-glow flex-shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300">
@@ -119,7 +129,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
               {menuItems.map((item) => {
                 const isActive = activeEvent === item.id && !activePage;
-                const handleSelect = () => onSelectEvent(item.id as LifeEventType | null);
+                const handleSelect = () => handleMenuClick(() => onSelectEvent(item.id as LifeEventType | null));
 
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -187,9 +197,11 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               {toolItems.map((item) => {
                 const isActive = activePage === item.id;
                 const handleSelect = () => {
-                  if (onSelectPage) {
-                    onSelectPage(item.id);
-                  }
+                  handleMenuClick(() => {
+                    if (onSelectPage) {
+                      onSelectPage(item.id);
+                    }
+                  });
                 };
 
                 return (
