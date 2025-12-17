@@ -140,8 +140,8 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
       {activeTab === 'overview' ? (
         <>
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-teal-300 dark:hover:border-teal-700 transition-all duration-300 bg-teal-100/30 dark:bg-teal-900/20 shadow-lg shadow-teal-100/50 dark:shadow-teal-900/20 hover:shadow-xl hover:shadow-teal-200/60 dark:hover:shadow-teal-800/30 hover:-translate-y-1">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="group rounded-3xl p-4 md:p-6 hover-lift border-2 border-transparent hover:border-teal-300 dark:hover:border-teal-700 transition-all duration-300 bg-teal-100/30 dark:bg-teal-900/20 shadow-lg shadow-teal-100/50 dark:shadow-teal-900/20 hover:shadow-xl hover:shadow-teal-200/60 dark:hover:shadow-teal-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-white dark:bg-teal-800 flex items-center justify-center text-teal-600 dark:text-teal-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Target className="w-6 h-6" />
@@ -160,7 +160,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               </div>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-green-300 dark:hover:border-green-700 transition-all duration-300 bg-green-100/30 dark:bg-green-900/20 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 hover:shadow-xl hover:shadow-green-200/60 dark:hover:shadow-green-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-4 md:p-6 hover-lift border-2 border-transparent hover:border-green-300 dark:hover:border-green-700 transition-all duration-300 bg-green-100/30 dark:bg-green-900/20 shadow-lg shadow-green-100/50 dark:shadow-green-900/20 hover:shadow-xl hover:shadow-green-200/60 dark:hover:shadow-green-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-white dark:bg-green-800 flex items-center justify-center text-green-600 dark:text-green-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 className="w-6 h-6" />
@@ -173,7 +173,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               </div>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 bg-amber-100/30 dark:bg-amber-900/20 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-200/60 dark:hover:shadow-amber-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-4 md:p-6 hover-lift border-2 border-transparent hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 bg-amber-100/30 dark:bg-amber-900/20 shadow-lg shadow-amber-100/50 dark:shadow-amber-900/20 hover:shadow-xl hover:shadow-amber-200/60 dark:hover:shadow-amber-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-white dark:bg-amber-800 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Coins className="w-6 h-6" />
@@ -188,7 +188,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               </p>
             </div>
 
-            <div className="group rounded-3xl p-6 hover-lift border-2 border-transparent hover:border-red-300 dark:hover:border-red-700 transition-all duration-300 bg-red-100/30 dark:bg-red-900/20 shadow-lg shadow-red-100/50 dark:shadow-red-900/20 hover:shadow-xl hover:shadow-red-200/60 dark:hover:shadow-red-800/30 hover:-translate-y-1">
+            <div className="group rounded-3xl p-4 md:p-6 hover-lift border-2 border-transparent hover:border-red-300 dark:hover:border-red-700 transition-all duration-300 bg-red-100/30 dark:bg-red-900/20 shadow-lg shadow-red-100/50 dark:shadow-red-900/20 hover:shadow-xl hover:shadow-red-200/60 dark:hover:shadow-red-800/30 hover:-translate-y-1">
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 shrink-0 rounded-2xl bg-white dark:bg-red-800 flex items-center justify-center text-red-600 dark:text-red-400 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <AlertTriangle className="w-6 h-6" />
