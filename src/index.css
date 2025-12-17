@@ -6,69 +6,69 @@
 
 @layer base {
   :root {
-    /* Dashboard-inspired Blue & Cyan Theme */
-    --background: 210 20% 98%;
-    /* Very light blue-gray background */
-    --foreground: 210 40% 20%;
-    /* Dark blue-gray text */
+    /* Unified Teal/Turquoise Theme */
+    --background: 180 15% 98%;
+    /* Very light teal-tinted background */
+    --foreground: 175 30% 25%;
+    /* Dark teal text */
 
     --card: 0 0% 100%;
-    --card-foreground: 210 40% 20%;
+    --card-foreground: 175 30% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 210 40% 20%;
+    --popover-foreground: 175 30% 25%;
 
-    /* Primary: Vibrant Blue (#0066CC) */
-    --primary: 210 100% 40%;
+    /* Primary: Teal (matching sidebar) */
+    --primary: 172 60% 42%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 25% 95%;
-    --secondary-foreground: 210 100% 40%;
+    --secondary: 175 20% 95%;
+    --secondary-foreground: 172 60% 42%;
 
-    --muted: 210 20% 94%;
-    --muted-foreground: 210 15% 55%;
+    --muted: 175 15% 94%;
+    --muted-foreground: 175 20% 50%;
 
-    /* Accent: Bright Cyan (#00C9D7) */
-    --accent: 186 100% 42%;
+    /* Accent: Bright Turquoise */
+    --accent: 170 65% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 350 80% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 20% 90%;
-    --input: 210 20% 90%;
-    --ring: 210 100% 40%;
+    --border: 175 15% 88%;
+    --input: 175 15% 88%;
+    --ring: 172 60% 42%;
 
     --radius: 1rem;
 
-    /* Dashboard-style Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(210 100% 40%) 0%, hsl(186 100% 42%) 100%);
-    --gradient-hero: radial-gradient(circle at top right, hsl(210 100% 40% / 0.1), transparent 60%), radial-gradient(circle at bottom left, hsl(186 100% 42% / 0.1), transparent 60%);
+    /* Teal-themed Gradients */
+    --gradient-warm: linear-gradient(135deg, hsl(172 60% 42%) 0%, hsl(170 65% 48%) 100%);
+    --gradient-hero: radial-gradient(circle at top right, hsl(172 60% 42% / 0.1), transparent 60%), radial-gradient(circle at bottom left, hsl(170 65% 48% / 0.1), transparent 60%);
     --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.7) 100%);
-    --gradient-soft: linear-gradient(to bottom, hsl(210 20% 98%), hsl(0 0% 100%));
+    --gradient-soft: linear-gradient(to bottom, hsl(180 15% 98%), hsl(0 0% 100%));
     --gradient-shimmer: linear-gradient(90deg, transparent 0%, hsl(0 0% 100% / 0.6) 50%, transparent 100%);
-    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(210 100% 40% / 0.08) 0deg, hsl(186 100% 42% / 0.08) 120deg, hsl(170 100% 35% / 0.08) 240deg, hsl(210 100% 40% / 0.08) 360deg);
+    --gradient-mesh: conic-gradient(from 180deg at 50% 50%, hsl(172 60% 42% / 0.08) 0deg, hsl(170 65% 48% / 0.08) 120deg, hsl(174 55% 38% / 0.08) 240deg, hsl(172 60% 42% / 0.08) 360deg);
 
-    /* Clean Shadows */
-    --shadow-soft: 0 2px 8px -2px hsl(210 40% 20% / 0.08);
-    --shadow-card: 0 4px 12px -4px hsl(210 40% 20% / 0.1);
-    --shadow-xl: 0 20px 40px -12px hsl(210 40% 20% / 0.15);
-    --shadow-glow: 0 0 24px hsl(210 100% 40% / 0.2);
-    --shadow-glow-accent: 0 0 24px hsl(186 100% 42% / 0.2);
-    --shadow-inner-glow: inset 0 2px 8px 0 hsl(210 100% 40% / 0.05);
-    --shadow-colored-primary: 0 8px 24px -8px hsl(210 100% 40% / 0.25);
-    --shadow-colored-accent: 0 8px 24px -8px hsl(186 100% 42% / 0.25);
+    /* Teal-tinted Shadows */
+    --shadow-soft: 0 2px 8px -2px hsl(175 30% 25% / 0.08);
+    --shadow-card: 0 4px 12px -4px hsl(175 30% 25% / 0.1);
+    --shadow-xl: 0 20px 40px -12px hsl(175 30% 25% / 0.15);
+    --shadow-glow: 0 0 24px hsl(172 60% 42% / 0.2);
+    --shadow-glow-accent: 0 0 24px hsl(170 65% 48% / 0.2);
+    --shadow-inner-glow: inset 0 2px 8px 0 hsl(172 60% 42% / 0.05);
+    --shadow-colored-primary: 0 8px 24px -8px hsl(172 60% 42% / 0.25);
+    --shadow-colored-accent: 0 8px 24px -8px hsl(170 65% 48% / 0.25);
 
-    /* Life event colors - Dashboard-inspired */
-    --event-marriage: 335 70% 70%;
+    /* Life event colors - Harmonized with teal theme */
+    --event-marriage: 335 65% 68%;
     /* Soft Pink */
-    --event-birth: 25 95% 60%;
+    --event-birth: 25 85% 58%;
     /* Soft Orange */
-    --event-job: 210 100% 50%;
-    /* Bright Blue */
-    --event-moving: 170 100% 40%;
-    /* Turquoise */
-    --event-care: 260 60% 65%;
+    --event-job: 172 60% 42%;
+    /* Primary Teal */
+    --event-moving: 170 65% 48%;
+    /* Accent Turquoise */
+    --event-care: 260 55% 63%;
     /* Soft Purple */
 
     /* Sidebar Variables - Teal/Turquoise Gradient (matching reference) */
@@ -89,51 +89,51 @@
   }
 
   .dark {
-    --background: 210 40% 8%;
-    --foreground: 210 20% 96%;
+    --background: 175 30% 8%;
+    --foreground: 175 15% 96%;
 
-    --card: 210 35% 12%;
-    --card-foreground: 210 20% 96%;
+    --card: 175 25% 12%;
+    --card-foreground: 175 15% 96%;
 
-    --popover: 210 35% 12%;
-    --popover-foreground: 210 20% 96%;
+    --popover: 175 25% 12%;
+    --popover-foreground: 175 15% 96%;
 
-    --primary: 210 100% 50%;
+    --primary: 172 60% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 30% 18%;
-    --secondary-foreground: 210 20% 90%;
+    --secondary: 175 20% 18%;
+    --secondary-foreground: 175 15% 90%;
 
-    --muted: 210 30% 18%;
-    --muted-foreground: 210 15% 60%;
+    --muted: 175 20% 18%;
+    --muted-foreground: 175 15% 60%;
 
-    --accent: 186 100% 45%;
+    --accent: 170 65% 50%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 350 62% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 30% 18%;
-    --input: 210 30% 18%;
-    --ring: 210 100% 50%;
+    --border: 175 20% 18%;
+    --input: 175 20% 18%;
+    --ring: 172 60% 45%;
 
     --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.4);
     --shadow-card: 0 4px 12px -4px hsl(0 0% 0% / 0.4);
     --shadow-xl: 0 20px 40px -12px hsl(0 0% 0% / 0.5);
-    --shadow-glow: 0 0 24px hsl(210 100% 50% / 0.3);
-    --shadow-glow-accent: 0 0 24px hsl(186 100% 45% / 0.3);
-    --shadow-inner-glow: inset 0 2px 8px hsl(210 100% 50% / 0.05);
-    --shadow-colored-primary: 0 8px 24px -8px hsl(210 100% 50% / 0.3);
-    --shadow-colored-accent: 0 8px 24px -8px hsl(186 100% 45% / 0.3);
+    --shadow-glow: 0 0 24px hsl(172 60% 45% / 0.3);
+    --shadow-glow-accent: 0 0 24px hsl(170 65% 50% / 0.3);
+    --shadow-inner-glow: inset 0 2px 8px hsl(172 60% 45% / 0.05);
+    --shadow-colored-primary: 0 8px 24px -8px hsl(172 60% 45% / 0.3);
+    --shadow-colored-accent: 0 8px 24px -8px hsl(170 65% 50% / 0.3);
 
-    --sidebar-background: 210 40% 10%;
-    --sidebar-foreground: 210 20% 96%;
-    --sidebar-primary: 210 100% 50%;
+    --sidebar-background: 175 30% 10%;
+    --sidebar-foreground: 175 15% 96%;
+    --sidebar-primary: 172 60% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 30% 18%;
-    --sidebar-accent-foreground: 210 20% 96%;
-    --sidebar-border: 210 30% 18%;
-    --sidebar-ring: 210 100% 50%;
+    --sidebar-accent: 175 20% 18%;
+    --sidebar-accent-foreground: 175 15% 96%;
+    --sidebar-border: 175 20% 18%;
+    --sidebar-ring: 172 60% 45%;
   }
 }
 
