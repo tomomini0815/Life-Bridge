@@ -163,7 +163,7 @@ export function DashboardLayout() {
                     className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
                     onClick={() => handleSelectPage('reminders')}
                   >
-                    <Bell className="w-5 h-5" />
+                    <Bell className="w-7 h-7" />
                     <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive border border-background" />
                   </Button>
                   <Button
@@ -172,9 +172,9 @@ export function DashboardLayout() {
                     className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
                     onClick={() => handleSelectPage('settings')}
                   >
-                    <UserCog className="w-5 h-5" />
+                    <UserCog className="w-7 h-7" />
                   </Button>
-                  <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" />
+                  <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors [&_svg]:w-7 [&_svg]:h-7" />
                 </div>
 
                 {/* Desktop: Action Buttons */}
@@ -185,7 +185,7 @@ export function DashboardLayout() {
                     className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
                     onClick={() => handleSelectPage('reminders')}
                   >
-                    <Bell className="w-5 h-5" />
+                    <Bell className="w-7 h-7" />
                     <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
                   </Button>
                   <Button
