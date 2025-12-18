@@ -1,6 +1,7 @@
 export interface UserProfile {
+    name?: string;
     annualIncome: number;
-    employmentStatus: 'employed' | 'self-employed' | 'unemployed';
+    employmentStatus: string[]; // ['employed', 'sole_proprietor', 'corporation', 'unemployed']
     hasSpouse: boolean;
     spouseIncome?: number;
     numberOfChildren: number;
@@ -8,6 +9,11 @@ export interface UserProfile {
     isPregnant?: boolean;
     isTakingMaternityLeave?: boolean;
     isTakingPaternityLeave?: boolean;
+    // Entrepreneur specific fields
+    // corporateType?: 'individual' | 'corporation'; // Deprecated, merged into employmentStatus
+    businessStartDate?: string;
+    hasBlueTaxReturn?: boolean;
+    isSmallBusinessMutualAidJoined?: boolean;
 }
 
 export interface BenefitResult {

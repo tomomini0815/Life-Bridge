@@ -10,11 +10,9 @@ import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, Fa
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { User, Moon, Sun, Trash2, RefreshCw } from 'lucide-react';
-
-interface UserProfile {
-    name: string;
-}
+import { User, Moon, Sun, Trash2, RefreshCw, CreditCard, Users, Briefcase } from 'lucide-react';
+import { profileService } from '@/services/ProfileService';
+import { UserProfile } from '@/types/benefit';
 
 interface MenuVisibilitySettings {
     marriage: boolean;
@@ -56,13 +54,12 @@ const DEFAULT_SETTINGS: MenuVisibilitySettings = {
 };
 
 const STORAGE_KEY = 'lifebridge_menu_visibility';
-const PROFILE_KEY = 'lifebridge_user_profile';
 const THEME_KEY = 'lifebridge_theme';
 
 export function Settings() {
     const [settings, setSettings] = useState<MenuVisibilitySettings>(DEFAULT_SETTINGS);
     const [hasChanges, setHasChanges] = useState(false);
-    const [profile, setProfile] = useState<UserProfile>({ name: 'Tomomi' });
+    const [profile, setProfile] = useState<UserProfile>(profileService.getProfile());
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
     // Load settings from localStorage
@@ -78,16 +75,7 @@ export function Settings() {
             }
         }
 
-        // Profile
-        const storedProfile = localStorage.getItem(PROFILE_KEY);
-        if (storedProfile) {
-            try {
-                const parsed = JSON.parse(storedProfile);
-                setProfile(parsed);
-            } catch (e) {
-                console.error('Failed to parse profile:', e);
-            }
-        }
+        // Profile is initialized from service directly in useState
 
         // Theme
         const storedTheme = localStorage.getItem(THEME_KEY);
@@ -135,10 +123,10 @@ export function Settings() {
     };
 
     const handleSaveProfile = () => {
-        localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
-        toast.success('プロフィールを更新しました');
-        // Notify DashboardHome
-        window.dispatchEvent(new CustomEvent('userProfileChanged', { detail: profile }));
+        profileService.updateProfile(profile);
+        toast.success('プロフィールを更新しました', {
+            description: 'おすすめ情報が更新されます',
+        });
     };
 
     const toggleTheme = () => {
@@ -193,26 +181,203 @@ export function Settings() {
                 <TabsContent value="general" className="space-y-6">
                     {/* Profile */}
                     <div className="glass-medium rounded-2xl p-6 border border-border/50">
-                        <div className="flex items-center gap-2 mb-4">
-                            <User className="w-5 h-5 text-primary" />
-                            <h2 className="text-xl font-bold text-foreground">プロフィール設定</h2>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-2">
+                                <User className="w-5 h-5 text-primary" />
+                                <h2 className="text-xl font-bold text-foreground">プロフィール設定</h2>
+                            </div>
+                            <Button onClick={handleSaveProfile} size="sm">保存</Button>
                         </div>
                         <Separator className="mb-6" />
-                        <div className="grid gap-4 max-w-md">
+
+                        <div className="grid gap-6">
                             <div className="grid gap-2">
                                 <Label htmlFor="name">表示名</Label>
-                                <div className="flex gap-2">
-                                    <Input
-                                        id="name"
-                                        value={profile.name}
-                                        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                                        placeholder="あなたの名前"
-                                    />
-                                    <Button onClick={handleSaveProfile}>保存</Button>
-                                </div>
+                                <Input
+                                    id="name"
+                                    value={profile.name || ''}
+                                    onChange={(e) => setProfile({ ...profile, name: e.target.value })}
+                                    placeholder="あなたの名前"
+                                />
                                 <p className="text-sm text-muted-foreground">
                                     この名前はダッシュボードの挨拶などで使用されます。
                                 </p>
+                            </div>
+
+                            <div className="grid md:grid-cols-2 gap-6">
+                                <div className="grid gap-2">
+                                    <Label htmlFor="income" className="flex items-center gap-2">
+                                        <CreditCard className="w-4 h-4" /> 年収（税込）
+                                    </Label>
+                                    <div className="relative">
+                                        <Input
+                                            id="income"
+                                            type="number"
+                                            value={profile.annualIncome}
+                                            onChange={(e) => setProfile({ ...profile, annualIncome: parseInt(e.target.value) || 0 })}
+                                            placeholder="5000000"
+                                        />
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">円</span>
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-2">
+                                    <Label htmlFor="employment" className="flex items-center gap-2">
+                                        <Briefcase className="w-4 h-4" /> 雇用形態（複数選択可）
+                                    </Label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {[
+                                            { id: 'employed', label: '会社員・パート' },
+                                            { id: 'sole_proprietor', label: '個人事業主（副業含む）' },
+                                            { id: 'corporation', label: '法人代表' },
+                                            { id: 'unemployed', label: '就労していない' },
+                                        ].map((type) => (
+                                            <button
+                                                key={type.id}
+                                                onClick={() => {
+                                                    let newStatus: string[];
+                                                    if (type.id === 'unemployed') {
+                                                        // If selecting unemployed, clear others
+                                                        newStatus = ['unemployed'];
+                                                    } else {
+                                                        // If selecting others, remove unemployed first
+                                                        let current = profile.employmentStatus.filter(s => s !== 'unemployed');
+                                                        if (current.includes(type.id)) {
+                                                            newStatus = current.filter(s => s !== type.id);
+                                                        } else {
+                                                            newStatus = [...current, type.id];
+                                                        }
+                                                        // Ensure at least one is selected or handle empty? 
+                                                        // Ideally allow empty during selection but maybe warn if saving empty.
+                                                    }
+                                                    setProfile({ ...profile, employmentStatus: newStatus });
+                                                }}
+                                                className={cn(
+                                                    "px-3 py-2 rounded-lg text-sm font-medium border transition-all text-left",
+                                                    profile.employmentStatus.includes(type.id)
+                                                        ? "bg-primary/10 border-primary text-primary"
+                                                        : "bg-background border-input hover:bg-muted"
+                                                )}
+                                            >
+                                                {type.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Entrepreneur Specific Settings */}
+                            {(profile.employmentStatus.includes('sole_proprietor') || profile.employmentStatus.includes('corporation')) && (
+                                <div className="grid gap-4 p-4 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 animate-fade-in">
+                                    <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-medium mb-2">
+                                        <Briefcase className="w-4 h-4" /> 事業詳細設定
+                                    </div>
+
+                                    <div className="grid md:grid-cols-1 gap-6">
+                                        <div className="grid gap-2">
+                                            <Label htmlFor="businessStartDate">開業日 / 設立日</Label>
+                                            <Input
+                                                id="businessStartDate"
+                                                type="date"
+                                                value={profile.businessStartDate || ''}
+                                                onChange={(e) => setProfile({ ...profile, businessStartDate: e.target.value })}
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {profile.employmentStatus.includes('sole_proprietor') && (
+                                        <div className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border/50">
+                                            <Label htmlFor="blueTax" className="cursor-pointer flex-1">
+                                                青色申告を行っていますか？
+                                            </Label>
+                                            <Switch
+                                                id="blueTax"
+                                                checked={profile.hasBlueTaxReturn || false}
+                                                onCheckedChange={(checked) => setProfile({ ...profile, hasBlueTaxReturn: checked })}
+                                            />
+                                        </div>
+                                    )}
+
+                                    <div className="flex items-center justify-between p-3 rounded-lg bg-background/50 border border-border/50">
+                                        <Label htmlFor="mutualAid" className="cursor-pointer flex-1">
+                                            小規模企業共済に加入していますか？
+                                        </Label>
+                                        <Switch
+                                            id="mutualAid"
+                                            checked={profile.isSmallBusinessMutualAidJoined || false}
+                                            onCheckedChange={(checked) => setProfile({ ...profile, isSmallBusinessMutualAidJoined: checked })}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="grid gap-4 p-4 rounded-xl bg-muted/30">
+                                <Label className="flex items-center gap-2">
+                                    <Users className="w-4 h-4" /> 家族構成
+                                </Label>
+
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <Switch
+                                        checked={profile.hasSpouse}
+                                        onCheckedChange={(checked) => setProfile({ ...profile, hasSpouse: checked })}
+                                    />
+                                    <span>配偶者あり</span>
+                                </label>
+
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm">お子様の人数: {profile.numberOfChildren}人</span>
+                                        <div className="flex items-center gap-2">
+                                            <Button
+                                                variant="outline" size="icon" className="h-8 w-8"
+                                                onClick={() => {
+                                                    const newCount = Math.max(0, profile.numberOfChildren - 1);
+                                                    setProfile({
+                                                        ...profile,
+                                                        numberOfChildren: newCount,
+                                                        childrenAges: profile.childrenAges.slice(0, newCount)
+                                                    });
+                                                }}
+                                            >
+                                                -
+                                            </Button>
+                                            <Button
+                                                variant="outline" size="icon" className="h-8 w-8"
+                                                onClick={() => {
+                                                    const newCount = Math.min(10, profile.numberOfChildren + 1);
+                                                    setProfile({
+                                                        ...profile,
+                                                        numberOfChildren: newCount,
+                                                        childrenAges: [...profile.childrenAges, 0]
+                                                    });
+                                                }}
+                                            >
+                                                +
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    {profile.numberOfChildren > 0 && (
+                                        <div className="grid grid-cols-2 gap-2 mt-2">
+                                            {profile.childrenAges.map((age, idx) => (
+                                                <div key={idx} className="flex items-center gap-2">
+                                                    <span className="text-xs text-muted-foreground whitespace-nowrap">{idx + 1}人目</span>
+                                                    <Input
+                                                        type="number"
+                                                        value={age}
+                                                        onChange={(e) => {
+                                                            const newAges = [...profile.childrenAges];
+                                                            newAges[idx] = parseInt(e.target.value) || 0;
+                                                            setProfile({ ...profile, childrenAges: newAges });
+                                                        }}
+                                                        className="h-8"
+                                                    />
+                                                    <span className="text-xs">歳</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

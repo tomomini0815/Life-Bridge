@@ -90,6 +90,12 @@ export class NotificationService {
       return deadline;
     }
 
+    // Handle specific date string (YYYY-MM-DD)
+    const dateMatch = deadlineStr.match(/^\d{4}-\d{2}-\d{2}$/);
+    if (dateMatch) {
+      return new Date(deadlineStr);
+    }
+
     // Handle specific dates if provided (future enhancement)
     // For now, return null for non-parseable deadlines
     return null;

@@ -11,17 +11,15 @@ import {
     DollarSign,
     ChevronRight,
     Info,
+    Save,
+    RotateCcw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { profileService } from '@/services/ProfileService';
+import { toast } from 'sonner';
 
 export function BenefitSimulator() {
-    const [profile, setProfile] = useState<UserProfile>({
-        annualIncome: 5000000,
-        employmentStatus: 'employed',
-        hasSpouse: false,
-        numberOfChildren: 0,
-        childrenAges: [],
-    });
+    const [profile, setProfile] = useState<UserProfile>(() => profileService.getProfile());
 
     const [result, setResult] = useState<SimulationResult | null>(null);
     const [showComparison, setShowComparison] = useState(false);
@@ -64,13 +62,39 @@ export function BenefitSimulator() {
         <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
             {/* Header */}
             <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
-                <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
-                        <Calculator className="w-7 h-7 text-white" />
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                            <Calculator className="w-7 h-7 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-foreground font-display">給付金シミュレーター</h1>
+                            <p className="text-muted-foreground">あなたが受け取れる給付金を試算</p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-3xl font-bold text-foreground font-display">給付金シミュレーター</h1>
-                        <p className="text-muted-foreground">あなたが受け取れる給付金を試算</p>
+                    <div className="flex gap-2">
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setProfile(profileService.getProfile());
+                                toast.info('プロフィール設定を読み込みました');
+                            }}
+                            className="gap-2"
+                        >
+                            <RotateCcw className="w-4 h-4" />
+                            リセット
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            onClick={() => {
+                                profileService.updateProfile(profile);
+                                toast.success('この条件をプロフィールに保存しました');
+                            }}
+                            className="gap-2"
+                        >
+                            <Save className="w-4 h-4" />
+                            プロフィールに保存
+                        </Button>
                     </div>
                 </div>
             </div>
@@ -107,21 +131,39 @@ export function BenefitSimulator() {
                             {/* Employment Status */}
                             <div>
                                 <label className="block text-sm font-medium mb-2">
-                                    雇用形態
+                                    雇用形態（複数選択可）
                                 </label>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {(['employed', 'self-employed', 'unemployed'] as const).map((status) => (
+                                <div className="grid grid-cols-2 gap-2">
+                                    {[
+                                        { id: 'employed', label: '会社員' },
+                                        { id: 'sole_proprietor', label: '個人事業主' },
+                                        { id: 'corporation', label: '法人' },
+                                        { id: 'unemployed', label: '無職' },
+                                    ].map((type) => (
                                         <button
-                                            key={status}
-                                            onClick={() => handleInputChange('employmentStatus', status)}
+                                            key={type.id}
+                                            onClick={() => {
+                                                let newStatus: string[];
+                                                if (type.id === 'unemployed') {
+                                                    newStatus = ['unemployed'];
+                                                } else {
+                                                    let current = profile.employmentStatus.filter(s => s !== 'unemployed');
+                                                    if (current.includes(type.id)) {
+                                                        newStatus = current.filter(s => s !== type.id);
+                                                    } else {
+                                                        newStatus = [...current, type.id];
+                                                    }
+                                                }
+                                                handleInputChange('employmentStatus', newStatus);
+                                            }}
                                             className={cn(
                                                 "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                                                profile.employmentStatus === status
+                                                profile.employmentStatus.includes(type.id)
                                                     ? "bg-primary text-primary-foreground shadow-md"
                                                     : "bg-muted text-muted-foreground hover:bg-muted/80"
                                             )}
                                         >
-                                            {status === 'employed' ? '会社員' : status === 'self-employed' ? '自営業' : '無職'}
+                                            {type.label}
                                         </button>
                                     ))}
                                 </div>

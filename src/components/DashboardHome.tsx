@@ -21,9 +21,13 @@ import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, Fa
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { LifeTimeline } from './LifeTimeline';
+import { recommendationService, RecommendationItem } from '@/services/RecommendationService';
+import { profileService } from '@/services/ProfileService';
+import { Link } from 'react-router-dom';
 
 interface DashboardHomeProps {
   onSelectEvent: (eventId: LifeEventType) => void;
+  onNavigate: (page: string) => void;
   completedTasks: Record<string, string[]>;
 }
 
@@ -81,37 +85,80 @@ const iconMap: Record<string, React.ElementType> = {
   care: FaHandHoldingHeart,
 };
 
-export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomeProps) {
+export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
   const [userName, setUserName] = useState('Tomomi');
 
-  useEffect(() => {
-    // Load initial profile
-    const storedProfile = localStorage.getItem('lifebridge_user_profile');
-    if (storedProfile) {
-      try {
-        const { name } = JSON.parse(storedProfile);
-        if (name) setUserName(name);
-      } catch (e) {
-        console.error('Failed to parse profile:', e);
-      }
-    }
+  // Recommendations
+  const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
 
-    // Listen for profile changes
-    const handleProfileChange = (e: CustomEvent) => {
-      if (e.detail && e.detail.name) {
-        setUserName(e.detail.name);
+  useEffect(() => {
+    const fetchRecommendations = (currentProfile: any) => {
+      // Safe cast or parsing
+      const recs = recommendationService.getRecommendations(currentProfile);
+      setRecommendations(recs);
+    };
+
+    // Initial load
+    const profile = profileService.getProfile();
+    if (profile.name) setUserName(profile.name);
+    fetchRecommendations(profile);
+
+    // Subscribe to changes
+    const unsubscribe = profileService.subscribe((updatedProfile) => {
+      setUserName(updatedProfile.name || 'Tomomi');
+      fetchRecommendations(updatedProfile);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    // Load initial settings
+    const loadSettings = () => {
+      if (typeof window !== 'undefined') {
+        const stored = localStorage.getItem('lifebridge_menu_visibility');
+        if (stored) {
+          try {
+            setMenuVisibility(JSON.parse(stored));
+          } catch (e) {
+            console.error('Failed to parse menu settings:', e);
+          }
+        }
+      }
+    };
+    loadSettings();
+
+    // Listen for changes
+    const handleSettingsChange = (event: CustomEvent) => {
+      setMenuVisibility(event.detail);
+    };
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'lifebridge_menu_visibility' && event.newValue) {
+        try {
+          setMenuVisibility(JSON.parse(event.newValue));
+        } catch (e) {
+          console.error('Storage sync error:', e);
+        }
       }
     };
 
-    window.addEventListener('userProfileChanged', handleProfileChange as EventListener);
+    window.addEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
-      window.removeEventListener('userProfileChanged', handleProfileChange as EventListener);
+      window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, []);
 
+  const visibleLifeEvents = lifeEvents.filter(event => menuVisibility[event.id] !== false);
+
   // Calculate overall stats
-  const allEvents = lifeEvents.map(event => {
+  const allEvents = visibleLifeEvents.map(event => {
     const completed = completedTasks[event.id] || [];
     const total = event.tasks.length;
     const progress = total > 0 ? (completed.length / total) * 100 : 0;
@@ -145,7 +192,6 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
   return (
     <div className="space-y-8 animate-fade-in max-w-7xl mx-auto pb-10">
       {/* Welcome Section */}
-      {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-xl py-2 px-8">
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、{userName}さん</h1>
@@ -167,16 +213,19 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
           >
             ダッシュボード
           </button>
-          <button
-            onClick={() => setActiveTab('timeline')}
-            className={cn(
-              "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
-              activeTab === 'timeline' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            <span className="text-xs">✨</span>
-            人生のタイムライン
-          </button>
+
+          {menuVisibility['timeline'] !== false && (
+            <button
+              onClick={() => setActiveTab('timeline')}
+              className={cn(
+                "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
+                activeTab === 'timeline' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <span className="text-xs">✨</span>
+              人生のタイムライン
+            </button>
+          )}
         </div>
       </div>
 
@@ -276,6 +325,63 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
             </div>
           </div>
 
+          {/* Recommendations Section */}
+          {recommendations.length > 0 && (
+            <div className="glass-medium rounded-3xl p-8 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-8">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-foreground">あなたへのおすすめ</h2>
+                  <p className="text-sm text-muted-foreground">登録情報に基づいた提案</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {recommendations.map((rec) => (
+                  <div key={rec.id} className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 transition-all duration-300">
+                    <div className="flex items-start justify-between mb-3">
+                      <span className={cn(
+                        "px-2 py-1 rounded-md text-xs font-bold",
+                        rec.type === 'benefit' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
+                          rec.type === 'procedure' ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
+                            "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
+                      )}>
+                        {rec.type === 'benefit' ? '給付金' : rec.type === 'procedure' ? '手続き' : 'タスク'}
+                      </span>
+                      {rec.urgency === 'high' && (
+                        <span className="flex items-center gap-1 text-xs font-bold text-red-500">
+                          <AlertTriangle className="w-3 h-3" /> 要確認
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="font-bold text-foreground mb-2">{rec.title}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                      {rec.description}
+                    </p>
+                    <button
+                      onClick={() => {
+                        if (rec.link === '/settings') {
+                          onNavigate('settings');
+                        } else if (rec.link?.includes('benefits')) {
+                          onNavigate('simulator');
+                        } else if (rec.link) {
+                          // Fallback for other links, e.g., external or direct internal
+                          window.open(rec.link, '_blank');
+                        }
+                      }}
+                      className="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors bg-transparent border-none p-0 cursor-pointer"
+                    >
+                      {rec.actionLabel || '詳細を見る'} <ArrowRight className="w-4 h-4 ml-1" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Urgent Tasks */}
           {allUrgentTasks.length > 0 && (
             <div className="glass-medium rounded-3xl p-8 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
@@ -331,7 +437,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               <h2 className="text-2xl font-bold font-display">ライフイベント別進捗</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {lifeEvents.map((event) => {
+              {visibleLifeEvents.map((event) => {
                 const stats = allEvents.find(e => e.id === event.id)!;
                 const colors = colorMap[event.id];
                 const IconComponent = iconMap[event.id] || FaHeart;

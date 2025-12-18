@@ -98,8 +98,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
   const toolItems = [
     { title: 'メモ帳', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
+    { title: 'サブスク管理', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
     { title: '給付金試算', icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
-    { title: 'リマインダー', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
   ].filter(item => {
     // Map tool IDs to settings keys if they differ (currently 'memo' maps to 'memos' in settings)
     const settingsKey = item.id === 'memo' ? 'memos' : (item.id === 'simulator' ? 'benefits' : item.id);

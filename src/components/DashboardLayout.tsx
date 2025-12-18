@@ -10,7 +10,7 @@ import { BenefitSimulator } from '@/components/BenefitSimulator';
 import { ReminderSettings } from '@/components/ReminderSettings';
 import { Settings } from '@/components/Settings';
 import { HelpPage } from '@/components/HelpPage';
-import { Search, Bell, User, ScanLine, Sparkles } from 'lucide-react';
+import { Search, Bell, User, ScanLine, Sparkles, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
 import { DocumentScanner } from '@/components/DocumentScanner';
@@ -106,6 +106,7 @@ export function DashboardLayout() {
     return (
       <DashboardHome
         onSelectEvent={handleSelectEvent}
+        onNavigate={handleSelectPage}
         completedTasks={completedTasks}
       />
     );
@@ -162,8 +163,13 @@ export function DashboardLayout() {
                     <Bell className="w-5 h-5" />
                     <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive border border-background" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
-                    <User className="w-5 h-5" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    onClick={() => handleSelectPage('settings')}
+                  >
+                    <UserCog className="w-5 h-5" />
                   </Button>
                   <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" />
                 </div>
@@ -179,8 +185,13 @@ export function DashboardLayout() {
                     <Bell className="w-5 h-5" />
                     <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10">
-                    <User className="w-5 h-5" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    onClick={() => handleSelectPage('settings')}
+                  >
+                    <UserCog className="w-8 h-8" />
                   </Button>
                 </div>
               </div>

@@ -77,7 +77,8 @@ export class BenefitCalculator {
 
     // 育児休業給付金 - Maternity/Paternity leave benefits
     static calculateParentalLeaveAllowance(profile: UserProfile): BenefitResult {
-        if (profile.employmentStatus === 'unemployed') {
+        // Must be employed to get leave benefits
+        if (!profile.employmentStatus.includes('employed')) {
             return {
                 id: 'parental-leave',
                 name: '育児休業給付金',
@@ -128,7 +129,7 @@ export class BenefitCalculator {
 
     // 雇用保険 (失業給付) - Unemployment benefits
     static calculateUnemploymentBenefit(profile: UserProfile): BenefitResult {
-        if (profile.employmentStatus !== 'unemployed') {
+        if (!profile.employmentStatus.includes('unemployed')) {
             return {
                 id: 'unemployment',
                 name: '雇用保険（失業給付）',
