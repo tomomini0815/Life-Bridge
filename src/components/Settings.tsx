@@ -171,7 +171,7 @@ export function Settings() {
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-12">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-slate-500 to-slate-700 flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg">
                     <SettingsIcon className="w-8 h-8 text-white" />
                 </div>
                 <div>
