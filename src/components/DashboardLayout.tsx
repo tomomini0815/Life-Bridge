@@ -9,6 +9,7 @@ import { MemoManager } from '@/components/MemoManager';
 import { BenefitSimulator } from '@/components/BenefitSimulator';
 import { ReminderSettings } from '@/components/ReminderSettings';
 import { Settings } from '@/components/Settings';
+import { HelpPage } from '@/components/HelpPage';
 import { Search, Bell, User, ScanLine, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
@@ -78,6 +79,9 @@ export function DashboardLayout() {
     }
     if (activePage === 'settings') {
       return <Settings />;
+    }
+    if (activePage === 'help') {
+      return <HelpPage />;
     }
     if (selectedEvent) {
       // Use BusinessStartup component for startup event

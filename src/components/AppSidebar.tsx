@@ -294,14 +294,19 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             <SidebarMenu className="space-y-1">
               {settingsItems.map((item) => {
                 const isSettingsPage = item.title === '設定';
-                const isActive = activePage === 'settings' && isSettingsPage;
+                const isHelpPage = item.title === 'ヘルプ';
+                const isActive = (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
 
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       onClick={() => {
-                        if (isSettingsPage && onSelectPage) {
-                          handleMenuClick(() => onSelectPage('settings'));
+                        if (onSelectPage) {
+                          if (isSettingsPage) {
+                            handleMenuClick(() => onSelectPage('settings'));
+                          } else if (isHelpPage) {
+                            handleMenuClick(() => onSelectPage('help'));
+                          }
                         }
                       }}
                       className={cn(
