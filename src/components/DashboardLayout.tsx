@@ -20,6 +20,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Minus } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function DashboardLayout() {
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
