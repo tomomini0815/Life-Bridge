@@ -17,6 +17,7 @@ import {
   Heart,
   ChevronRight
 } from 'lucide-react';
+import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { LifeTimeline } from './LifeTimeline';
@@ -69,6 +70,15 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     glass: 'bg-violet-50/40 dark:bg-violet-900/10',
     border: 'border-violet-200/50 hover:border-violet-300/80'
   },
+};
+
+const iconMap: Record<string, React.ElementType> = {
+  marriage: FaChurch,
+  birth: FaBaby,
+  job: FaBriefcase,
+  startup: FaRocket,
+  moving: FaHome,
+  care: FaHandHoldingHeart,
 };
 
 export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomeProps) {
@@ -168,7 +178,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <div className="h-2 bg-black/10 rounded-full overflow-hidden">
                   <div
                     className="h-full bg-white/90 rounded-full transition-all duration-1000 ease-out"
-                    style={{ width: `${overallProgress}%` }}
+                    style={{ width: `${overallProgress}% ` }}
                   />
                 </div>
               </div>
@@ -293,6 +303,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               {lifeEvents.map((event) => {
                 const stats = allEvents.find(e => e.id === event.id)!;
                 const colors = colorMap[event.id];
+                const IconComponent = iconMap[event.id] || FaHeart;
 
                 return (
                   <button
@@ -318,7 +329,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                           colors.gradient
                         )}
                       >
-                        {event.icon}
+                        <IconComponent className="w-8 h-8 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors truncate">
