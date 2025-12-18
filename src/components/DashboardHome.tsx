@@ -156,7 +156,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium text-white/90">全体進捗</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <Target className="w-5 h-5" />
+                    <Target className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                 </div>
 
@@ -182,7 +182,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium text-white/90">完了タスク</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <CheckCircle2 className="w-5 h-5" />
+                    <CheckCircle2 className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                 </div>
 
@@ -201,7 +201,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium text-white/90">獲得済み給付金</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <Coins className="w-5 h-5" />
+                    <Coins className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                 </div>
 
@@ -224,7 +224,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-sm font-medium text-white/90">要対応</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <AlertTriangle className="w-5 h-5" />
+                    <AlertTriangle className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                 </div>
 
