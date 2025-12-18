@@ -91,50 +91,60 @@
   }
 
   .dark {
-    --background: 175 30% 8%;
-    --foreground: 175 15% 96%;
+    /* Deep Slate Theme */
+    --background: 222 47% 11%;
+    /* slate-950 */
+    --foreground: 210 40% 98%;
+    /* slate-50 */
 
-    --card: 175 25% 12%;
-    --card-foreground: 175 15% 96%;
+    --card: 217 33% 17%;
+    /* slate-900 (slightly lighter than bg) */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 175 25% 12%;
-    --popover-foreground: 175 15% 96%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
 
     --primary: 172 60% 45%;
+    /* Keep Teal identity but bright */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 175 20% 18%;
-    --secondary-foreground: 175 15% 90%;
+    --secondary: 215 25% 27%;
+    /* slate-800 */
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 175 20% 18%;
-    --muted-foreground: 175 15% 60%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;
+    /* slate-400 */
 
-    --accent: 170 65% 50%;
+    --accent: 172 60% 45%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 350 62% 50%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 175 20% 18%;
-    --input: 175 20% 18%;
+    --border: 215 25% 27%;
+    /* slate-800 */
+    --input: 215 25% 27%;
     --ring: 172 60% 45%;
 
-    --shadow-soft: 0 2px 8px -2px hsl(0 0% 0% / 0.4);
-    --shadow-card: 0 4px 12px -4px hsl(0 0% 0% / 0.4);
-    --shadow-xl: 0 20px 40px -12px hsl(0 0% 0% / 0.5);
-    --shadow-glow: 0 0 24px hsl(172 60% 45% / 0.3);
-    --shadow-glow-accent: 0 0 24px hsl(170 65% 50% / 0.3);
-    --shadow-inner-glow: inset 0 2px 8px hsl(172 60% 45% / 0.05);
-    --shadow-colored-primary: 0 8px 24px -8px hsl(172 60% 45% / 0.3);
-    --shadow-colored-accent: 0 8px 24px -8px hsl(170 65% 50% / 0.3);
+    --shadow-soft: 0 2px 8px -2px rgba(0, 0, 0, 0.5);
+    --shadow-card: 0 4px 12px -4px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 40px -12px rgba(0, 0, 0, 0.7);
+    --shadow-glow: 0 0 24px rgba(45, 212, 191, 0.15);
+    /* primary glow */
+    --shadow-glow-accent: 0 0 24px rgba(45, 212, 191, 0.15);
+    --shadow-inner-glow: inset 0 2px 8px rgba(45, 212, 191, 0.05);
+    --shadow-colored-primary: 0 8px 24px -8px rgba(45, 212, 191, 0.2);
+    --shadow-colored-accent: 0 8px 24px -8px rgba(45, 212, 191, 0.2);
 
-    --sidebar-background: 175 30% 10%;
-    --sidebar-foreground: 175 15% 96%;
+    /* Sidebar - match Deep Slate but slightly different tone */
+    --sidebar-background: 222 47% 10%;
+    --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 172 60% 45%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 175 20% 18%;
-    --sidebar-accent-foreground: 175 15% 96%;
-    --sidebar-border: 175 20% 18%;
+    --sidebar-accent: 215 25% 27%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 25% 27%;
     --sidebar-ring: 172 60% 45%;
   }
 }

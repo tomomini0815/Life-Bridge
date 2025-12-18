@@ -19,21 +19,21 @@ const colorMap: Record<string, string> = {
 };
 
 const glassColorMap: Record<string, string> = {
-  'event-marriage': 'bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-950/30 dark:to-rose-950/30',
-  'event-birth': 'bg-gradient-to-br from-orange-50/80 to-amber-50/80 dark:from-orange-950/30 dark:to-amber-950/30',
-  'event-job': 'bg-gradient-to-br from-sky-50/80 to-blue-50/80 dark:from-sky-950/30 dark:to-blue-950/30',
-  'event-moving': 'bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/30 dark:to-teal-950/30',
-  'event-care': 'bg-gradient-to-br from-violet-50/80 to-purple-50/80 dark:from-violet-950/30 dark:to-purple-950/30',
-  'event-startup': 'bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-950/30 dark:to-red-950/30',
+  'event-marriage': 'bg-gradient-to-br from-pink-50/80 to-rose-50/80 dark:from-pink-950/40 dark:to-rose-950/20',
+  'event-birth': 'bg-gradient-to-br from-orange-50/80 to-amber-50/80 dark:from-orange-950/40 dark:to-amber-950/20',
+  'event-job': 'bg-gradient-to-br from-sky-50/80 to-blue-50/80 dark:from-sky-950/40 dark:to-blue-950/20',
+  'event-moving': 'bg-gradient-to-br from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/40 dark:to-teal-950/20',
+  'event-care': 'bg-gradient-to-br from-violet-50/80 to-purple-50/80 dark:from-violet-950/40 dark:to-purple-950/20',
+  'event-startup': 'bg-gradient-to-br from-orange-50/80 to-red-50/80 dark:from-orange-950/40 dark:to-red-950/20',
 };
 
 const borderColorMap: Record<string, string> = {
-  'event-marriage': 'border-pink-200/50 hover:border-pink-300/80',
-  'event-birth': 'border-orange-200/50 hover:border-orange-300/80',
-  'event-job': 'border-sky-200/50 hover:border-sky-300/80',
-  'event-moving': 'border-emerald-200/50 hover:border-emerald-300/80',
-  'event-care': 'border-violet-200/50 hover:border-violet-300/80',
-  'event-startup': 'border-orange-200/50 hover:border-orange-300/80',
+  'event-marriage': 'border-pink-200/50 hover:border-pink-300/80 dark:border-pink-800/20 dark:hover:border-pink-700/40',
+  'event-birth': 'border-orange-200/50 hover:border-orange-300/80 dark:border-orange-800/20 dark:hover:border-orange-700/40',
+  'event-job': 'border-sky-200/50 hover:border-sky-300/80 dark:border-sky-800/20 dark:hover:border-sky-700/40',
+  'event-moving': 'border-emerald-200/50 hover:border-emerald-300/80 dark:border-emerald-800/20 dark:hover:border-emerald-700/40',
+  'event-care': 'border-violet-200/50 hover:border-violet-300/80 dark:border-violet-800/20 dark:hover:border-violet-700/40',
+  'event-startup': 'border-orange-200/50 hover:border-orange-300/80 dark:border-orange-800/20 dark:hover:border-orange-700/40',
 };
 
 const iconMap: Record<string, React.ElementType> = {

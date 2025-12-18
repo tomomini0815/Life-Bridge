@@ -33,42 +33,42 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     text: 'text-pink-600',
     gradient: 'from-pink-400 to-rose-500',
     glass: 'bg-pink-50/40 dark:bg-pink-900/10',
-    border: 'border-pink-200/50 hover:border-pink-300/80'
+    border: 'border-pink-200/50 hover:border-pink-300/80 dark:border-pink-800/20 dark:hover:border-pink-700/40'
   },
   birth: {
     bg: 'bg-orange-50',
     text: 'text-orange-600',
     gradient: 'from-orange-300 to-amber-500',
     glass: 'bg-orange-50/40 dark:bg-orange-900/10',
-    border: 'border-orange-200/50 hover:border-orange-300/80'
+    border: 'border-orange-200/50 hover:border-orange-300/80 dark:border-orange-800/20 dark:hover:border-orange-700/40'
   },
   job: {
     bg: 'bg-sky-50',
     text: 'text-sky-600',
     gradient: 'from-sky-400 to-blue-500',
     glass: 'bg-sky-50/40 dark:bg-sky-900/10',
-    border: 'border-sky-200/50 hover:border-sky-300/80'
+    border: 'border-sky-200/50 hover:border-sky-300/80 dark:border-sky-800/20 dark:hover:border-sky-700/40'
   },
   startup: {
     bg: 'bg-purple-50',
     text: 'text-purple-600',
     gradient: 'from-purple-500 to-indigo-600',
     glass: 'bg-purple-50/40 dark:bg-purple-900/10',
-    border: 'border-purple-200/50 hover:border-purple-300/80'
+    border: 'border-purple-200/50 hover:border-purple-300/80 dark:border-purple-800/20 dark:hover:border-purple-700/40'
   },
   moving: {
     bg: 'bg-emerald-50',
     text: 'text-emerald-600',
     gradient: 'from-emerald-400 to-teal-500',
     glass: 'bg-emerald-50/40 dark:bg-emerald-900/10',
-    border: 'border-emerald-200/50 hover:border-emerald-300/80'
+    border: 'border-emerald-200/50 hover:border-emerald-300/80 dark:border-emerald-800/20 dark:hover:border-emerald-700/40'
   },
   care: {
     bg: 'bg-violet-50',
     text: 'text-violet-600',
     gradient: 'from-violet-400 to-purple-500',
     glass: 'bg-violet-50/40 dark:bg-violet-900/10',
-    border: 'border-violet-200/50 hover:border-violet-300/80'
+    border: 'border-violet-200/50 hover:border-violet-300/80 dark:border-violet-800/20 dark:hover:border-violet-700/40'
   },
 };
 

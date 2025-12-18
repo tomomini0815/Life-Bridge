@@ -153,7 +153,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               {/* Sliding Active Indicator */}
               {activeIndex !== -1 && (
                 <div
-                  className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
+                  className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
                     top: `${activeIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
                     borderRadius: "30px 0 0 30px",
@@ -164,13 +164,13 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   {/* Top Curve */}
                   <div className="absolute -top-[23px] right-0 w-6 h-6 bg-transparent">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 24H0C14 24 24 14 24 0V24Z" fill="white" />
+                      <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
                     </svg>
                   </div>
                   {/* Bottom Curve */}
                   <div className="absolute -bottom-[23px] right-0 w-6 h-6 bg-transparent">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 0H0C14 0 24 10 24 24V0Z" fill="white" />
+                      <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
                     </svg>
                   </div>
                 </div>
@@ -222,7 +222,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               {/* Sliding Active Indicator for Tools */}
               {activeToolIndex !== -1 && (
                 <div
-                  className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
+                  className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
                     top: `${activeToolIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
                     borderRadius: "30px 0 0 30px",
@@ -233,13 +233,13 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   {/* Top Curve */}
                   <div className="absolute -top-[23px] right-0 w-6 h-6 bg-transparent">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 24H0C14 24 24 14 24 0V24Z" fill="white" />
+                      <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
                     </svg>
                   </div>
                   {/* Bottom Curve */}
                   <div className="absolute -bottom-[23px] right-0 w-6 h-6 bg-transparent">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 0H0C14 0 24 10 24 24V0Z" fill="white" />
+                      <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
                     </svg>
                   </div>
                 </div>
