@@ -17,7 +17,7 @@ import {
   Heart,
   ChevronRight
 } from 'lucide-react';
-import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart } from 'react-icons/fa';
+import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart, FaClipboardList, FaLightbulb } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { LifeTimeline } from './LifeTimeline';
@@ -269,7 +269,12 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                   >
                     <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-red-500/10 transition-colors" />
                     <div className="flex items-start gap-4 relative z-10">
-                      <span className="text-3xl bg-white dark:bg-card rounded-xl p-2 shadow-sm group-hover:scale-110 transition-transform duration-300">{task.eventIcon}</span>
+                      <span className="text-3xl bg-white dark:bg-card rounded-xl p-2 shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center w-12 h-12">
+                        {(() => {
+                          const Icon = iconMap[task.eventId] || FaHeart;
+                          return <Icon className="w-6 h-6 text-red-500" />;
+                        })()}
+                      </span>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-bold text-foreground truncate mb-1 group-hover:text-red-600 transition-colors">{task.title}</h3>
                         <p className="text-sm text-muted-foreground flex items-center gap-2 font-medium">
@@ -372,17 +377,25 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  <span className="text-xl mr-2">📋</span>
-                  <strong className="text-foreground">書類の準備</strong>は前日までに！
-                  当日焦らないように、必要書類は事前に確認しておきましょう。
+                <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
+                  <span className="bg-white p-2 rounded-lg shadow-sm">
+                    <FaClipboardList className="w-5 h-5 text-indigo-500" />
+                  </span>
+                  <span>
+                    <strong className="text-foreground block mb-1">書類の準備は前日までに！</strong>
+                    当日焦らないように、必要書類は事前に確認しておきましょう。
+                  </span>
                 </p>
               </div>
               <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  <span className="text-xl mr-2">💡</span>
-                  <strong className="text-foreground">オンライン申請</strong>が可能なものは、
-                  窓口の待ち時間なしで手続きできます。積極的に活用しましょう。
+                <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
+                  <span className="bg-white p-2 rounded-lg shadow-sm">
+                    <FaLightbulb className="w-5 h-5 text-amber-500" />
+                  </span>
+                  <span>
+                    <strong className="text-foreground block mb-1">オンライン申請を活用</strong>
+                    窓口の待ち時間なしで手続きできます。積極的に活用しましょう。
+                  </span>
                 </p>
               </div>
             </div>

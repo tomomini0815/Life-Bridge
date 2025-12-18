@@ -16,6 +16,7 @@ import {
     User,
     Building2,
 } from 'lucide-react';
+import { FaRocket, FaLandmark, FaCoins, FaBuilding } from 'react-icons/fa';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface BusinessStartupProps {
@@ -75,11 +76,11 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
 
     const remainingBenefits = totalBenefits - claimedBenefits;
 
-    const filters: { value: FilterType; label: string }[] = [
+    const filters: { value: FilterType; label: React.ReactNode }[] = [
         { value: 'all', label: 'すべて' },
-        { value: 'government', label: '🏛️ 行政' },
-        { value: 'benefit', label: '💰 給付金' },
-        { value: 'private', label: '🏢 民間' },
+        { value: 'government', label: <span className="flex items-center gap-2"><FaLandmark /> 行政</span> },
+        { value: 'benefit', label: <span className="flex items-center gap-2"><FaCoins /> 給付金</span> },
+        { value: 'private', label: <span className="flex items-center gap-2"><FaBuilding /> 民間</span> },
     ];
 
     return (
@@ -89,7 +90,7 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10 flex items-start gap-6">
                     <div className="w-20 h-20 rounded-3xl gradient-warm flex items-center justify-center text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                        {event.icon}
+                        <FaRocket className="w-10 h-10 text-white" />
                     </div>
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold text-foreground mb-2 font-display">{event.title}</h1>
