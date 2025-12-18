@@ -171,10 +171,10 @@ export function Settings() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-auto gap-2 sm:gap-0 mb-8 p-1">
-                    <TabsTrigger value="general" className="py-2.5">一般設定</TabsTrigger>
-                    <TabsTrigger value="menu" className="py-2.5">メニュー表示</TabsTrigger>
-                    <TabsTrigger value="data" className="py-2.5">データ管理</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 h-auto gap-0 mb-8 p-1">
+                    <TabsTrigger value="general" className="py-2.5 text-xs sm:text-sm px-1">一般設定</TabsTrigger>
+                    <TabsTrigger value="menu" className="py-2.5 text-xs sm:text-sm px-1">メニュー表示</TabsTrigger>
+                    <TabsTrigger value="data" className="py-2.5 text-xs sm:text-sm px-1">データ管理</TabsTrigger>
                 </TabsList>
 
                 {/* General Settings */}
@@ -432,7 +432,7 @@ export function Settings() {
                                         <div
                                             key={item.id}
                                             className={cn(
-                                                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 border",
+                                                "flex flex-col gap-2 p-3 rounded-xl transition-all duration-200 border",
                                                 settings[item.id as keyof MenuVisibilitySettings]
                                                     ? "bg-primary/5 border-primary/10"
                                                     : "bg-muted/30 border-transparent opacity-60"
@@ -440,13 +440,15 @@ export function Settings() {
                                         >
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl">{item.icon}</span>
-                                                <Label htmlFor={item.id} className="cursor-pointer">{item.label}</Label>
+                                                <Label htmlFor={item.id} className="cursor-pointer whitespace-nowrap text-base">{item.label}</Label>
                                             </div>
-                                            <Switch
-                                                id={item.id}
-                                                checked={settings[item.id as keyof MenuVisibilitySettings]}
-                                                onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
-                                            />
+                                            <div className="flex justify-end w-full">
+                                                <Switch
+                                                    id={item.id}
+                                                    checked={settings[item.id as keyof MenuVisibilitySettings]}
+                                                    onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
+                                                />
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
@@ -459,7 +461,7 @@ export function Settings() {
                                         <div
                                             key={item.id}
                                             className={cn(
-                                                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 border",
+                                                "flex flex-col gap-2 p-3 rounded-xl transition-all duration-200 border",
                                                 settings[item.id as keyof MenuVisibilitySettings]
                                                     ? "bg-primary/5 border-primary/10"
                                                     : "bg-muted/30 border-transparent opacity-60"
@@ -467,13 +469,15 @@ export function Settings() {
                                         >
                                             <div className="flex items-center gap-3">
                                                 <span className="text-xl">{item.icon}</span>
-                                                <Label htmlFor={item.id} className="cursor-pointer">{item.label}</Label>
+                                                <Label htmlFor={item.id} className="cursor-pointer whitespace-nowrap text-base">{item.label}</Label>
                                             </div>
-                                            <Switch
-                                                id={item.id}
-                                                checked={settings[item.id as keyof MenuVisibilitySettings]}
-                                                onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
-                                            />
+                                            <div className="flex justify-end w-full">
+                                                <Switch
+                                                    id={item.id}
+                                                    checked={settings[item.id as keyof MenuVisibilitySettings]}
+                                                    onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
+                                                />
+                                            </div>
                                         </div>
                                     ))}
                                 </div>
