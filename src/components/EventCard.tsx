@@ -73,7 +73,7 @@ export function EventCard({ event, onClick, index }: EventCardProps) {
             colorMap[event.color]
           )}
         >
-          <IconComponent className="w-8 h-8 text-white" strokeWidth={1.5} />
+          <IconComponent className="w-8 h-8 text-white" fill="currentColor" strokeWidth={0} />
           {/* Icon Glow Effect */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-0 group-hover:opacity-50 blur-md transition-opacity duration-300"
             style={{ background: `linear-gradient(135deg, ${colorMap[event.color].split(' ')[0].replace('from-', 'hsl(var(--event-')}` }} />
