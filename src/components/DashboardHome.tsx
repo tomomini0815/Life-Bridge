@@ -190,7 +190,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
               <div className="flex items-end gap-3">
                 <span className="text-3xl lg:text-4xl font-bold text-amber-700 dark:text-amber-400">¥{totalClaimedBenefits.toLocaleString()}</span>
               </div>
-              <p className="text-xs font-medium text-amber-800 dark:text-amber-300 mt-2 bg-gray-100/80 dark:bg-amber-800/30 px-2 py-1 rounded-lg inline-block truncate max-w-full">
+              <p className="text-xs font-medium text-amber-800 dark:text-amber-300 mt-2 bg-amber-200/50 dark:bg-amber-800/30 px-2 py-1 rounded-lg inline-block truncate max-w-full">
                 残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
               </p>
             </div>
@@ -206,7 +206,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
                 <span className="text-3xl lg:text-4xl font-bold text-red-700 dark:text-red-400">{allUrgentTasks.length}</span>
                 <span className="text-sm text-red-600/80 dark:text-red-400/80 mb-1.5 font-medium whitespace-nowrap">件</span>
               </div>
-              <p className="text-xs font-medium text-red-800 dark:text-red-300 mt-2 bg-gray-100/80 dark:bg-red-800/30 px-2 py-1 rounded-lg inline-block truncate max-w-full">
+              <p className="text-xs font-medium text-red-800 dark:text-red-300 mt-2 bg-red-200/50 dark:bg-red-800/30 px-2 py-1 rounded-lg inline-block truncate max-w-full">
                 期限が迫っています
               </p>
             </div>
