@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart, FaClipboardList, FaLightbulb } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LifeTimeline } from './LifeTimeline';
 
 interface DashboardHomeProps {
@@ -83,6 +83,32 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomeProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
+  const [userName, setUserName] = useState('Tomomi');
+
+  useEffect(() => {
+    // Load initial profile
+    const storedProfile = localStorage.getItem('lifebridge_user_profile');
+    if (storedProfile) {
+      try {
+        const { name } = JSON.parse(storedProfile);
+        if (name) setUserName(name);
+      } catch (e) {
+        console.error('Failed to parse profile:', e);
+      }
+    }
+
+    // Listen for profile changes
+    const handleProfileChange = (e: CustomEvent) => {
+      if (e.detail && e.detail.name) {
+        setUserName(e.detail.name);
+      }
+    };
+
+    window.addEventListener('userProfileChanged', handleProfileChange as EventListener);
+    return () => {
+      window.removeEventListener('userProfileChanged', handleProfileChange as EventListener);
+    };
+  }, []);
 
   // Calculate overall stats
   const allEvents = lifeEvents.map(event => {
@@ -122,7 +148,7 @@ export function DashboardHome({ onSelectEvent, completedTasks }: DashboardHomePr
       {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-xl py-2 px-8">
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、Tomomiさん</h1>
+          <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、{userName}さん</h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
             人生の転機は、新しい物語の始まりです。複雑な手続きは私に任せて、あなたらしい毎日を過ごしましょう。
           </p>
