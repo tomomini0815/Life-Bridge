@@ -109,7 +109,7 @@ export function DashboardLayout() {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <div className="flex min-h-screen w-full bg-white"> {/* Pure white background */}
+      <div className="flex min-h-screen w-full bg-background transition-colors duration-300"> {/* Dynamic background */}
         <AppSidebar
           activeEvent={activeEvent}
           onSelectEvent={handleSelectEvent}
@@ -119,27 +119,27 @@ export function DashboardLayout() {
 
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden relative bg-transparent"> {/* Allow parent bg to show through */}
           {/* Top Header - Fixed on scroll */}
-          <header className="fixed md:sticky top-0 left-0 right-0 z-50 h-16 shrink-0 border-b border-black/5 bg-white/95 backdrop-blur-md shadow-sm">
+          <header className="fixed md:sticky top-0 left-0 right-0 z-50 h-16 shrink-0 border-b border-border bg-background/80 backdrop-blur-md shadow-sm transition-colors duration-300">
             <div className="h-full px-4 flex items-center justify-between gap-2">
               {/* Left: Site Name (Mobile) / Sidebar Trigger + Search (Desktop) */}
               <div className="flex items-center gap-2 flex-1">
                 {/* Mobile: Site Name */}
                 <div className="md:hidden flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-primary" />
-                  <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600">
+                  <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400">
                     LifeBridge
                   </span>
                 </div>
 
                 {/* Desktop: Sidebar Trigger + Search */}
                 <div className="hidden md:flex items-center gap-2 flex-1">
-                  <SidebarTrigger className="-ml-1 text-slate-500 hover:text-slate-800" />
+                  <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div className="relative w-96">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       placeholder="知りたいこと、やりたいことは何ですか..."
-                      className="pl-10 h-10 w-full rounded-full bg-white border-slate-200 focus:border-teal-400 focus:ring-teal-400/20 shadow-sm transition-all duration-300"
+                      className="pl-10 h-10 w-full rounded-full bg-background border-input focus:border-primary focus:ring-primary/20 shadow-sm transition-all duration-300"
                     />
                   </div>
                 </div>
