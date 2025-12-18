@@ -1,6 +1,6 @@
 import { LifeEvent } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Heart, Baby, Briefcase, Rocket, Home, Handshake, Church } from 'lucide-react';
 
 interface EventCardProps {
   event: LifeEvent;
@@ -35,7 +35,18 @@ const borderColorMap: Record<string, string> = {
   'event-startup': 'border-orange-200/50 hover:border-orange-300/80',
 };
 
+const iconMap: Record<string, React.ElementType> = {
+  marriage: Church,
+  birth: Baby,
+  job: Briefcase,
+  startup: Rocket,
+  moving: Home,
+  care: Handshake,
+};
+
 export function EventCard({ event, onClick, index }: EventCardProps) {
+  const IconComponent = iconMap[event.id] || Heart;
+
   return (
     <button
       onClick={onClick}
@@ -62,7 +73,7 @@ export function EventCard({ event, onClick, index }: EventCardProps) {
             colorMap[event.color]
           )}
         >
-          {event.icon}
+          <IconComponent className="w-8 h-8 text-white" strokeWidth={1.5} />
           {/* Icon Glow Effect */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-0 group-hover:opacity-50 blur-md transition-opacity duration-300"
             style={{ background: `linear-gradient(135deg, ${colorMap[event.color].split(' ')[0].replace('from-', 'hsl(var(--event-')}` }} />
