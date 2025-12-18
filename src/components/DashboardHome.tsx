@@ -200,7 +200,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
   const allUrgentTasks = allEvents.flatMap(e => e.urgentTasks.map(t => ({ ...t, eventId: e.id, eventIcon: e.icon })));
 
   return (
-    <div className="space-y-8 animate-fade-in max-w-7xl mx-auto pb-10">
+    <div className="space-y-4 md:space-y-8 animate-fade-in max-w-7xl mx-auto pb-4 md:pb-10">
       {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-xl py-2 px-8">
         <div className="relative z-10 max-w-2xl">
@@ -213,7 +213,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
       {/* Tab Switcher */}
       <div className="flex justify-center border-b border-border/40">
-        <div className="flex gap-8">
+        <div className="flex gap-4 sm:gap-8">
           <button
             onClick={() => setActiveTab('overview')}
             className={cn(
@@ -337,7 +337,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
           {/* Recommendations Section */}
           {visibleRecommendations.length > 0 && (
-            <div className="glass-medium rounded-3xl p-8 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-8">
+            <div className="glass-medium rounded-3xl p-4 md:p-8 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-4 md:mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
                   <Sparkles className="w-5 h-5" />

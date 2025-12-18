@@ -19,6 +19,7 @@ import { UserContext } from '@/services/AiConciergeService';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Minus } from 'lucide-react';
 
 export function DashboardLayout() {
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
@@ -32,6 +33,7 @@ export function DashboardLayout() {
     care: [],
   });
   const [showGlobalScanner, setShowGlobalScanner] = useState(false);
+  const [isScannerMinimized, setIsScannerMinimized] = useState(false);
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
@@ -204,16 +206,41 @@ export function DashboardLayout() {
           </main>
 
           {/* Global Magic Scan FAB */}
-          <div className="fixed bottom-24 right-6 z-40 animate-fade-in">
-            <Button
-              onClick={() => setShowGlobalScanner(true)}
-              className="h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center justify-center group border border-white/10"
-            >
-              <ScanLine className="w-6 h-6" />
-              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 px-2 py-1 rounded-md shadow-sm pointer-events-none border border-border/50">
-                Magic Scan
-              </span>
-            </Button>
+          <div className={cn(
+            "fixed z-40 animate-fade-in transition-all duration-300",
+            isScannerMinimized ? "bottom-24 right-4 md:right-6" : "bottom-24 right-4 md:right-6"
+          )}>
+            <div className="relative">
+              {!isScannerMinimized && (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsScannerMinimized(true);
+                  }}
+                  size="icon"
+                  className="absolute -top-1 -left-1 z-50 h-6 w-6 rounded-full bg-slate-500 hover:bg-slate-600 text-white shadow-md border border-white"
+                >
+                  <Minus className="w-3 h-3" />
+                </Button>
+              )}
+
+              <Button
+                onClick={() => setShowGlobalScanner(true)}
+                className={cn(
+                  "rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group border border-white/10",
+                  isScannerMinimized
+                    ? "h-10 w-10 hover:scale-110"
+                    : "h-14 w-14 hover:scale-105"
+                )}
+              >
+                <ScanLine className={cn("transition-all", isScannerMinimized ? "w-5 h-5" : "w-6 h-6")} />
+                {!isScannerMinimized && (
+                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 px-2 py-1 rounded-md shadow-sm pointer-events-none border border-border/50">
+                    Magic Scan
+                  </span>
+                )}
+              </Button>
+            </div>
           </div>
 
           <DocumentScanner

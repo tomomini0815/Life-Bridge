@@ -96,9 +96,9 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
             {/* Header */}
             <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="relative z-10 flex items-start gap-6">
-                    <div className="w-20 h-20 rounded-3xl gradient-warm flex items-center justify-center text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                        <FaRocket className="w-10 h-10 text-white" />
+                <div className="relative z-10 flex items-start gap-4 sm:gap-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl gradient-warm flex items-center justify-center text-3xl sm:text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0">
+                        <FaRocket className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                     </div>
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold text-foreground mb-2 font-display">{event.title}</h1>
@@ -109,20 +109,20 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
 
             {/* Business Type Tabs */}
             <Tabs value={businessType} onValueChange={(v) => setBusinessType(v as BusinessType)} className="w-full">
-                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-12 bg-secondary/50 p-1">
+                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-14 bg-secondary/50 p-1">
                     <TabsTrigger
                         value="individual"
-                        className="data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
+                        className="h-full data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
                     >
-                        <User className="w-4 h-4 mr-2" />
-                        個人事業主
+                        <User className="w-4 h-4 mr-2 shrink-0" />
+                        <span className="whitespace-normal leading-tight">個人事業主</span>
                     </TabsTrigger>
                     <TabsTrigger
                         value="corporate"
-                        className="data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
+                        className="h-full data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
                     >
-                        <Building2 className="w-4 h-4 mr-2" />
-                        法人
+                        <Building2 className="w-4 h-4 mr-2 shrink-0" />
+                        <span className="whitespace-normal leading-tight">法人</span>
                     </TabsTrigger>
                 </TabsList>
 

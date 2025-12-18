@@ -179,7 +179,7 @@ export function SubscriptionManager() {
                                     defaultValue={editingSubscription?.name}
                                 />
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="amount">金額</Label>
                                     <Input
@@ -205,7 +205,7 @@ export function SubscriptionManager() {
                                     </Select>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="billingCycle">支払いサイクル</Label>
                                     <Select name="billingCycle" defaultValue={editingSubscription?.billingCycle || "monthly"}>

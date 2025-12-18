@@ -310,7 +310,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                         }
                       }}
                       className={cn(
-                        "text-primary-foreground/80 hover:bg-white/10 hover:text-white transition-colors duration-200 rounded-2xl h-11 pl-4",
+                        "text-primary-foreground/80 hover:bg-white/10 hover:text-white transition-colors duration-200 rounded-2xl h-11 pl-4 text-base font-medium",
                         isCollapsed && "justify-center pl-0",
                         isActive && "bg-white/10 text-white"
                       )}

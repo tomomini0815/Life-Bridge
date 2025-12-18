@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AiConciergeService, AiMessage, UserContext } from '@/services/AiConciergeService';
@@ -11,6 +11,7 @@ interface ChatWidgetProps {
 
 export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<AiMessage[]>([
     {
       id: 'init',
@@ -205,13 +206,16 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
   return (
     <>
       {/* Chat button */}
-      <div className="fixed bottom-6 right-6 z-50">
-        {hasUnread && !isOpen && (
+      <div className={cn(
+        "fixed z-50 transition-all duration-300",
+        isMinimized ? "bottom-6 right-4 md:right-6" : "bottom-6 right-4 md:right-6"
+      )}>
+        {hasUnread && !isOpen && !isMinimized && (
           <div className="absolute -top-2 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white animate-pulse" />
         )}
 
-        {/* Proactive Bubble (if closed and has suggestion) */}
-        {!isOpen && hasUnread && (
+        {/* Proactive Bubble (if closed and has suggestion, and not minimized) */}
+        {!isOpen && hasUnread && !isMinimized && (
           <div
             className="absolute bottom-16 right-0 w-64 p-3 bg-white dark:bg-zinc-900 rounded-2xl rounded-tr-sm shadow-xl border border-border/50 animate-slide-up cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => { setIsOpen(true); setHasUnread(false); }}
@@ -230,19 +234,43 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
           </div>
         )}
 
-        <button
-          onClick={() => { setIsOpen(!isOpen); setHasUnread(false); }}
-          className={cn(
-            "w-14 h-14 rounded-full",
-            "bg-gradient-to-tr from-teal-500 to-emerald-500 shadow-lg shadow-teal-500/30 text-white",
-            "flex items-center justify-center relative overflow-hidden group",
-            "transition-all duration-300 hover:scale-110",
-            isOpen && "rotate-90 scale-0 opacity-0"
+        <div className="relative">
+          {!isMinimized && !isOpen && (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsMinimized(true);
+              }}
+              size="icon"
+              className="absolute -top-1 -left-1 z-50 h-6 w-6 rounded-full bg-slate-500 hover:bg-slate-600 text-white shadow-md border border-white"
+            >
+              <Minus className="w-3 h-3" />
+            </Button>
           )}
-        >
-          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <MessageCircle className="w-7 h-7" />
-        </button>
+
+          <button
+            onClick={() => {
+              if (isMinimized) {
+                setIsMinimized(false);
+                setIsOpen(true);
+              } else {
+                setIsOpen(!isOpen);
+              }
+              setHasUnread(false);
+            }}
+            className={cn(
+              "rounded-full",
+              "bg-gradient-to-tr from-teal-500 to-emerald-500 shadow-lg shadow-teal-500/30 text-white",
+              "flex items-center justify-center relative overflow-hidden group",
+              "transition-all duration-300 hover:scale-110",
+              isOpen && "rotate-90 scale-0 opacity-0",
+              isMinimized ? "w-10 h-10" : "w-14 h-14"
+            )}
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <MessageCircle className={cn("transition-all", isMinimized ? "w-5 h-5" : "w-7 h-7")} />
+          </button>
+        </div>
       </div>
 
       {/* Chat window */}

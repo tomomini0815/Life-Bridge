@@ -158,11 +158,11 @@ export function Settings() {
     return (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-12">
             {/* Header */}
-            <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg">
+            <div className="flex items-start gap-4">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shrink-0">
                     <SettingsIcon className="w-8 h-8 text-white" />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0">
                     <h1 className="text-3xl font-bold text-foreground">設定</h1>
                     <p className="text-muted-foreground mt-1">
                         アプリの全体設定とカスタマイズ
@@ -171,10 +171,10 @@ export function Settings() {
             </div>
 
             <Tabs defaultValue="general" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 mb-8">
-                    <TabsTrigger value="general">一般設定</TabsTrigger>
-                    <TabsTrigger value="menu">メニュー表示</TabsTrigger>
-                    <TabsTrigger value="data">データ管理</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-1 sm:grid-cols-3 h-auto gap-2 sm:gap-0 mb-8 p-1">
+                    <TabsTrigger value="general" className="py-2.5">一般設定</TabsTrigger>
+                    <TabsTrigger value="menu" className="py-2.5">メニュー表示</TabsTrigger>
+                    <TabsTrigger value="data" className="py-2.5">データ管理</TabsTrigger>
                 </TabsList>
 
                 {/* General Settings */}
