@@ -15,7 +15,9 @@ import {
   Target,
   Zap,
   Heart,
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart, FaClipboardList, FaLightbulb } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
@@ -88,6 +90,7 @@ const iconMap: Record<string, React.ElementType> = {
 export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
   const [userName, setUserName] = useState('Tomomi');
+  const [expandedRecId, setExpandedRecId] = useState<string | null>(null);
 
   // Recommendations
   const [recommendations, setRecommendations] = useState<RecommendationItem[]>([]);
@@ -157,6 +160,13 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
   const visibleLifeEvents = lifeEvents.filter(event => menuVisibility[event.id] !== false);
 
+  const visibleRecommendations = recommendations.filter(rec => {
+    // If no specific category, always show
+    if (!rec.category) return true;
+    // Otherwise check visibility setting
+    return menuVisibility[rec.category] !== false;
+  });
+
   // Calculate overall stats
   const allEvents = visibleLifeEvents.map(event => {
     const completed = completedTasks[event.id] || [];
@@ -202,13 +212,13 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex justify-center">
-        <div className="bg-muted/50 p-1 rounded-full flex gap-1 border border-border/50">
+      <div className="flex justify-center border-b border-border/40">
+        <div className="flex gap-8">
           <button
             onClick={() => setActiveTab('overview')}
             className={cn(
-              "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300",
-              activeTab === 'overview' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+              "pb-3 px-2 text-sm font-bold transition-all duration-300 border-b-2",
+              activeTab === 'overview' ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
             ダッシュボード
@@ -218,8 +228,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
             <button
               onClick={() => setActiveTab('timeline')}
               className={cn(
-                "px-6 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2",
-                activeTab === 'timeline' ? "bg-white dark:bg-zinc-800 shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
+                "pb-3 px-2 text-sm font-bold transition-all duration-300 flex items-center gap-2 border-b-2",
+                activeTab === 'timeline' ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               <span className="text-xs">✨</span>
@@ -326,7 +336,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
           </div>
 
           {/* Recommendations Section */}
-          {recommendations.length > 0 && (
+          {visibleRecommendations.length > 0 && (
             <div className="glass-medium rounded-3xl p-8 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-8">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
@@ -339,7 +349,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recommendations.map((rec) => (
+                {visibleRecommendations.map((rec) => (
                   <div key={rec.id} className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 transition-all duration-300">
                     <div className="flex items-start justify-between mb-3">
                       <span className={cn(
@@ -361,21 +371,96 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                     <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                       {rec.description}
                     </p>
-                    <button
-                      onClick={() => {
-                        if (rec.link === '/settings') {
-                          onNavigate('settings');
-                        } else if (rec.link?.includes('benefits')) {
-                          onNavigate('simulator');
-                        } else if (rec.link) {
-                          // Fallback for other links, e.g., external or direct internal
-                          window.open(rec.link, '_blank');
-                        }
-                      }}
-                      className="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors bg-transparent border-none p-0 cursor-pointer"
-                    >
-                      {rec.actionLabel || '詳細を見る'} <ArrowRight className="w-4 h-4 ml-1" />
-                    </button>
+
+                    <div className="flex items-center justify-between mt-2">
+                      <button
+                        onClick={() => {
+                          if (rec.link === '/settings') {
+                            onNavigate('settings');
+                          } else if (rec.link?.includes('benefits')) {
+                            onNavigate('simulator');
+                          } else if (rec.link) {
+                            window.open(rec.link, '_blank');
+                          }
+                        }}
+                        className="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors bg-transparent border-none p-0 cursor-pointer"
+                      >
+                        {rec.actionLabel || '移動する'} <ArrowRight className="w-4 h-4 ml-1" />
+                      </button>
+
+                      {rec.details && (
+                        <button
+                          onClick={() => setExpandedRecId(expandedRecId === rec.id ? null : rec.id)}
+                          className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none p-0 cursor-pointer"
+                        >
+                          {expandedRecId === rec.id ? '閉じる' : '詳細'}
+                          {expandedRecId === rec.id ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />}
+                        </button>
+                      )}
+                    </div>
+
+                    {rec.details && expandedRecId === rec.id && (
+                      <div className="mt-4 pt-4 border-t border-indigo-100 dark:border-white/10 space-y-3 animate-in fade-in slide-in-from-top-1">
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">概要</p>
+                          <p className="text-xs text-muted-foreground leading-relaxed">
+                            {rec.details.description}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">計算式</p>
+                          <p className="text-xs text-muted-foreground bg-white/50 dark:bg-white/5 p-2 rounded-md font-mono whitespace-pre-line">
+                            {rec.details.calculation}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-foreground mb-1">給付要件</p>
+                          <p className="text-xs text-muted-foreground whitespace-pre-line">
+                            {rec.details.requirements}
+                          </p>
+                        </div>
+
+                        {/* Nested Accordion for Application Guide */}
+                        <div className="pt-2">
+                          <details className="group rounded-lg border border-border/50 bg-background/50 open:bg-background open:ring-1 open:ring-primary/20">
+                            <summary className="flex cursor-pointer items-center justify-between p-3 text-xs font-bold text-foreground">
+                              <div className="flex items-center gap-2">
+                                申請手続きガイド（必要書類・手順）
+                              </div>
+                              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                            </summary>
+                            <div className="px-3 pb-3 pt-0">
+                              <div className="space-y-3 pt-2">
+                                {/* Required Documents */}
+                                {rec.requiredDocuments && rec.requiredDocuments.length > 0 && (
+                                  <div>
+                                    <p className="mb-2 text-xs font-bold text-foreground/80">📋 必要書類</p>
+                                    <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                                      {rec.requiredDocuments.map((doc, idx) => (
+                                        <li key={idx} className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
+                                          <span className="h-1.5 w-1.5 rounded-full bg-primary/50" />
+                                          {doc}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+
+                                {/* Application Steps */}
+                                {rec.details.applicationSteps && (
+                                  <div>
+                                    <p className="mb-1 text-xs font-bold text-foreground/80">📝 手続きの流れ</p>
+                                    <p className="text-xs leading-relaxed text-muted-foreground bg-primary/5 p-2 rounded-md">
+                                      {rec.details.applicationSteps}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </details>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

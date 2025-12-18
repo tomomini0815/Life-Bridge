@@ -5,7 +5,7 @@ const PROFILE_KEY = 'lifebridge_user_profile_v2';
 const DEFAULT_PROFILE: UserProfile = {
     name: 'Tomomi',
     annualIncome: 5000000,
-    employmentStatus: 'employed',
+    employmentStatus: ['employed'],
     hasSpouse: false,
     numberOfChildren: 0,
     childrenAges: []

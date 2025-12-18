@@ -1,5 +1,7 @@
-import { UserProfile } from '@/types/benefit';
+import { UserProfile, BenefitResult } from '@/types/benefit';
 import { BenefitCalculator } from '@/services/BenefitCalculator';
+import { BenefitDetail } from '@/data/benefitDetails';
+import { startupTasks } from '@/data/lifeEvents';
 
 export interface RecommendationItem {
     id: string;
@@ -9,6 +11,9 @@ export interface RecommendationItem {
     urgency: 'high' | 'medium' | 'low';
     link?: string;
     actionLabel?: string;
+    details?: BenefitDetail;
+    requiredDocuments?: string[];
+    category?: string;
 }
 
 export const recommendationService = {
@@ -18,6 +23,14 @@ export const recommendationService = {
         // 1. Benefit Recommendations
         const simulation = BenefitCalculator.simulate(profile);
         const eligibleBenefits = simulation.benefits.filter(b => b.eligibility);
+
+        const BENEFIT_CATEGORY_MAP: Record<string, string> = {
+            'birth-allowance': 'birth',
+            'child-allowance': 'birth',
+            'parental-leave': 'birth',
+            'unemployment': 'job',
+            'child-medical': 'birth',
+        };
 
         eligibleBenefits.forEach(benefit => {
             // Customize message based on benefit type
@@ -36,7 +49,10 @@ export const recommendationService = {
                 type: 'benefit',
                 urgency: urgency,
                 link: '/tools?tab=benefits', // Direct to simulator or specific page
-                actionLabel: '詳細を確認'
+                actionLabel: '詳細を確認',
+                details: benefit.details,
+                requiredDocuments: benefit.requiredDocuments,
+                category: BENEFIT_CATEGORY_MAP[benefit.id]
             });
         });
 
@@ -72,7 +88,8 @@ function getAdvancedRecommendations(profile: UserProfile, recommendations: Recom
             type: 'procedure',
             urgency: 'medium',
             link: 'https://www.nta.go.jp/taxes/tetsuzuki/shinsei/annai/shinkoku/annai/1095.htm',
-            actionLabel: '国税庁HPへ'
+            actionLabel: '国税庁HPへ',
+            category: 'startup'
         });
     }
 
@@ -85,7 +102,8 @@ function getAdvancedRecommendations(profile: UserProfile, recommendations: Recom
             type: 'procedure',
             urgency: 'low',
             link: 'https://www.smrj.go.jp/kyosai/skyosai/',
-            actionLabel: '制度詳細へ'
+            actionLabel: '制度詳細へ',
+            category: 'startup'
         });
     }
 
@@ -98,7 +116,8 @@ function getAdvancedRecommendations(profile: UserProfile, recommendations: Recom
             type: 'task',
             urgency: 'medium',
             link: '/tools?tab=startup',
-            actionLabel: '会社設立ガイドへ'
+            actionLabel: '会社設立ガイドへ',
+            category: 'startup'
         });
     }
 
@@ -111,7 +130,8 @@ function getAdvancedRecommendations(profile: UserProfile, recommendations: Recom
             type: 'task',
             urgency: 'low',
             link: '/tools?tab=startup',
-            actionLabel: '起業ガイドへ'
+            actionLabel: '起業ガイドへ',
+            category: 'startup'
         });
     }
 
@@ -124,7 +144,38 @@ function getAdvancedRecommendations(profile: UserProfile, recommendations: Recom
             type: 'task',
             urgency: 'medium',
             link: 'https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1900.htm',
-            actionLabel: '国税庁HPへ'
+            actionLabel: '国税庁HPへ',
+            category: 'startup'
+        });
+    }
+
+    // Business Subsidies & Grants (Sole Proprietor / Corporation)
+    if (profile.employmentStatus.includes('sole_proprietor') || profile.employmentStatus.includes('corporation')) {
+        // Import startupTasks dynamically to avoid circular dependency issues if possible, or assume it's safe.
+        // Since we are inside a function, we can rely on the imported module.
+        // Note: We need to ensure startupTasks is imported at the top of the file.
+
+        const businessBenefits = startupTasks.filter(task => task.category === 'benefit');
+
+        businessBenefits.forEach(task => {
+            recommendations.push({
+                id: `subsidy-${task.id}`,
+                title: task.title,
+                description: task.description,
+                type: 'benefit',
+                urgency: task.priority === 'high' ? 'high' : 'medium',
+                link: task.officialUrl || '/tools?tab=startup',
+                actionLabel: task.officialUrl ? '公式サイトへ' : '詳細へ',
+                requiredDocuments: task.requiredDocs,
+                details: {
+                    description: task.description,
+                    calculation: `最大 ${(task.benefitAmount || 0).toLocaleString()} 円`,
+                    requirements: '・事業計画書の作成が必要です\n・詳細は公募要領をご確認ください',
+                    applicationSteps: `1. 公募要領の確認\n2. 必要書類（${task.requiredDocs?.join('、') || '事業計画書など'}）の準備\n3. ${task.submitTo}へ申請`,
+                    officialLink: task.officialUrl
+                },
+                category: 'startup'
+            });
         });
     }
 }

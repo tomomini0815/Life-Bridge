@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Star, Plus, Pencil, Trash2, Calendar, FileText, Type } from 'lucide-react';
+import { Star, Plus, Pencil, Trash2, Calendar, FileText, Type, Clock, CheckCircle2, Circle, ChevronDown, ChevronUp, ChevronRight, Globe, Coins, Building2 } from 'lucide-react';
 import { TimelineEvent, TimelineStatus, TimelineScenario, timelineService, ICON_MAP } from '@/services/TimelineService';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,7 +10,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -31,6 +30,9 @@ export function LifeTimeline() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<TimelineEvent | null>(null);
     const [formData, setFormData] = useState<Partial<TimelineEvent>>({});
+
+    // State for task details expansion
+    const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
     useEffect(() => {
         loadEvents();
@@ -59,6 +61,8 @@ export function LifeTimeline() {
 
     const handleSave = () => {
         if (!formData.year || !formData.title || !formData.description || !formData.status || !formData.iconName) {
+            // Basic validation
+            alert('年、タイトル、詳細、ステータス、アイコンは必須です。');
             return;
         }
 
@@ -78,6 +82,13 @@ export function LifeTimeline() {
             timelineService.deleteEvent(id);
             loadEvents();
         }
+    };
+
+    // Mock handler for toggling task completion
+    const onToggleTask = (_eventId: string, taskId: string) => {
+        // In a real application, this would update the task's 'completed' status in the service
+        console.log('Toggled task:', taskId);
+        // For now, we'll just log and not change state, as the service doesn't support task updates directly yet.
     };
 
     return (
@@ -134,8 +145,7 @@ export function LifeTimeline() {
                                     "ml-16 md:ml-0 w-full md:w-[45%] bg-white/60 dark:bg-black/40 backdrop-blur-md p-5 rounded-2xl border border-white/40 dark:border-white/10 shadow-sm hover:shadow-lg transition-all duration-300 group/card",
                                     isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8",
                                     event.status === 'active' && "border-yellow-400/50 bg-yellow-50/30 dark:bg-yellow-900/10 ring-1 ring-yellow-400/30"
-                                )}
-                                >
+                                )}>
                                     <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover/card:opacity-100 transition-opacity">
                                         <button
                                             onClick={(e) => { e.stopPropagation(); handleOpenEdit(event); }}
@@ -174,9 +184,124 @@ export function LifeTimeline() {
                                         {event.title}
                                     </h3>
 
-                                    <p className="text-sm text-muted-foreground leading-relaxed">
+                                    <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                                         {event.description}
                                     </p>
+
+                                    {/* Tasks List */}
+                                    <div className="space-y-2">
+                                        {event.tasks && event.tasks.length > 0 && event.tasks.map((task) => (
+                                            <div key={task.id} className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-3 border border-slate-100 dark:border-slate-700/50">
+                                                <div className="flex items-start gap-3">
+                                                    <button
+                                                        onClick={() => onToggleTask(event.id, task.id)}
+                                                        className="mt-0.5 text-slate-400 hover:text-green-500 transition-colors shrink-0"
+                                                    >
+                                                        {task.completed ? (
+                                                            <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                                        ) : (
+                                                            <Circle className="w-5 h-5" />
+                                                        )}
+                                                    </button>
+                                                    <div className="flex-1 min-w-0">
+                                                        <div className="flex items-center justify-between gap-2">
+                                                            <span className={cn(
+                                                                "text-sm font-medium truncate",
+                                                                task.completed && "text-slate-400 line-through"
+                                                            )}>
+                                                                {task.title}
+                                                            </span>
+                                                            <div className="flex items-center gap-2 shrink-0">
+                                                                {task.deadline && (
+                                                                    <span className="text-[10px] text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-100 dark:border-amber-900/30 hidden sm:inline-block">
+                                                                        期限: {task.deadline}
+                                                                    </span>
+                                                                )}
+                                                                <button
+                                                                    onClick={() => setExpandedTaskId(expandedTaskId === task.id ? null : task.id)}
+                                                                    className="text-slate-400 hover:text-primary transition-colors p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+                                                                >
+                                                                    {expandedTaskId === task.id ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Details Accordion */}
+                                                        {expandedTaskId === task.id && (
+                                                            <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 animate-in fade-in slide-in-from-top-1">
+                                                                <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
+                                                                    {task.description}
+                                                                </p>
+
+                                                                <div className="flex flex-wrap gap-2 mb-4">
+                                                                    {task.estimatedTime && (
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] text-slate-600 dark:text-slate-300">
+                                                                            <Clock className="w-3 h-3" /> 所要時間: {task.estimatedTime}
+                                                                        </span>
+                                                                    )}
+                                                                    {task.isOnline && (
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-green-50 dark:bg-green-900/20 text-[10px] text-green-600 dark:text-green-400">
+                                                                            <Globe className="w-3 h-3" /> オンライン申請可
+                                                                        </span>
+                                                                    )}
+                                                                    {task.benefitAmount && (
+                                                                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded bg-yellow-50 dark:bg-yellow-900/20 text-[10px] text-yellow-600 dark:text-yellow-400 font-bold">
+                                                                            <Coins className="w-3 h-3" /> 給付額: {task.benefitAmount.toLocaleString()}円
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+
+                                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                    {/* Required Documents */}
+                                                                    {task.requiredDocs && task.requiredDocs.length > 0 && (
+                                                                        <div>
+                                                                            <p className="flex items-center gap-1 text-xs font-bold text-foreground mb-2">
+                                                                                <FileText className="w-3 h-3" /> 必要書類
+                                                                            </p>
+                                                                            <ul className="space-y-1">
+                                                                                {task.requiredDocs.map((doc, idx) => (
+                                                                                    <li key={idx} className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                                                        <span className="w-1 h-1 rounded-full bg-primary/50 shrink-0" />
+                                                                                        {doc}
+                                                                                    </li>
+                                                                                ))}
+                                                                            </ul>
+                                                                        </div>
+                                                                    )}
+
+                                                                    {/* Submit To / Method */}
+                                                                    {(task.submitTo || task.officialUrl) && (
+                                                                        <div>
+                                                                            <p className="flex items-center gap-1 text-xs font-bold text-foreground mb-2">
+                                                                                <Building2 className="w-3 h-3" /> 提出先・方法
+                                                                            </p>
+                                                                            <div className="bg-slate-50 dark:bg-slate-800/50 rounded p-2 border border-slate-100 dark:border-slate-700">
+                                                                                {task.submitTo && (
+                                                                                    <p className="text-xs text-muted-foreground">
+                                                                                        {task.submitTo}
+                                                                                    </p>
+                                                                                )}
+                                                                                {task.officialUrl && (
+                                                                                    <a
+                                                                                        href={task.officialUrl}
+                                                                                        target="_blank"
+                                                                                        rel="noopener noreferrer"
+                                                                                        className="flex items-center gap-1 text-[10px] text-blue-500 hover:underline mt-2"
+                                                                                    >
+                                                                                        公式サイトへ <ChevronRight className="w-3 h-3" />
+                                                                                    </a>
+                                                                                )}
+                                                                            </div>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         );
@@ -191,7 +316,6 @@ export function LifeTimeline() {
                 </p>
             </div>
 
-            {/* Edit/Add Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
@@ -200,7 +324,6 @@ export function LifeTimeline() {
                             あなたの人生のタイムラインに新しいページを追加しましょう。
                         </DialogDescription>
                     </DialogHeader>
-                    {/* ... (Existing Dialog Content) ... */}
                     <div className="grid gap-4 py-4">
                         <div className="grid gap-2">
                             <Label htmlFor="year" className="flex items-center gap-2">

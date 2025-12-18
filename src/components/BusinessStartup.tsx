@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { LifeEvent } from '@/types/lifeEvent';
 import { TaskItem } from './TaskItem';
 import { ProgressRing } from './ProgressRing';
 import { cn } from '@/lib/utils';
+import { profileService } from '@/services/ProfileService';
 import {
     Filter,
     Trophy,
@@ -32,7 +33,14 @@ type BusinessType = 'individual' | 'corporate';
 export function BusinessStartup({ event, completedTaskIds, onToggleTask }: BusinessStartupProps) {
     const [filter, setFilter] = useState<FilterType>('all');
     const [view, setView] = useState<ViewType>('list');
-    const [businessType, setBusinessType] = useState<BusinessType>('individual');
+    const [businessType, setBusinessType] = useState<BusinessType>(() => {
+        // Initialize based on user profile
+        const profile = profileService.getProfile();
+        // If user is corporation, default to corporate tab. 
+        // If user is sole proprietor, individual.
+        // If neither (or both?), default to individual unless explicit corporation.
+        return profile.employmentStatus.includes('corporation') ? 'corporate' : 'individual';
+    });
 
     // Individual business tasks: startup-1 to startup-5 (basic tasks) + startup-13 to startup-15 (subsidies)
     // Corporate business tasks: startup-6 to startup-12 (basic tasks) + startup-16 to startup-20 (subsidies)

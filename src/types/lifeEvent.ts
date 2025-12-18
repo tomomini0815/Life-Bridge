@@ -20,6 +20,7 @@ export interface Task {
   submitTo: string;
   isOnline: boolean;
   benefitAmount?: number;
+  benefitId?: string;
   completed: boolean;
   priority: 'high' | 'medium' | 'low';
   officialUrl?: string; // Link to actual government site or PDF

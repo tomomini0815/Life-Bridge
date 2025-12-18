@@ -2,6 +2,7 @@ import { FaBaby, FaBriefcase, FaGraduationCap, FaHeart, FaHome, FaStar, FaTrophy
 import React from 'react';
 
 import { GeminiService } from './GeminiService';
+import { Task } from '../types/lifeEvent';
 
 export type TimelineStatus = 'completed' | 'active' | 'future';
 export type TimelineScenario = 'current' | 'ideal';
@@ -10,10 +11,11 @@ export interface TimelineEvent {
     id: string;
     year: string;
     title: string;
-    iconName: string;
-    status: TimelineStatus;
     description: string;
+    status: TimelineStatus;
+    iconName: string;
     scenario: TimelineScenario;
+    tasks?: Task[];
 }
 
 export const ICON_MAP: Record<string, React.ElementType> = {

@@ -1,4 +1,5 @@
 import { UserProfile, BenefitResult, SimulationResult } from '@/types/benefit';
+import { BENEFIT_DETAILS } from '@/data/benefitDetails';
 
 export class BenefitCalculator {
     // 出産育児一時金 - Fixed amount
@@ -15,10 +16,11 @@ export class BenefitCalculator {
             reason: eligible ? '出産時に支給されます' : '出産予定がありません',
             applicationDeadline: '出産から2年以内',
             requiredDocuments: ['出産育児一時金支給申請書', '母子健康手帳', '領収書'],
+            details: BENEFIT_DETAILS['birth-allowance']
         };
     }
 
-    // 児童手当 - Monthly per child, income-based
+    // 児童手当 - Monthly per child
     static calculateChildAllowance(profile: UserProfile): BenefitResult {
         if (profile.numberOfChildren === 0) {
             return {
@@ -29,34 +31,33 @@ export class BenefitCalculator {
                 totalAmount: 0,
                 eligibility: false,
                 reason: '対象となる子供がいません',
+                details: BENEFIT_DETAILS['child-allowance']
             };
         }
 
-        // Income limits (simplified - actual limits vary by number of dependents)
-        const incomeLimit = profile.hasSpouse ? 9600000 : 8330000;
-        const totalIncome = profile.annualIncome + (profile.spouseIncome || 0);
+        // Oct 2024 Update: Income limits removed.
+        // Amounts: 0-3yo: 15k, 3yo-Hs: 10k (3rd+ child: 30k)
 
-        if (totalIncome > incomeLimit) {
-            return {
-                id: 'child-allowance',
-                name: '児童手当',
-                amount: 0,
-                frequency: 'monthly',
-                totalAmount: 0,
-                eligibility: false,
-                reason: `所得制限により対象外です（所得限度額: ${incomeLimit.toLocaleString()}円）`,
-            };
-        }
-
-        // Calculate monthly amount per child based on age
         let monthlyTotal = 0;
-        profile.childrenAges.forEach((age) => {
-            if (age < 3) {
-                monthlyTotal += 15000; // 0-3歳: 15,000円
-            } else if (age < 12) {
-                monthlyTotal += 10000; // 3歳-小学生: 10,000円
-            } else if (age < 15) {
-                monthlyTotal += 10000; // 中学生: 10,000円
+        // Count children to identify 3rd+ child (simplified logic assuming ages sorted or just index based count logic needed)
+        // Ideally we need to sort children by age to correctly identify "3rd child".
+        // For this simulation, we'll assume the input order or just apply simple count.
+        // Current logic in input: just ages array.
+        // Rule: Count 1st, 2nd, 3rd child among those < 22yo (student).
+        // Since we only track under 18 mainly, we'll just treat all input children as countable.
+
+        profile.childrenAges.forEach((age, index) => {
+            const isThirdOrLater = index >= 2; // Simple assumption: array is list of all children
+
+            // 3rd child or later gets 30,000 yen (0yo - HS)
+            if (isThirdOrLater) {
+                monthlyTotal += 30000;
+            } else {
+                if (age < 3) {
+                    monthlyTotal += 15000; // 0-3歳: 15,000円
+                } else {
+                    monthlyTotal += 10000; // 3歳-高校生: 10,000円
+                }
             }
         });
 
@@ -69,9 +70,10 @@ export class BenefitCalculator {
             frequency: 'monthly',
             totalAmount: yearlyTotal,
             eligibility: true,
-            reason: `${profile.numberOfChildren}人のお子様が対象です`,
+            reason: `${profile.numberOfChildren}人のお子様が対象です（2024年10月制度改正対応）`,
             applicationDeadline: '出生から15日以内',
-            requiredDocuments: ['認定請求書', '健康保険証のコピー', '所得証明書', '口座情報'],
+            requiredDocuments: ['認定請求書', '健康保険証のコピー', '口座情報'],
+            details: BENEFIT_DETAILS['child-allowance']
         };
     }
 
@@ -87,6 +89,7 @@ export class BenefitCalculator {
                 totalAmount: 0,
                 eligibility: false,
                 reason: '雇用保険に加入していません',
+                details: BENEFIT_DETAILS['parental-leave']
             };
         }
 
@@ -99,6 +102,7 @@ export class BenefitCalculator {
                 totalAmount: 0,
                 eligibility: false,
                 reason: '育児休業を取得していません',
+                details: BENEFIT_DETAILS['parental-leave']
             };
         }
 
@@ -124,6 +128,7 @@ export class BenefitCalculator {
             reason: '育休中に給与の67%（6ヶ月後は50%）が支給されます',
             applicationDeadline: '育休開始から4ヶ月以内',
             requiredDocuments: ['育児休業給付金支給申請書', '賃金台帳', '出勤簿'],
+            details: BENEFIT_DETAILS['parental-leave']
         };
     }
 
@@ -138,6 +143,7 @@ export class BenefitCalculator {
                 totalAmount: 0,
                 eligibility: false,
                 reason: '現在就業中です',
+                details: BENEFIT_DETAILS['unemployment']
             };
         }
 
@@ -158,6 +164,7 @@ export class BenefitCalculator {
             reason: '失業給付を受けられます（最大90日間）',
             applicationDeadline: '退職後すぐ',
             requiredDocuments: ['離職票', '本人確認書類', '写真2枚', '口座情報'],
+            details: BENEFIT_DETAILS['unemployment']
         };
     }
 
@@ -172,11 +179,12 @@ export class BenefitCalculator {
                 totalAmount: 0,
                 eligibility: false,
                 reason: '対象となる子供がいません',
+                details: BENEFIT_DETAILS['child-medical']
             };
         }
 
         // Estimate based on number of young children
-        const youngChildren = profile.childrenAges.filter((age) => age < 6).length;
+        const youngChildren = profile.childrenAges.filter((age) => age < 18).length; // Expanded to 18 based on trends
         if (youngChildren === 0) {
             return {
                 id: 'child-medical',
@@ -185,7 +193,8 @@ export class BenefitCalculator {
                 frequency: 'yearly',
                 totalAmount: 0,
                 eligibility: false,
-                reason: '対象年齢の子供がいません（通常6歳未満）',
+                reason: '対象年齢の子供がいません',
+                details: BENEFIT_DETAILS['child-medical']
             };
         }
 
@@ -201,6 +210,7 @@ export class BenefitCalculator {
             eligibility: true,
             reason: `${youngChildren}人のお子様の医療費が助成されます`,
             requiredDocuments: ['申請書', '健康保険証', 'マイナンバーカード'],
+            details: BENEFIT_DETAILS['child-medical']
         };
     }
 

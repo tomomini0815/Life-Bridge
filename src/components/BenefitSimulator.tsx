@@ -10,6 +10,8 @@ import {
     Briefcase,
     DollarSign,
     ChevronRight,
+    ChevronDown,
+    ChevronUp,
     Info,
     Save,
     RotateCcw
@@ -23,6 +25,7 @@ export function BenefitSimulator() {
 
     const [result, setResult] = useState<SimulationResult | null>(null);
     const [showComparison, setShowComparison] = useState(false);
+    const [expandedBenefit, setExpandedBenefit] = useState<string | null>(null);
 
     const handleInputChange = (field: keyof UserProfile, value: any) => {
         setProfile((prev) => ({
@@ -362,14 +365,111 @@ export function BenefitSimulator() {
                                                     <p className="text-2xl font-bold text-green-600 mb-2">
                                                         {formatCurrency(benefit.totalAmount)}
                                                     </p>
-                                                    <p className="text-xs text-muted-foreground mb-2">
+                                                    <p className="text-xs text-muted-foreground mb-3">
                                                         {benefit.reason}
                                                     </p>
-                                                    {benefit.applicationDeadline && (
-                                                        <p className="text-xs text-amber-600 flex items-center gap-1">
-                                                            <Info className="w-3 h-3" />
-                                                            申請期限: {benefit.applicationDeadline}
-                                                        </p>
+
+                                                    {benefit.details && (
+                                                        <div className="mt-3 pt-3 border-t border-border/50">
+                                                            <button
+                                                                onClick={() => setExpandedBenefit(expandedBenefit === benefit.id ? null : benefit.id)}
+                                                                className="flex items-center gap-1 text-xs font-bold text-primary hover:text-primary/80 transition-colors bg-transparent border-none p-0 cursor-pointer w-full justify-between"
+                                                            >
+                                                                <span>詳しく見る</span>
+                                                                {expandedBenefit === benefit.id ? (
+                                                                    <ChevronUp className="w-4 h-4" />
+                                                                ) : (
+                                                                    <ChevronDown className="w-4 h-4" />
+                                                                )}
+                                                            </button>
+
+                                                            {expandedBenefit === benefit.id && (
+                                                                <div className="mt-3 space-y-3 animate-in fade-in slide-in-from-top-1 duration-200">
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-foreground mb-1">概要</p>
+                                                                        <p className="text-xs text-muted-foreground leading-relaxed">
+                                                                            {benefit.details.description}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-foreground mb-1">計算式</p>
+                                                                        <p className="text-xs text-muted-foreground whitespace-pre-line bg-muted/50 p-2 rounded-md font-mono">
+                                                                            {benefit.details.calculation}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <p className="text-xs font-bold text-foreground mb-1">給付要件</p>
+                                                                        <p className="text-xs text-muted-foreground whitespace-pre-line">
+                                                                            {benefit.details.requirements}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    {/* Nested Accordion for Application Guide */}
+                                                                    <div className="pt-2">
+                                                                        <details className="group rounded-lg border border-border/50 bg-background/50 open:bg-background open:ring-1 open:ring-primary/20">
+                                                                            <summary className="flex cursor-pointer items-center justify-between p-3 text-xs font-bold text-foreground">
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary/10 text-primary">
+                                                                                        <Info className="h-3 w-3" />
+                                                                                    </span>
+                                                                                    申請手続きガイド（必要書類・手順）
+                                                                                </div>
+                                                                                <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
+                                                                            </summary>
+                                                                            <div className="px-3 pb-3 pt-0">
+                                                                                <div className="space-y-3 pt-2">
+                                                                                    {/* Required Documents */}
+                                                                                    {benefit.requiredDocuments && benefit.requiredDocuments.length > 0 && (
+                                                                                        <div>
+                                                                                            <p className="mb-2 text-xs font-bold text-foreground/80">📋 必要書類</p>
+                                                                                            <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                                                                                                {benefit.requiredDocuments.map((doc, idx) => (
+                                                                                                    <li key={idx} className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
+                                                                                                        <span className="h-1.5 w-1.5 rounded-full bg-primary/50" />
+                                                                                                        {doc}
+                                                                                                    </li>
+                                                                                                ))}
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    )}
+
+                                                                                    {/* Application Steps */}
+                                                                                    {benefit.details.applicationSteps && (
+                                                                                        <div>
+                                                                                            <p className="mb-1 text-xs font-bold text-foreground/80">📝 手続きの流れ</p>
+                                                                                            <p className="text-xs leading-relaxed text-muted-foreground bg-primary/5 p-2 rounded-md">
+                                                                                                {benefit.details.applicationSteps}
+                                                                                            </p>
+                                                                                        </div>
+                                                                                    )}
+                                                                                </div>
+                                                                            </div>
+                                                                        </details>
+                                                                    </div>
+
+                                                                    {benefit.applicationDeadline && (
+                                                                        <div className="flex items-start gap-2 text-amber-600 bg-amber-50 dark:bg-amber-900/10 p-2 rounded-md">
+                                                                            <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                                                                            <p className="text-xs">
+                                                                                <span className="font-bold">申請期限:</span> {benefit.applicationDeadline}
+                                                                            </p>
+                                                                        </div>
+                                                                    )}
+                                                                    {benefit.details.officialLink && (
+                                                                        <div className="pt-2">
+                                                                            <a
+                                                                                href={benefit.details.officialLink}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="text-xs text-blue-500 hover:underline flex items-center gap-1"
+                                                                            >
+                                                                                詳細（公式サイト）Base <ChevronRight className="w-3 h-3" />
+                                                                            </a>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+                                                        </div>
                                                     )}
                                                 </>
                                             ) : (

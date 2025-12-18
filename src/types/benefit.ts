@@ -1,3 +1,5 @@
+import { BenefitDetail } from '@/data/benefitDetails';
+
 export interface UserProfile {
     name?: string;
     annualIncome: number;
@@ -26,6 +28,7 @@ export interface BenefitResult {
     reason?: string; // Why eligible or not
     applicationDeadline?: string;
     requiredDocuments?: string[];
+    details?: BenefitDetail;
 }
 
 export interface SimulationResult {

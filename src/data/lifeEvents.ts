@@ -315,6 +315,110 @@ export const movingTasks: Task[] = [
   },
 ];
 
+
+
+export const pregnancyBirthTasks: Task[] = [
+  {
+    id: 'birth-allowance',
+    title: '出産育児一時金の申請',
+    description: '健康保険から出産費用の一部が支給されます。',
+    category: 'benefit',
+    deadline: '出産後2年以内',
+    estimatedTime: '15分',
+    requiredDocs: ['健康保険証', '母子手帳', '医療機関からの証明書'],
+    submitTo: '加入している健康保険組合または協会けんぽ',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+    benefitId: 'birth-allowance',
+  },
+  {
+    id: 'child-allowance',
+    title: '児童手当の申請',
+    description: '中学校卒業までの児童を養育している方に支給されます。',
+    category: 'benefit',
+    deadline: '出生から15日以内',
+    estimatedTime: '20分',
+    requiredDocs: ['申請者名義の預金通帳', '健康保険証', '印鑑'],
+    submitTo: '市区町村役場',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+    benefitId: 'child-allowance',
+  },
+  {
+    id: 'birth-registration',
+    title: '出生届の提出',
+    description: 'お子様の誕生を公的に登録する手続きです。',
+    category: 'government',
+    deadline: '出生から14日以内',
+    estimatedTime: '10分',
+    requiredDocs: ['出生証明書', '母子手帳', '届出人の印鑑'],
+    submitTo: '市区町村役場',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+  },
+  {
+    id: 'health-insurance',
+    title: '健康保険への加入',
+    description: 'お子様を親の健康保険の扶養に入れる手続きです。',
+    category: 'government',
+    deadline: '出生後速やかに',
+    estimatedTime: '15分',
+    requiredDocs: ['健康保険被扶養者（異動）届', '戸籍謄本または住民票'],
+    submitTo: '勤務先または健康保険組合',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+    benefitId: 'child-medical', // Closely related to child medical benefits
+  },
+];
+
+export const childcareTasks: Task[] = [
+  {
+    id: 'parental-leave',
+    title: '育児休業給付金の申請',
+    description: '育児休業中に給与の一部が支給されます。',
+    category: 'benefit',
+    deadline: '育児休業開始から4ヶ月以内',
+    estimatedTime: '30分',
+    requiredDocs: ['育児休業給付金支給申請書', '母子手帳', '賃金台帳'],
+    submitTo: 'ハローワーク（会社経由）',
+    isOnline: true,
+    completed: false,
+    priority: 'high',
+    benefitId: 'parental-leave',
+  },
+  {
+    id: 'nursery-application',
+    title: '保育園の入園申し込み',
+    description: 'お子様を保育園に入園させるための申し込みです。',
+    category: 'private',
+    deadline: '入園希望月の数ヶ月前',
+    estimatedTime: '1時間',
+    requiredDocs: ['入園申込書', '就労証明書', '住民票'],
+    submitTo: '市区町村役場',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+  },
+  {
+    id: 'child-medical-subsidy',
+    title: '小児医療費助成の申請',
+    description: 'お子様の医療費の一部または全額が助成されます。',
+    category: 'benefit',
+    deadline: '出生後速やかに',
+    estimatedTime: '15分',
+    requiredDocs: ['健康保険証', '印鑑', '住民票'],
+    submitTo: '市区町村役場',
+    isOnline: false,
+    completed: false,
+    priority: 'high',
+    benefitId: 'child-medical',
+  },
+];
+
 export const startupTasks: Task[] = [
   // Individual Business (個人事業主)
   {
