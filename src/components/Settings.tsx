@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaStickyNote, FaCalculator, FaBell, FaCalendarAlt } from 'react-icons/fa';
 
 interface MenuVisibilitySettings {
     marriage: boolean;
@@ -21,16 +22,16 @@ interface MenuVisibilitySettings {
 }
 
 const MENU_ITEMS = [
-    { id: 'marriage', label: '結婚', icon: '💒', category: 'events' },
-    { id: 'birth', label: '出産', icon: '👶', category: 'events' },
-    { id: 'job', label: '転職', icon: '💼', category: 'events' },
-    { id: 'startup', label: '起業', icon: '🚀', category: 'events' },
-    { id: 'moving', label: '引越し', icon: '🏠', category: 'events' },
-    { id: 'care', label: '介護', icon: '🤝', category: 'events' },
-    { id: 'memos', label: 'メモ帳', icon: '📝', category: 'tools' },
-    { id: 'benefits', label: '給付金シミュレーター', icon: '💰', category: 'tools' },
-    { id: 'reminders', label: 'リマインダー', icon: '🔔', category: 'tools' },
-    { id: 'timeline', label: 'ライフタイムライン', icon: '📅', category: 'tools' },
+    { id: 'marriage', label: '結婚', icon: <FaChurch />, category: 'events' },
+    { id: 'birth', label: '出産', icon: <FaBaby />, category: 'events' },
+    { id: 'job', label: '転職', icon: <FaBriefcase />, category: 'events' },
+    { id: 'startup', label: '起業', icon: <FaRocket />, category: 'events' },
+    { id: 'moving', label: '引越し', icon: <FaHome />, category: 'events' },
+    { id: 'care', label: '介護', icon: <FaHandHoldingHeart />, category: 'events' },
+    { id: 'memos', label: 'メモ帳', icon: <FaStickyNote />, category: 'tools' },
+    { id: 'benefits', label: '給付金シミュレーター', icon: <FaCalculator />, category: 'tools' },
+    { id: 'reminders', label: 'リマインダー', icon: <FaBell />, category: 'tools' },
+    { id: 'timeline', label: 'ライフタイムライン', icon: <FaCalendarAlt />, category: 'tools' },
 ] as const;
 
 const DEFAULT_SETTINGS: MenuVisibilitySettings = {
