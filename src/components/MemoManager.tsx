@@ -231,17 +231,26 @@ export function MemoManager() {
     return (
         <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-500 flex items-center justify-center">
-                        <StickyNote className="w-6 h-6 text-white" />
+            <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg">
+                            <StickyNote className="w-7 h-7 text-white" />
+                        </div>
+                        <div>
+                            <h1 className="text-3xl font-bold text-foreground font-display">メモ</h1>
+                            <p className="text-muted-foreground">アイデアやTODOを自由に記録</p>
+                        </div>
                     </div>
-                    <h1 className="text-2xl font-medium text-foreground">メモ</h1>
+                    <Button onClick={() => setIsCreating(true)} className="gap-2 bg-primary text-primary-foreground shadow-lg shadow-primary/20">
+                        <Plus className="w-5 h-5" />
+                        新しいメモ
+                    </Button>
                 </div>
             </div>
 
             {/* Search */}
-            <div className="max-w-2xl">
+            <div className="max-w-2xl px-1">
                 <div className="relative">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <input
