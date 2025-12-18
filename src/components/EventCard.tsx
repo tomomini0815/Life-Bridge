@@ -1,6 +1,7 @@
 import { LifeEvent } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
-import { ArrowRight, Heart, Baby, Briefcase, Rocket, Home, Handshake, Church } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart } from 'react-icons/fa';
 
 interface EventCardProps {
   event: LifeEvent;
@@ -36,16 +37,16 @@ const borderColorMap: Record<string, string> = {
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  marriage: Church,
-  birth: Baby,
-  job: Briefcase,
-  startup: Rocket,
-  moving: Home,
-  care: Handshake,
+  marriage: FaChurch,
+  birth: FaBaby,
+  job: FaBriefcase,
+  startup: FaRocket,
+  moving: FaHome,
+  care: FaHandHoldingHeart,
 };
 
 export function EventCard({ event, onClick, index }: EventCardProps) {
-  const IconComponent = iconMap[event.id] || Heart;
+  const IconComponent = iconMap[event.id] || FaHeart;
 
   return (
     <button
@@ -73,7 +74,7 @@ export function EventCard({ event, onClick, index }: EventCardProps) {
             colorMap[event.color]
           )}
         >
-          <IconComponent className="w-8 h-8 text-white" fill="currentColor" strokeWidth={0} />
+          <IconComponent className="w-8 h-8 text-white" />
           {/* Icon Glow Effect */}
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-0 group-hover:opacity-50 blur-md transition-opacity duration-300"
             style={{ background: `linear-gradient(135deg, ${colorMap[event.color].split(' ')[0].replace('from-', 'hsl(var(--event-')}` }} />
