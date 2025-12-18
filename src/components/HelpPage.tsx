@@ -32,7 +32,7 @@ export function HelpPage() {
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
             {/* Header */}
             <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
                     <HelpCircle className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -75,7 +75,7 @@ export function HelpPage() {
                 <Card className="border-border/50 shadow-sm hover:shadow-md transition-all glass-medium">
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <MessageCircle className="w-5 h-5 text-indigo-500" />
+                            <MessageCircle className="w-5 h-5 text-cyan-500" />
                             お問い合わせ
                         </CardTitle>
                         <CardDescription>解決しない場合はこちら</CardDescription>
@@ -84,7 +84,7 @@ export function HelpPage() {
                         <p className="text-sm text-muted-foreground">
                             機能の不具合やご要望、その他ご不明な点がございましたら、お気軽にお問い合わせください。
                         </p>
-                        <Button className="w-full gap-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-md">
+                        <Button className="w-full gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white shadow-md">
                             <Mail className="w-4 h-4" /> サポートへ連絡する
                         </Button>
                         <Button variant="outline" className="w-full gap-2">
@@ -100,7 +100,7 @@ export function HelpPage() {
             {/* FAQs */}
             <div className="space-y-4">
                 <div className="flex items-center gap-2 mb-2">
-                    <FileQuestion className="w-5 h-5 text-amber-500" />
+                    <FileQuestion className="w-5 h-5 text-cyan-500" />
                     <h2 className="text-xl font-bold text-foreground">よくある質問</h2>
                 </div>
 
