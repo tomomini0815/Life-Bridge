@@ -156,10 +156,10 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
                     top: `${activeIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
-                    width: isCollapsed ? '100%' : 'calc(100% + 1.5rem)',
+                    width: 'calc(100% + 1.5rem)',
                     borderRadius: "30px 0 0 30px",
-                    marginRight: isCollapsed ? '0' : '-1.5rem',
-                    paddingRight: isCollapsed ? '0' : '1.5rem',
+                    marginRight: '-1.5rem',
+                    paddingRight: '1.5rem',
                   }}
                 >
                   {/* Top Curve */}
@@ -226,10 +226,10 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
                     top: `${activeToolIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
-                    width: isCollapsed ? '100%' : 'calc(100% + 1.5rem)',
+                    width: 'calc(100% + 1.5rem)',
                     borderRadius: "30px 0 0 30px",
-                    marginRight: isCollapsed ? '0' : '-1.5rem',
-                    paddingRight: isCollapsed ? '0' : '1.5rem',
+                    marginRight: '-1.5rem',
+                    paddingRight: '1.5rem',
                   }}
                 >
                   {/* Top Curve */}
