@@ -163,6 +163,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
+                    left: isCollapsed ? "-0.5rem" : "0",
                   }}
                 >
                   {/* Top Curve */}
@@ -251,6 +252,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
+                    left: isCollapsed ? "-0.5rem" : "0",
                   }}
                 >
                   {/* Top Curve */}
