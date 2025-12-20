@@ -126,7 +126,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
   return (
     <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30" style={{ background: 'var(--sidebar-gradient)' }}>
-      <SidebarHeader className="p-6 pb-2">
+      <SidebarHeader className="p-4 pb-2">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/20 shadow-inner-glow flex-shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white group-data-[collapsible=icon]:w-5 group-data-[collapsible=icon]:h-5 transition-all duration-300">
