@@ -186,7 +186,10 @@ export function Settings() {
                                 <User className="w-5 h-5 text-primary" />
                                 <h2 className="text-xl font-bold text-foreground">プロフィール設定</h2>
                             </div>
-                            <Button onClick={handleSaveProfile} size="sm">保存</Button>
+                            <Button onClick={handleSaveProfile} size="sm">
+                                <Save className="w-4 h-4 mr-2" />
+                                保存
+                            </Button>
                         </div>
                         <Separator className="mb-6" />
 
@@ -364,10 +367,11 @@ export function Settings() {
                                                     <span className="text-xs text-muted-foreground whitespace-nowrap">{idx + 1}人目</span>
                                                     <Input
                                                         type="number"
-                                                        value={age}
+                                                        value={age === 0 ? '' : age}
                                                         onChange={(e) => {
                                                             const newAges = [...profile.childrenAges];
-                                                            newAges[idx] = parseInt(e.target.value) || 0;
+                                                            const val = e.target.value === '' ? 0 : parseInt(e.target.value);
+                                                            newAges[idx] = isNaN(val) ? 0 : val;
                                                             setProfile({ ...profile, childrenAges: newAges });
                                                         }}
                                                         className="h-8"
@@ -407,16 +411,16 @@ export function Settings() {
                 {/* Menu Visibility Settings */}
                 <TabsContent value="menu" className="space-y-6">
                     <div className="glass-medium rounded-2xl p-6 border border-border/50">
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                             <div>
                                 <h2 className="text-xl font-bold text-foreground">サイドメニュー表示設定</h2>
                                 <p className="text-sm text-muted-foreground">表示中の項目: {visibleCount} / {totalCount}</p>
                             </div>
-                            <div className="flex gap-2">
-                                <Button variant="outline" onClick={handleReset} className="gap-2">
+                            <div className="flex gap-2 justify-end">
+                                <Button variant="outline" onClick={handleReset} className="gap-2 h-8">
                                     <EyeOff className="w-4 h-4" /> リセット
                                 </Button>
-                                <Button onClick={handleSave} disabled={!hasChanges} className="gap-2 bg-primary">
+                                <Button onClick={handleSave} disabled={!hasChanges} className="gap-2 bg-primary h-8">
                                     <Save className="w-4 h-4" /> 保存
                                 </Button>
                             </div>
@@ -432,7 +436,7 @@ export function Settings() {
                                         <div
                                             key={item.id}
                                             className={cn(
-                                                "flex flex-col gap-2 p-3 rounded-xl transition-all duration-200 border",
+                                                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 border",
                                                 settings[item.id as keyof MenuVisibilitySettings]
                                                     ? "bg-primary/5 border-primary/10"
                                                     : "bg-muted/30 border-transparent opacity-60"
@@ -442,13 +446,11 @@ export function Settings() {
                                                 <span className="text-xl">{item.icon}</span>
                                                 <Label htmlFor={item.id} className="cursor-pointer whitespace-nowrap text-base">{item.label}</Label>
                                             </div>
-                                            <div className="flex justify-end w-full">
-                                                <Switch
-                                                    id={item.id}
-                                                    checked={settings[item.id as keyof MenuVisibilitySettings]}
-                                                    onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
-                                                />
-                                            </div>
+                                            <Switch
+                                                id={item.id}
+                                                checked={settings[item.id as keyof MenuVisibilitySettings]}
+                                                onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -461,7 +463,7 @@ export function Settings() {
                                         <div
                                             key={item.id}
                                             className={cn(
-                                                "flex flex-col gap-2 p-3 rounded-xl transition-all duration-200 border",
+                                                "flex items-center justify-between p-3 rounded-xl transition-all duration-200 border",
                                                 settings[item.id as keyof MenuVisibilitySettings]
                                                     ? "bg-primary/5 border-primary/10"
                                                     : "bg-muted/30 border-transparent opacity-60"
@@ -471,13 +473,11 @@ export function Settings() {
                                                 <span className="text-xl">{item.icon}</span>
                                                 <Label htmlFor={item.id} className="cursor-pointer whitespace-nowrap text-base">{item.label}</Label>
                                             </div>
-                                            <div className="flex justify-end w-full">
-                                                <Switch
-                                                    id={item.id}
-                                                    checked={settings[item.id as keyof MenuVisibilitySettings]}
-                                                    onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
-                                                />
-                                            </div>
+                                            <Switch
+                                                id={item.id}
+                                                checked={settings[item.id as keyof MenuVisibilitySettings]}
+                                                onCheckedChange={() => handleToggle(item.id as keyof MenuVisibilitySettings)}
+                                            />
                                         </div>
                                     ))}
                                 </div>
@@ -517,21 +517,23 @@ export function Settings() {
                 </TabsContent>
             </Tabs>
 
-            {hasChanges && (
-                <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
-                    <div className="glass-medium rounded-full px-6 py-3 border border-primary/20 shadow-xl flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                        <p className="text-sm font-medium">変更が保存されていません</p>
-                        <Button
-                            size="sm"
-                            onClick={handleSave}
-                            className="bg-primary hover:bg-primary/90 h-8"
-                        >
-                            保存
-                        </Button>
+            {
+                hasChanges && (
+                    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-slide-up">
+                        <div className="glass-medium rounded-full px-6 py-3 border border-primary/20 shadow-xl flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                            <p className="text-sm font-medium">変更が保存されていません</p>
+                            <Button
+                                size="sm"
+                                onClick={handleSave}
+                                className="bg-primary hover:bg-primary/90 h-8"
+                            >
+                                保存
+                            </Button>
+                        </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 }

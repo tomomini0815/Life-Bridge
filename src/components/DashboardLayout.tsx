@@ -160,21 +160,21 @@ export function DashboardLayout() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-11 h-11 [&_svg]:w-6 [&_svg]:h-6 text-slate-500"
                     onClick={() => handleSelectPage('reminders')}
                   >
-                    <Bell className="w-7 h-7" />
+                    <Bell />
                     <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive border border-background" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-11 h-11 [&_svg]:w-7 [&_svg]:h-7 text-slate-500"
                     onClick={() => handleSelectPage('settings')}
                   >
-                    <UserCog className="w-7 h-7" />
+                    <UserCog />
                   </Button>
-                  <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors [&_svg]:w-7 [&_svg]:h-7" />
+                  <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors [&_svg]:w-7 [&_svg]:h-7" />
                 </div>
 
                 {/* Desktop: Action Buttons */}
