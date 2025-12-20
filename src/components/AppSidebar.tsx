@@ -198,7 +198,12 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       }}
                     >
                       <item.icon
-                        className={cn("w-5 h-5 mr-3 transition-transform duration-300 flex-shrink-0", isActive ? "scale-110" : "group-hover:scale-110", item.color && !isActive && "opacity-90")}
+                        className={cn(
+                          "w-5 h-5 transition-transform duration-300 flex-shrink-0",
+                          !isCollapsed && "mr-3",
+                          isActive ? "scale-110" : "group-hover:scale-110",
+                          item.color && !isActive && "opacity-90"
+                        )}
                       />
 
                       {!isCollapsed && (
@@ -274,7 +279,14 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                         borderRadius: isActive && !isCollapsed ? "30px 0 0 30px" : "16px"
                       }}
                     >
-                      <item.icon className={cn("w-5 h-5 mr-3 transition-transform duration-300 flex-shrink-0", isActive ? "scale-110" : "group-hover:scale-110", item.color && !isActive && "opacity-90")} />
+                      <item.icon
+                        className={cn(
+                          "w-5 h-5 transition-transform duration-300 flex-shrink-0",
+                          !isCollapsed && "mr-3",
+                          isActive ? "scale-110" : "group-hover:scale-110",
+                          item.color && !isActive && "opacity-90"
+                        )}
+                      />
 
                       {!isCollapsed && (
                         <>
