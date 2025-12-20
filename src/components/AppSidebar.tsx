@@ -159,7 +159,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   )}
                   style={{
                     top: `${activeIndex * (isCollapsed ? 2 : 3)}rem`,
-                    width: 'calc(100% + 1.5rem)',
+                    width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
                     borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
@@ -248,7 +248,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   )}
                   style={{
                     top: `${activeToolIndex * (isCollapsed ? 2 : 3)}rem`,
-                    width: 'calc(100% + 1.5rem)',
+                    width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
                     borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
