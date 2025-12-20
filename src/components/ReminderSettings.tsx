@@ -76,7 +76,7 @@ export function ReminderSettings() {
                         <Bell className="w-7 h-7 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-bold text-foreground font-display">通知・サブスク管理</h1>
+                        <h1 className="text-3xl font-bold text-foreground font-display">サブスク管理</h1>
                         <p className="text-muted-foreground">リマインダーと定期支払いの管理</p>
                     </div>
                 </div>

@@ -151,7 +151,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           <SidebarGroupContent>
             <SidebarMenu className="relative gap-1.5">
               {/* Sliding Active Indicator */}
-              {activeIndex !== -1 && (
+              {activeIndex !== -1 && !isCollapsed && (
                 <div
                   className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
@@ -188,7 +188,9 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       className={cn(
                         "w-full justify-start h-12 pl-4 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
                         isActive
-                          ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
+                          ? isCollapsed
+                            ? "bg-white/15 backdrop-blur-md border border-white/20 text-white shadow-lg justify-center pl-0"
+                            : "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
                       )}
                       style={{
@@ -220,7 +222,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           <SidebarGroupContent>
             <SidebarMenu className="relative gap-1.5">
               {/* Sliding Active Indicator for Tools */}
-              {activeToolIndex !== -1 && (
+              {activeToolIndex !== -1 && !isCollapsed && (
                 <div
                   className="absolute left-0 z-10 w-[calc(100%+1.5rem)] h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
@@ -263,7 +265,9 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       className={cn(
                         "w-full justify-start h-12 pl-4 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
                         isActive
-                          ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
+                          ? isCollapsed
+                            ? "bg-white/15 backdrop-blur-md border border-white/20 text-white shadow-lg justify-center pl-0"
+                            : "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
                       )}
                       style={{
