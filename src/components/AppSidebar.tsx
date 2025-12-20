@@ -149,29 +149,40 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             Menu
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="relative gap-1.5">
+            <SidebarMenu className="relative gap-0">
               {/* Sliding Active Indicator */}
               {activeIndex !== -1 && (
                 <div
-                  className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
+                  className={cn(
+                    "absolute left-0 z-10 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none",
+                    isCollapsed ? "h-8" : "h-12"
+                  )}
                   style={{
-                    top: `${activeIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
+                    top: `${activeIndex * (isCollapsed ? 2 : 3)}rem`,
                     width: 'calc(100% + 1.5rem)',
-                    borderRadius: "30px 0 0 30px",
+                    borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
                   }}
                 >
                   {/* Top Curve */}
-                  <div className="absolute -top-[23px] right-0 w-6 h-6 bg-transparent">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
+                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                    <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {isCollapsed ? (
+                        <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
+                      ) : (
+                        <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
+                      )}
                     </svg>
                   </div>
                   {/* Bottom Curve */}
-                  <div className="absolute -bottom-[23px] right-0 w-6 h-6 bg-transparent">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
+                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                    <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {isCollapsed ? (
+                        <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />
+                      ) : (
+                        <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
+                      )}
                     </svg>
                   </div>
                 </div>
@@ -199,8 +210,9 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     >
                       <item.icon
                         className={cn(
-                          "w-5 h-5 transition-transform duration-300 flex-shrink-0",
-                          !isCollapsed && "mr-3",
+                          "transition-transform duration-300 flex-shrink-0",
+                          isCollapsed ? "w-4 h-4" : "w-5 h-5",
+                          !isCollapsed && "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
@@ -225,29 +237,40 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             Tools
           </SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="relative gap-1.5">
+            <SidebarMenu className="relative gap-0">
               {/* Sliding Active Indicator for Tools */}
               {activeToolIndex !== -1 && (
                 <div
-                  className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
+                  className={cn(
+                    "absolute left-0 z-10 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none",
+                    isCollapsed ? "h-8" : "h-12"
+                  )}
                   style={{
-                    top: `${activeToolIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
+                    top: `${activeToolIndex * (isCollapsed ? 2 : 3)}rem`,
                     width: 'calc(100% + 1.5rem)',
-                    borderRadius: "30px 0 0 30px",
+                    borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
                   }}
                 >
                   {/* Top Curve */}
-                  <div className="absolute -top-[23px] right-0 w-6 h-6 bg-transparent">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
+                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                    <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {isCollapsed ? (
+                        <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
+                      ) : (
+                        <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
+                      )}
                     </svg>
                   </div>
                   {/* Bottom Curve */}
-                  <div className="absolute -bottom-[23px] right-0 w-6 h-6 bg-transparent">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
+                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                    <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                      {isCollapsed ? (
+                        <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />
+                      ) : (
+                        <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
+                      )}
                     </svg>
                   </div>
                 </div>
@@ -281,8 +304,9 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     >
                       <item.icon
                         className={cn(
-                          "w-5 h-5 transition-transform duration-300 flex-shrink-0",
-                          !isCollapsed && "mr-3",
+                          "transition-transform duration-300 flex-shrink-0",
+                          isCollapsed ? "w-4 h-4" : "w-5 h-5",
+                          !isCollapsed && "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
