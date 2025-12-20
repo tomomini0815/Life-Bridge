@@ -187,7 +187,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       onClick={handleSelect}
                       tooltip={isCollapsed ? item.title : undefined}
                       className={cn(
-                        "w-full justify-start h-12 pl-4 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        "w-full h-12 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        isCollapsed ? "justify-center pl-0" : "justify-start pl-4",
                         isActive
                           ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
@@ -263,7 +264,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       onClick={handleSelect}
                       tooltip={isCollapsed ? item.title : undefined}
                       className={cn(
-                        "w-full justify-start h-12 pl-4 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        "w-full h-12 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        isCollapsed ? "justify-center pl-0" : "justify-start pl-4",
                         isActive
                           ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
