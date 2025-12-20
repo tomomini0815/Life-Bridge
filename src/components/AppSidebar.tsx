@@ -212,7 +212,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
                           isCollapsed ? "w-4 h-4" : "w-5 h-5",
-                          "mr-2",
+                          isCollapsed ? "mr-4" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
@@ -306,7 +306,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
                           isCollapsed ? "w-4 h-4" : "w-5 h-5",
-                          "mr-2",
+                          isCollapsed ? "mr-4" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
