@@ -155,7 +155,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 <div
                   className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
-                    top: `${activeIndex * (3 + 0.375) + 0.125}rem`, // 3rem (h-12) + 0.375rem (gap-1.5) + 0.125rem (offset)
+                    top: `${activeIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
                     width: 'calc(100% + 1.5rem)',
                     borderRadius: "30px 0 0 30px",
                     marginRight: '-1.5rem',
@@ -231,7 +231,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 <div
                   className="absolute left-0 z-10 h-12 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none"
                   style={{
-                    top: `${activeToolIndex * (3 + 0.375) + 0.125}rem`, // 3rem (h-12) + 0.375rem (gap-1.5) + 0.125rem (offset)
+                    top: `${activeToolIndex * (3 + 0.375)}rem`, // 3rem (h-12) + 0.375rem (gap-1.5)
                     width: 'calc(100% + 1.5rem)',
                     borderRadius: "30px 0 0 30px",
                     marginRight: '-1.5rem',
