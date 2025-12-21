@@ -74,7 +74,7 @@ export function BenefitSimulator() {
                             <p className="text-muted-foreground whitespace-nowrap">あなたが受け取れる給付金を試算</p>
                         </div>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 self-end">
                         <Button
                             variant="outline"
                             onClick={() => {
