@@ -63,16 +63,15 @@ export function BenefitSimulator() {
 
     return (
         <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
-            {/* Header */}
             <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg">
+                        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-400 to-emerald-500 flex items-center justify-center shadow-lg flex-shrink-0">
                             <Calculator className="w-7 h-7 text-white" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-bold text-foreground font-display">給付金シミュレーター</h1>
-                            <p className="text-muted-foreground">あなたが受け取れる給付金を試算</p>
+                            <h1 className="text-3xl font-bold text-foreground font-display whitespace-nowrap">給付金シミュレーター</h1>
+                            <p className="text-muted-foreground whitespace-nowrap">あなたが受け取れる給付金を試算</p>
                         </div>
                     </div>
                     <div className="flex gap-2">
