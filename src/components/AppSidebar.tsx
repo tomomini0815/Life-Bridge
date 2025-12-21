@@ -393,9 +393,11 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             </div>
           </div>
         ) : (
-          <div className="flex justify-center p-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer">
-              T
+          <div className="flex justify-center">
+            <div className="bg-white/10 rounded-2xl p-2 backdrop-blur-sm border border-white/10">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer">
+                T
+              </div>
             </div>
           </div>
         )}
