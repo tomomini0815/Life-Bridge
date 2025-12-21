@@ -42,7 +42,23 @@ interface AppSidebarProps {
 
 export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePage }: AppSidebarProps) {
   const { state } = useSidebar();
-  const isCollapsed = state === 'collapsed';
+
+  // Detect if we're on mobile
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // On mobile, always show expanded state
+  const isCollapsed = !isMobile && state === 'collapsed';
 
   // Initialize state from localStorage to avoid flash of incorrect content
   const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
