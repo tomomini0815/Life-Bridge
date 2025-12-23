@@ -10,6 +10,7 @@ import { BenefitSimulator } from '@/components/BenefitSimulator';
 import { ReminderSettings } from '@/components/ReminderSettings';
 import { Settings } from '@/components/Settings';
 import { HelpPage } from '@/components/HelpPage';
+import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
 import { Search, Bell, User, ScanLine, Sparkles, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
@@ -133,7 +134,7 @@ export function DashboardLayout() {
               <div className="flex items-center gap-2 flex-1">
                 {/* Mobile: Site Name */}
                 <div className="md:hidden flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
+                  <LifeBridgeLogo className="w-8 h-8" />
                   <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400">
                     LifeBridge
                   </span>

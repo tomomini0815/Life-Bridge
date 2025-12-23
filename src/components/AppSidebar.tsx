@@ -32,6 +32,7 @@ import {
 import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { LifeBridgeLogo } from './ui/LifeBridgeLogo';
 
 interface AppSidebarProps {
   activeEvent: LifeEventType | null;
@@ -144,14 +145,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
     <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30" style={{ background: 'var(--sidebar-gradient)' }}>
       <SidebarHeader className="p-4 pb-2">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/20 shadow-inner-glow flex-shrink-0 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white group-data-[collapsible=icon]:w-5 group-data-[collapsible=icon]:h-5 transition-all duration-300">
-              <path d="M12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20C16.4183 20 20 16.4183 20 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M15 12L12 9L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M12 9V15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" strokeOpacity="0.2" />
-            </svg>
-          </div>
+          <LifeBridgeLogo className="w-10 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300" />
           <div className="flex flex-col group-data-[collapsible=icon]:hidden transition-opacity duration-200">
             <span className="font-bold text-lg tracking-tight text-white">LifeBridge</span>
             <span className="text-[10px] text-white/70 font-medium uppercase tracking-wider">AI Partner</span>
