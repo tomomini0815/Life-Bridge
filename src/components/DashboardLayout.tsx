@@ -142,7 +142,7 @@ export function DashboardLayout() {
 
                 {/* Desktop: Sidebar Trigger + Search */}
                 <div className="hidden md:flex items-center gap-2 flex-1">
-                  <SidebarTrigger className="-ml-1 text-muted-foreground hover:text-foreground" />
+                  <SidebarTrigger className="-ml-4 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div className="relative w-96">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -183,19 +183,19 @@ export function DashboardLayout() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    className="relative hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10 [&_svg]:w-6 [&_svg]:h-6"
                     onClick={() => handleSelectPage('reminders')}
                   >
-                    <Bell className="w-7 h-7" />
+                    <Bell className="w-6 h-6" />
                     <span className="absolute top-2 right-2 w-2.5 h-2.5 rounded-full bg-destructive border-2 border-background animate-glow-pulse" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10"
+                    className="hover:bg-primary/10 hover:text-primary transition-colors rounded-full w-10 h-10 [&_svg]:w-7 [&_svg]:h-7"
                     onClick={() => handleSelectPage('settings')}
                   >
-                    <UserCog className="w-8 h-8" />
+                    <UserCog className="w-7 h-7" />
                   </Button>
                 </div>
               </div>

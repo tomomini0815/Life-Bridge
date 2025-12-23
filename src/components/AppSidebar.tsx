@@ -144,7 +144,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   return (
     <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30" style={{ background: 'var(--sidebar-gradient)' }}>
       <SidebarHeader className="p-4 pb-2">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
           <LifeBridgeLogo className="w-10 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300" />
           <div className="flex flex-col group-data-[collapsible=icon]:hidden transition-opacity duration-200">
             <span className="font-bold text-lg tracking-tight text-white">LifeBridge</span>
@@ -165,12 +165,12 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 <div
                   className={cn(
                     "absolute left-0 z-10 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none",
-                    isCollapsed ? "h-8" : "h-12"
+                    isCollapsed ? "h-12" : "h-12"
                   )}
                   style={{
-                    top: `${activeIndex * (isCollapsed ? 2 : 3)}rem`,
+                    top: `${activeIndex * (isCollapsed ? 3 : 3)}rem`,
                     width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
-                    borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
+                    borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
                     left: isCollapsed ? "-0.5rem" : "0",
@@ -210,20 +210,20 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       tooltip={isCollapsed ? item.title : undefined}
                       className={cn(
                         "w-full h-12 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
-                        isCollapsed ? "justify-center pl-0" : "justify-start pl-4",
+                        isCollapsed ? "justify-center pl-0 gap-0" : "justify-start pl-4",
                         isActive
                           ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
                       )}
                       style={{
-                        borderRadius: isActive && !isCollapsed ? "30px 0 0 30px" : "16px"
+                        borderRadius: isActive && !isCollapsed ? "40px 0 0 40px" : "16px"
                       }}
                     >
                       <item.icon
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
-                          isCollapsed ? "w-4 h-4" : "w-5 h-5",
-                          isCollapsed ? "mr-4" : "mr-2",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
+                          isCollapsed ? "mr-0" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
@@ -254,12 +254,12 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 <div
                   className={cn(
                     "absolute left-0 z-10 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none",
-                    isCollapsed ? "h-8" : "h-12"
+                    isCollapsed ? "h-12" : "h-12"
                   )}
                   style={{
-                    top: `${activeToolIndex * (isCollapsed ? 2 : 3)}rem`,
+                    top: `${activeToolIndex * (isCollapsed ? 3 : 3)}rem`,
                     width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
-                    borderRadius: isCollapsed ? "16px 0 0 16px" : "30px 0 0 30px",
+                    borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
                     left: isCollapsed ? "-0.5rem" : "0",
@@ -305,20 +305,20 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       tooltip={isCollapsed ? item.title : undefined}
                       className={cn(
                         "w-full h-12 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
-                        isCollapsed ? "justify-center pl-0" : "justify-start pl-4",
+                        isCollapsed ? "justify-center pl-0 gap-0" : "justify-start pl-4",
                         isActive
                           ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
                           : "text-sidebar-foreground hover:bg-sidebar-accent"
                       )}
                       style={{
-                        borderRadius: isActive && !isCollapsed ? "30px 0 0 30px" : "16px"
+                        borderRadius: isActive && !isCollapsed ? "40px 0 0 40px" : "16px"
                       }}
                     >
                       <item.icon
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
-                          isCollapsed ? "w-4 h-4" : "w-5 h-5",
-                          isCollapsed ? "mr-4" : "mr-2",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
+                          isCollapsed ? "mr-0" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
                         )}
