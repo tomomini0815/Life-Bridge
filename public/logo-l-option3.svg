@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- L Only - Option 3: Minimalist L with Heart -->
+  <defs>
+    <linearGradient id="mintL3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a7f3d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+    <filter id="softL3">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#mintL3)"/>
+  
+  <!-- Minimalist L with heart symbol -->
+  <g filter="url(#softL3)">
+    <!-- Clean L -->
+    <path d="M 160 140 L 160 370 L 360 370 L 360 320 L 210 320 L 210 140 Z" 
+          fill="white"/>
+    
+    <!-- Heart symbol in the corner -->
+    <path d="M 280 200 C 280 200 260 180 240 180 C 220 180 210 190 210 210 C 210 235 280 280 280 280 C 280 280 350 235 350 210 C 350 190 340 180 320 180 C 300 180 280 200 280 200 Z" 
+          fill="white" opacity="0.3"/>
+  </g>
+</svg>

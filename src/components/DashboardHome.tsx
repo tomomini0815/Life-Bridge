@@ -17,9 +17,16 @@ import {
   Heart,
   ChevronRight,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Church,
+  Baby,
+  Briefcase,
+  Rocket,
+  Home,
+  HandHeart,
+  ClipboardList,
+  Lightbulb
 } from 'lucide-react';
-import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart, FaClipboardList, FaLightbulb } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { LifeTimeline } from './LifeTimeline';
@@ -79,12 +86,12 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  marriage: FaChurch,
-  birth: FaBaby,
-  job: FaBriefcase,
-  startup: FaRocket,
-  moving: FaHome,
-  care: FaHandHoldingHeart,
+  marriage: Church,
+  birth: Baby,
+  job: Briefcase,
+  startup: Rocket,
+  moving: Home,
+  care: HandHeart,
 };
 
 export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
@@ -206,7 +213,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
         <div className="relative z-10 max-w-2xl">
           <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、{userName}さん</h1>
           <p className="text-muted-foreground text-sm leading-relaxed">
-            人生の転機は、新しい物語の始まりです。複雑な手続きは私に任せて、あなたらしい毎日を過ごしましょう。
+            人生の転機は、新しい物語の始まりです。複雑な手続きのナビゲートのお手伝いいたします。
           </p>
         </div>
       </div>
@@ -488,7 +495,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                     <div className="flex items-start gap-4 relative z-10">
                       <span className="text-3xl bg-white dark:bg-card rounded-xl p-2 shadow-sm group-hover:scale-110 transition-transform duration-300 flex items-center justify-center w-12 h-12">
                         {(() => {
-                          const Icon = iconMap[task.eventId] || FaHeart;
+                          const Icon = iconMap[task.eventId] || Heart;
                           return <Icon className="w-6 h-6 text-red-500" />;
                         })()}
                       </span>
@@ -525,7 +532,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
               {visibleLifeEvents.map((event) => {
                 const stats = allEvents.find(e => e.id === event.id)!;
                 const colors = colorMap[event.id];
-                const IconComponent = iconMap[event.id] || FaHeart;
+                const IconComponent = iconMap[event.id] || Heart;
 
                 return (
                   <button
@@ -596,7 +603,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
               <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
                 <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
                   <span className="bg-white p-2 rounded-lg shadow-sm">
-                    <FaClipboardList className="w-5 h-5 text-indigo-500" />
+                    <ClipboardList className="w-5 h-5 text-indigo-500" />
                   </span>
                   <span>
                     <strong className="text-foreground block mb-1">書類の準備は前日までに！</strong>
@@ -607,7 +614,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
               <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
                 <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
                   <span className="bg-white p-2 rounded-lg shadow-sm">
-                    <FaLightbulb className="w-5 h-5 text-amber-500" />
+                    <Lightbulb className="w-5 h-5 text-amber-500" />
                   </span>
                   <span>
                     <strong className="text-foreground block mb-1">オンライン申請を活用</strong>

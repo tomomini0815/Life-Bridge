@@ -1,7 +1,7 @@
+import { memo } from 'react';
 import { LifeEvent } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
-import { ArrowRight } from 'lucide-react';
-import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart } from 'react-icons/fa';
+import { ArrowRight, Church, Baby, Briefcase, Rocket, Home, HandHeart, Heart } from 'lucide-react';
 
 interface EventCardProps {
   event: LifeEvent;
@@ -37,16 +37,17 @@ const borderColorMap: Record<string, string> = {
 };
 
 const iconMap: Record<string, React.ElementType> = {
-  marriage: FaChurch,
-  birth: FaBaby,
-  job: FaBriefcase,
-  startup: FaRocket,
-  moving: FaHome,
-  care: FaHandHoldingHeart,
+  marriage: Church,
+  birth: Baby,
+  job: Briefcase,
+  startup: Rocket,
+  moving: Home,
+  care: HandHeart,
 };
 
-export function EventCard({ event, onClick, index }: EventCardProps) {
-  const IconComponent = iconMap[event.id] || FaHeart;
+// Memoized EventCard to prevent unnecessary re-renders
+export const EventCard = memo(function EventCard({ event, onClick, index }: EventCardProps) {
+  const IconComponent = iconMap[event.id] || Heart;
 
   return (
     <button
@@ -103,4 +104,5 @@ export function EventCard({ event, onClick, index }: EventCardProps) {
       </div>
     </button>
   );
-}
+});
+

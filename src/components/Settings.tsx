@@ -1,16 +1,15 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Eye, EyeOff, Save } from 'lucide-react';
+import { Settings as SettingsIcon, Eye, EyeOff, Save, Church, Baby, Briefcase, Rocket, Home, HandHeart, StickyNote, Calculator, Bell, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaStickyNote, FaCalculator, FaBell, FaCalendarAlt } from 'react-icons/fa';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { User, Moon, Sun, Trash2, RefreshCw, CreditCard, Users, Briefcase } from 'lucide-react';
+import { User, Moon, Sun, Trash2, RefreshCw, CreditCard, Users, Briefcase as BriefcaseIcon } from 'lucide-react';
 import { profileService } from '@/services/ProfileService';
 import { UserProfile } from '@/types/benefit';
 
@@ -28,16 +27,16 @@ interface MenuVisibilitySettings {
 }
 
 const MENU_ITEMS = [
-    { id: 'marriage', label: '結婚', icon: <FaChurch />, category: 'events' },
-    { id: 'birth', label: '出産', icon: <FaBaby />, category: 'events' },
-    { id: 'job', label: '転職', icon: <FaBriefcase />, category: 'events' },
-    { id: 'startup', label: '起業', icon: <FaRocket />, category: 'events' },
-    { id: 'moving', label: '引越し', icon: <FaHome />, category: 'events' },
-    { id: 'care', label: '介護', icon: <FaHandHoldingHeart />, category: 'events' },
-    { id: 'memos', label: 'メモ帳', icon: <FaStickyNote />, category: 'tools' },
-    { id: 'benefits', label: '給付金シミュレーター', icon: <FaCalculator />, category: 'tools' },
-    { id: 'reminders', label: 'リマインダー', icon: <FaBell />, category: 'tools' },
-    { id: 'timeline', label: 'ライフタイムライン', icon: <FaCalendarAlt />, category: 'tools' },
+    { id: 'marriage', label: '結婚', icon: <Church className="w-4 h-4" />, category: 'events' },
+    { id: 'birth', label: '出産', icon: <Baby className="w-4 h-4" />, category: 'events' },
+    { id: 'job', label: '転職', icon: <Briefcase className="w-4 h-4" />, category: 'events' },
+    { id: 'startup', label: '起業', icon: <Rocket className="w-4 h-4" />, category: 'events' },
+    { id: 'moving', label: '引越し', icon: <Home className="w-4 h-4" />, category: 'events' },
+    { id: 'care', label: '介護', icon: <HandHeart className="w-4 h-4" />, category: 'events' },
+    { id: 'memos', label: 'メモ帳', icon: <StickyNote className="w-4 h-4" />, category: 'tools' },
+    { id: 'benefits', label: '給付金シミュレーター', icon: <Calculator className="w-4 h-4" />, category: 'tools' },
+    { id: 'reminders', label: 'リマインダー', icon: <Bell className="w-4 h-4" />, category: 'tools' },
+    { id: 'timeline', label: 'ライフタイムライン', icon: <Calendar className="w-4 h-4" />, category: 'tools' },
 ] as const;
 
 const DEFAULT_SETTINGS: MenuVisibilitySettings = {
@@ -226,7 +225,7 @@ export function Settings() {
 
                                 <div className="grid gap-2">
                                     <Label htmlFor="employment" className="flex items-center gap-2">
-                                        <Briefcase className="w-4 h-4" /> 雇用形態（複数選択可）
+                                        <BriefcaseIcon className="w-4 h-4" /> 雇用形態（複数選択可）
                                     </Label>
                                     <div className="grid grid-cols-2 gap-2">
                                         {[
@@ -273,7 +272,7 @@ export function Settings() {
                             {(profile.employmentStatus.includes('sole_proprietor') || profile.employmentStatus.includes('corporation')) && (
                                 <div className="grid gap-4 p-4 rounded-xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 animate-fade-in">
                                     <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400 font-medium mb-2">
-                                        <Briefcase className="w-4 h-4" /> 事業詳細設定
+                                        <BriefcaseIcon className="w-4 h-4" /> 事業詳細設定
                                     </div>
 
                                     <div className="grid md:grid-cols-1 gap-6">

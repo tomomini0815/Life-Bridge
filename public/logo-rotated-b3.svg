@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rotated B as Bridge - Option 3: Double Arch -->
+  <defs>
+    <linearGradient id="rotatedMint3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a7f3d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+    <filter id="rotatedGlow3">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#rotatedMint3)"/>
+  
+  <g filter="url(#rotatedGlow3)">
+    <!-- L pillar -->
+    <path d="M 120 140 L 120 350 L 200 350 L 200 310 L 160 310 L 160 140 Z" fill="white"/>
+    
+    <!-- B rotated to form double bridge arches -->
+    <!-- Upper arch (smaller bump of B) -->
+    <path d="M 200 200 Q 256 160 312 200 L 312 220 Q 256 180 200 220 Z" fill="white"/>
+    
+    <!-- Lower arch (larger bump of B) -->
+    <path d="M 200 260 Q 256 210 312 260 L 312 285 Q 256 235 200 285 Z" fill="white"/>
+    
+    <!-- Horizontal beam connecting arches -->
+    <rect x="200" y="240" width="112" height="15" fill="white" opacity="0.8"/>
+    
+    <!-- Right pillar -->
+    <rect x="312" y="140" width="40" height="170" rx="5" fill="white"/>
+    
+    <!-- Support cables -->
+    <line x1="230" y1="200" x2="230" y2="240" stroke="white" stroke-width="4" opacity="0.5"/>
+    <line x1="256" y1="180" x2="256" y2="240" stroke="white" stroke-width="4" opacity="0.5"/>
+    <line x1="282" y1="200" x2="282" y2="240" stroke="white" stroke-width="4" opacity="0.5"/>
+  </g>
+</svg>

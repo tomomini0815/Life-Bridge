@@ -12,9 +12,17 @@ import {
   FileText,
   ListTodo,
   Clock,
-  ArrowLeft
+  ArrowLeft,
+  Church,
+  Baby,
+  Briefcase,
+  Rocket,
+  Home,
+  HandHeart,
+  Heart,
+  Landmark,
+  Building
 } from 'lucide-react';
-import { FaChurch, FaBaby, FaBriefcase, FaRocket, FaHome, FaHandHoldingHeart, FaHeart, FaLandmark, FaCoins, FaBuilding } from 'react-icons/fa';
 import { Button } from '@/components/ui/button';
 
 interface EventDashboardProps {
@@ -27,12 +35,12 @@ type FilterType = 'all' | 'government' | 'benefit' | 'private';
 type ViewType = 'list' | 'timeline';
 
 const iconMap: Record<string, React.ElementType> = {
-  marriage: FaChurch,
-  birth: FaBaby,
-  job: FaBriefcase,
-  startup: FaRocket,
-  moving: FaHome,
-  care: FaHandHoldingHeart,
+  marriage: Church,
+  birth: Baby,
+  job: Briefcase,
+  startup: Rocket,
+  moving: Home,
+  care: HandHeart,
 };
 
 export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventDashboardProps) {
@@ -66,9 +74,9 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
 
   const filters: { value: FilterType; label: React.ReactNode }[] = [
     { value: 'all', label: 'すべて' },
-    { value: 'government', label: <span className="flex items-center gap-2"><FaLandmark /> 行政</span> },
-    { value: 'benefit', label: <span className="flex items-center gap-2"><FaCoins /> 給付金</span> },
-    { value: 'private', label: <span className="flex items-center gap-2"><FaBuilding /> 民間</span> },
+    { value: 'government', label: <span className="flex items-center gap-2"><Landmark className="w-4 h-4" /> 行政</span> },
+    { value: 'benefit', label: <span className="flex items-center gap-2"><Coins className="w-4 h-4" /> 給付金</span> },
+    { value: 'private', label: <span className="flex items-center gap-2"><Building className="w-4 h-4" /> 民間</span> },
   ];
 
   return (
@@ -79,7 +87,7 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
         <div className="relative z-10 flex items-start gap-6">
           <div className="w-20 h-20 rounded-3xl gradient-warm flex items-center justify-center text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
             {(() => {
-              const Icon = iconMap[event.id] || FaHeart;
+              const Icon = iconMap[event.id] || Heart;
               return <Icon className="w-10 h-10 text-white" />;
             })()}
           </div>

@@ -1,0 +1,28 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- L Only - Option 2: Stylized L forming a Bridge -->
+  <defs>
+    <linearGradient id="mintL2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5eead4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadowL2">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#mintL2)"/>
+  
+  <!-- L shaped as a bridge structure -->
+  <g filter="url(#shadowL2)">
+    <!-- Vertical pillar -->
+    <rect x="150" y="130" width="70" height="280" rx="10" fill="white"/>
+    
+    <!-- Horizontal bridge deck -->
+    <rect x="150" y="350" width="240" height="60" rx="10" fill="white"/>
+    
+    <!-- Bridge cables/supports -->
+    <path d="M 220 180 L 340 350" stroke="white" stroke-width="8" opacity="0.4"/>
+    <path d="M 220 220 L 320 350" stroke="white" stroke-width="8" opacity="0.4"/>
+    <path d="M 220 260 L 300 350" stroke="white" stroke-width="8" opacity="0.4"/>
+  </g>
+</svg>

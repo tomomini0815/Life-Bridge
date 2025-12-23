@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Grownest Style - Clean Version -->
+  <defs>
+    <linearGradient id="grownestMint3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a7f3d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#grownestMint3)"/>
+  
+  <g transform="translate(256, 270)">
+    <!-- Top decorative circles -->
+    <circle cx="-100" cy="-90" r="11" fill="white"/>
+    <circle cx="-30" cy="-100" r="13" fill="white"/>
+    <circle cx="30" cy="-100" r="13" fill="white"/>
+    <circle cx="100" cy="-90" r="11" fill="white"/>
+    
+    <!-- Three-arch bridge structure -->
+    <!-- Left arch with pillar -->
+    <rect x="-140" y="-50" width="35" height="70" rx="3" fill="white"/>
+    <path d="M -140 -50 Q -122.5 -70 -105 -50" stroke="white" stroke-width="35" fill="none" stroke-linecap="round"/>
+    <rect x="-105" y="-50" width="35" height="70" rx="3" fill="white"/>
+    
+    <!-- Center arch with pillar (larger) -->
+    <rect x="-50" y="-60" width="35" height="80" rx="3" fill="white"/>
+    <path d="M -50 -60 Q 0 -90 50 -60" stroke="white" stroke-width="40" fill="none" stroke-linecap="round"/>
+    <rect x="15" y="-60" width="35" height="80" rx="3" fill="white"/>
+    
+    <!-- Right arch with pillar -->
+    <rect x="70" y="-50" width="35" height="70" rx="3" fill="white"/>
+    <path d="M 70 -50 Q 87.5 -70 105 -50" stroke="white" stroke-width="35" fill="none" stroke-linecap="round"/>
+    <rect x="105" y="-50" width="35" height="70" rx="3" fill="white"/>
+    
+    <!-- Bridge deck -->
+    <rect x="-140" y="15" width="280" height="22" rx="5" fill="white"/>
+  </g>
+</svg>

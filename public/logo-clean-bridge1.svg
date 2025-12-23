@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Clean Arch Bridge - Style 1 -->
+  <defs>
+    <linearGradient id="cleanMint1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ee7b7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+    <filter id="cleanShadow1">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#cleanMint1)"/>
+  
+  <g filter="url(#cleanShadow1)">
+    <!-- Main arch -->
+    <path d="M 120 240 Q 256 120 392 240" 
+          stroke="white" stroke-width="35" fill="none" stroke-linecap="round"/>
+    
+    <!-- Bridge deck (horizontal beam) -->
+    <rect x="100" y="230" width="312" height="30" rx="5" fill="white"/>
+    
+    <!-- Left support pillar -->
+    <path d="M 140 240 L 120 260 L 120 280 L 160 280 L 160 260 Z" fill="white"/>
+    
+    <!-- Right support pillar -->
+    <path d="M 372 240 L 352 260 L 352 280 L 392 280 L 392 260 Z" fill="white"/>
+  </g>
+</svg>

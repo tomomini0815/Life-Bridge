@@ -1,4 +1,4 @@
-import { FaBaby, FaBriefcase, FaGraduationCap, FaHeart, FaHome, FaStar, FaTrophy, FaUsers, FaPlane, FaCar, FaBuilding, FaChurch } from 'react-icons/fa';
+import { Baby, Briefcase, GraduationCap, Heart, Home, Star, Trophy, Users, Plane, Car, Building, Church } from 'lucide-react';
 import React from 'react';
 
 import { GeminiService } from './GeminiService';
@@ -19,17 +19,17 @@ export interface TimelineEvent {
 }
 
 export const ICON_MAP: Record<string, React.ElementType> = {
-    'graduation': FaGraduationCap,
-    'job': FaBriefcase,
-    'marriage': FaChurch,
-    'home': FaHome,
-    'baby': FaBaby,
-    'star': FaStar,
-    'trophy': FaTrophy,
-    'users': FaUsers,
-    'travel': FaPlane,
-    'car': FaCar,
-    'building': FaBuilding
+    'graduation': GraduationCap,
+    'job': Briefcase,
+    'marriage': Church,
+    'home': Home,
+    'baby': Baby,
+    'star': Star,
+    'trophy': Trophy,
+    'users': Users,
+    'travel': Plane,
+    'car': Car,
+    'building': Building
 };
 
 const STORAGE_KEY = 'life-bridge-timeline';

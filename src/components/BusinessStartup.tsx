@@ -16,8 +16,9 @@ import {
     Rocket,
     User,
     Building2,
+    Landmark,
+    Building,
 } from 'lucide-react';
-import { FaRocket, FaLandmark, FaCoins, FaBuilding } from 'react-icons/fa';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface BusinessStartupProps {
@@ -86,9 +87,9 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
 
     const filters: { value: FilterType; label: React.ReactNode }[] = [
         { value: 'all', label: 'すべて' },
-        { value: 'government', label: <span className="flex items-center gap-2"><FaLandmark /> 行政</span> },
-        { value: 'benefit', label: <span className="flex items-center gap-2"><FaCoins /> 給付金</span> },
-        { value: 'private', label: <span className="flex items-center gap-2"><FaBuilding /> 民間</span> },
+        { value: 'government', label: <span className="flex items-center gap-2"><Landmark className="w-4 h-4" /> 行政</span> },
+        { value: 'benefit', label: <span className="flex items-center gap-2"><Coins className="w-4 h-4" /> 給付金</span> },
+        { value: 'private', label: <span className="flex items-center gap-2"><Building className="w-4 h-4" /> 民間</span> },
     ];
 
     return (
@@ -98,7 +99,7 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10 flex items-start gap-4 sm:gap-6">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl gradient-warm flex items-center justify-center text-3xl sm:text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0">
-                        <FaRocket className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                        <Rocket className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
                     </div>
                     <div className="flex-1">
                         <h1 className="text-3xl font-bold text-foreground mb-2 font-display">{event.title}</h1>

@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Vibrant mint green gradient background with subtle radial overlay -->
+  <circle cx="256" cy="256" r="256" fill="url(#vibrantMint)"/>
+  <circle cx="256" cy="256" r="256" fill="url(#radialOverlay)" opacity="0.3"/>
+  
+  <defs>
+    <linearGradient id="vibrantMint" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7FFFD4;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#5FD4A8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#40E0D0;stop-opacity:1" />
+    </linearGradient>
+    
+    <radialGradient id="radialOverlay" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFFFFF;stop-opacity:0.2" />
+      <stop offset="100%" style="stop-color:#000000;stop-opacity:0.1" />
+    </radialGradient>
+    
+    <!-- Shadow for depth -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  
+  <!-- Connected LB letters as one unified shape -->
+  <g filter="url(#shadow)">
+    <!-- Combined L and B path - they share the vertical stem creating a seamless connection -->
+    <path d="M 110 130 L 110 382 L 210 382 L 210 330 L 160 330 L 160 130 Z 
+             M 160 130 L 160 382 L 260 382 C 290 382 310 362 310 332 L 310 295 C 310 273 300 260 280 252 C 300 244 310 231 310 209 L 310 180 C 310 150 290 130 260 130 Z 
+             M 210 180 L 260 180 C 275 180 285 190 285 205 L 285 225 C 285 240 275 250 260 250 L 210 250 Z 
+             M 210 285 L 260 285 C 275 285 285 295 285 310 L 285 340 C 285 355 275 365 260 365 L 210 365 Z" 
+          fill="white" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  </g>
+</svg>

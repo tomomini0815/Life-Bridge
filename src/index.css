@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Outfit:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -298,6 +298,26 @@
     animation: border-spin 3s linear infinite;
   }
 
+  .animate-gradient-x {
+    background-size: 200% 200%;
+    animation: gradient-x 3s ease infinite;
+  }
+
+  .animate-scroll {
+    animation: scroll 2s ease-in-out infinite;
+  }
+
+  .animate-draw {
+    stroke-dasharray: 200;
+    stroke-dashoffset: 200;
+    animation: draw 1s ease-out forwards;
+  }
+
+  .animate-flow {
+    stroke-dasharray: 5 5;
+    animation: flow 2s linear infinite;
+  }
+
   /* Hover Effects */
   .hover-lift {
     @apply transition-all duration-300;
@@ -417,6 +437,38 @@
   }
 }
 
+@keyframes gradient-x {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  80% {
+    transform: translateY(12px);
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
 /* Stagger animation delays */
 .stagger-1 {
   animation-delay: 0.1s;
@@ -448,4 +500,41 @@
 
 .stagger-8 {
   animation-delay: 0.8s;
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flow {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: 10;
+  }
+}
+
+/* Smooth gradient animation for hero background */
+@keyframes gradient-slow {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-slow {
+  background-size: 200% 200%;
+  animation: gradient-slow 15s ease infinite;
+  will-change: background-position;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
