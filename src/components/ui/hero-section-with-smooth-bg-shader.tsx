@@ -122,9 +122,7 @@ export function HeroSection({
             >
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3 group cursor-pointer">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center shadow-lg shadow-teal-500/30 group-hover:shadow-xl group-hover:shadow-teal-500/50 transition-all duration-300 group-hover:scale-110 p-2">
-                            <LifeBridgeLogo className="w-full h-full" />
-                        </div>
+                        <LifeBridgeLogo className="w-12 h-12 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110" />
                         <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
                             LifeBridge
                         </span>
