@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { Subscription, SUBSCRIPTION_CATEGORIES, SubscriptionCategory } from '@/types/subscription';
-import { Plus, Trash2, Edit2, AlertTriangle, TrendingUp, PieChart, ExternalLink, Calendar as CalendarIcon, Wallet } from 'lucide-react';
+import { Plus, Trash2, Edit2, AlertTriangle, TrendingUp, PieChart, ExternalLink, Calendar as CalendarIcon, Wallet, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
@@ -9,11 +9,36 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { subscriptionService } from '@/services/SubscriptionService';
+import { notificationService } from '@/services/NotificationService';
 
 export function SubscriptionManager() {
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
+    const [reminderSettings, setReminderSettings] = useState<number[]>([0, 1, 3]); // Default: Today, Yesterday, 3 days before
+
+    // Reset reminders when modal opens/closes or editing changes
+    useEffect(() => {
+        if (isModalOpen) {
+            if (editingSubscription && editingSubscription.reminderDays) {
+                setReminderSettings(editingSubscription.reminderDays);
+            } else if (editingSubscription) {
+                // Default for existing subs without settings
+                setReminderSettings([0, 1, 3]);
+            } else {
+                // Default for new subs
+                setReminderSettings([0, 1, 3]);
+            }
+        }
+    }, [isModalOpen, editingSubscription]);
+
+    const toggleReminder = (day: number) => {
+        setReminderSettings(prev =>
+            prev.includes(day)
+                ? prev.filter(d => d !== day)
+                : [...prev, day]
+        );
+    };
 
     // Initial load and event listener
     useEffect(() => {
@@ -23,11 +48,43 @@ export function SubscriptionManager() {
             setSubscriptions(e.detail);
         };
 
+        const handleNavigate = (e: CustomEvent<{ subscriptionId: string }>) => {
+            const sub = subscriptionService.getSubscriptions().find(s => s.id === e.detail.subscriptionId);
+            if (sub) {
+                setEditingSubscription(sub);
+                setIsModalOpen(true);
+            }
+        };
+
         window.addEventListener('subscriptionsChanged', handleChange as EventListener);
+        window.addEventListener('navigate-to-subscription', handleNavigate as EventListener);
+
         return () => {
             window.removeEventListener('subscriptionsChanged', handleChange as EventListener);
+            window.removeEventListener('navigate-to-subscription', handleNavigate as EventListener);
         };
     }, []);
+
+    const handleTestNotification = async () => {
+        const granted = await notificationService.requestPermission();
+        if (granted) {
+            try {
+                notificationService.sendTestNotification();
+                toast.success('テスト通知を送信しました', {
+                    description: '通知音も鳴るかご確認ください（OSの音声設定による）'
+                });
+            } catch (e) {
+                console.error('Notification failed:', e);
+                toast.error('通知の送信に失敗しました', {
+                    description: 'ブラウザのエラーが発生しました'
+                });
+            }
+        } else {
+            toast.error('通知が許可されていません', {
+                description: 'ブラウザの設定で通知を許可してください'
+            });
+        }
+    };
 
     // Stats Calculation
     const stats = useMemo(() => {
@@ -73,6 +130,7 @@ export function SubscriptionManager() {
             nextPaymentDate: formData.get('nextPaymentDate') as string,
             category: formData.get('category') as SubscriptionCategory,
             isEssential: formData.get('isEssential') === 'on',
+            reminderDays: reminderSettings,
         };
 
         if (editingSubscription) {
@@ -152,115 +210,149 @@ export function SubscriptionManager() {
             {/* Action Bar */}
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">登録済みサブスクリプション</h2>
-                <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                    <DialogTrigger asChild>
-                        <Button
-                            onClick={openAddModal}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all"
-                        >
-                            <Plus className="w-4 h-4 mr-2" /> 追加する
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px] glass-medium">
-                        <DialogHeader>
-                            <DialogTitle>
-                                {editingSubscription ? 'サブスクリプションを編集' : 'サブスクリプションを追加'}
-                            </DialogTitle>
-                        </DialogHeader>
-                        <form onSubmit={handleSubmit} className="space-y-4 py-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="name">サービス名</Label>
-                                <Input
-                                    id="name"
-                                    name="name"
-                                    required
-                                    placeholder="例: Netflix"
-                                    className="bg-white/50"
-                                    defaultValue={editingSubscription?.name}
-                                />
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleTestNotification}
+                        className="bg-background hover:bg-muted border-primary/20 hover:border-primary/50 text-foreground"
+                    >
+                        <Bell className="w-4 h-4 mr-2 text-primary" /> 通知テスト
+                    </Button>
+                    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+                        <DialogTrigger asChild>
+                            <Button
+                                onClick={openAddModal}
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all"
+                            >
+                                <Plus className="w-4 h-4 mr-2" /> 追加する
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px] glass-medium">
+                            <DialogHeader>
+                                <DialogTitle>
+                                    {editingSubscription ? 'サブスクリプションを編集' : 'サブスクリプションを追加'}
+                                </DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleSubmit} className="space-y-4 py-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="amount">金額</Label>
+                                    <Label htmlFor="name">サービス名</Label>
                                     <Input
-                                        id="amount"
-                                        name="amount"
-                                        type="number"
+                                        id="name"
+                                        name="name"
                                         required
-                                        placeholder="1000"
+                                        placeholder="例: Netflix"
                                         className="bg-white/50"
-                                        defaultValue={editingSubscription?.amount}
+                                        defaultValue={editingSubscription?.name}
                                     />
                                 </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="amount">金額</Label>
+                                        <Input
+                                            id="amount"
+                                            name="amount"
+                                            type="number"
+                                            required
+                                            placeholder="1000"
+                                            className="bg-white/50"
+                                            defaultValue={editingSubscription?.amount}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="currency">通貨</Label>
+                                        <Select name="currency" defaultValue={editingSubscription?.currency || "JPY"}>
+                                            <SelectTrigger className="bg-white/50">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="JPY">JPY (¥)</SelectItem>
+                                                <SelectItem value="USD">USD ($)</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="billingCycle">支払いサイクル</Label>
+                                        <Select name="billingCycle" defaultValue={editingSubscription?.billingCycle || "monthly"}>
+                                            <SelectTrigger className="bg-white/50">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="monthly">月払い</SelectItem>
+                                                <SelectItem value="yearly">年払い</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="nextPaymentDate">次回更新日</Label>
+                                        <Input
+                                            id="nextPaymentDate"
+                                            name="nextPaymentDate"
+                                            type="date"
+                                            required
+                                            className="bg-white/50"
+                                            defaultValue={editingSubscription?.nextPaymentDate}
+                                        />
+                                    </div>
+                                </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="currency">通貨</Label>
-                                    <Select name="currency" defaultValue={editingSubscription?.currency || "JPY"}>
+                                    <Label htmlFor="category">カテゴリー</Label>
+                                    <Select name="category" defaultValue={editingSubscription?.category || "entertainment"}>
                                         <SelectTrigger className="bg-white/50">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="JPY">JPY (¥)</SelectItem>
-                                            <SelectItem value="USD">USD ($)</SelectItem>
+                                            {Object.entries(SUBSCRIPTION_CATEGORIES).map(([key, info]) => (
+                                                <SelectItem key={key} value={key}>{info.label}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                 </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <Label htmlFor="billingCycle">支払いサイクル</Label>
-                                    <Select name="billingCycle" defaultValue={editingSubscription?.billingCycle || "monthly"}>
-                                        <SelectTrigger className="bg-white/50">
-                                            <SelectValue />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="monthly">月払い</SelectItem>
-                                            <SelectItem value="yearly">年払い</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="nextPaymentDate">次回更新日</Label>
-                                    <Input
-                                        id="nextPaymentDate"
-                                        name="nextPaymentDate"
-                                        type="date"
-                                        required
-                                        className="bg-white/50"
-                                        defaultValue={editingSubscription?.nextPaymentDate}
-                                    />
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="category">カテゴリー</Label>
-                                <Select name="category" defaultValue={editingSubscription?.category || "entertainment"}>
-                                    <SelectTrigger className="bg-white/50">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {Object.entries(SUBSCRIPTION_CATEGORIES).map(([key, info]) => (
-                                            <SelectItem key={key} value={key}>{info.label}</SelectItem>
+                                <div className="space-y-3 pt-2">
+                                    <Label>通知タイミング</Label>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {[
+                                            { day: 0, label: '当日' },
+                                            { day: 1, label: '1日前' },
+                                            { day: 3, label: '3日前' },
+                                            { day: 7, label: '1週間前' }
+                                        ].map((option) => (
+                                            <div key={option.day} className="flex items-center space-x-2">
+                                                <input
+                                                    type="checkbox"
+                                                    id={`reminder-${option.day}`}
+                                                    checked={reminderSettings.includes(option.day)}
+                                                    onChange={() => toggleReminder(option.day)}
+                                                    className="rounded border-gray-300 text-primary focus:ring-primary"
+                                                />
+                                                <Label htmlFor={`reminder-${option.day}`} className="cursor-pointer text-sm font-normal">
+                                                    {option.label}
+                                                </Label>
+                                            </div>
                                         ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex items-center gap-2 pt-2">
-                                <input
-                                    type="checkbox"
-                                    id="isEssential"
-                                    name="isEssential"
-                                    className="rounded border-gray-300 text-primary focus:ring-primary"
-                                    defaultChecked={editingSubscription?.isEssential}
-                                />
-                                <Label htmlFor="isEssential" className="cursor-pointer">必須サービスとしてマーク（生活に不可欠）</Label>
-                            </div>
-                            <DialogFooter>
-                                <Button type="submit">
-                                    {editingSubscription ? '更新する' : '登録する'}
-                                </Button>
-                            </DialogFooter>
-                        </form>
-                    </DialogContent>
-                </Dialog>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 pt-2">
+                                    <input
+                                        type="checkbox"
+                                        id="isEssential"
+                                        name="isEssential"
+                                        className="rounded border-gray-300 text-primary focus:ring-primary"
+                                        defaultChecked={editingSubscription?.isEssential}
+                                    />
+                                    <Label htmlFor="isEssential" className="cursor-pointer">必須サービスとしてマーク（生活に不可欠）</Label>
+                                </div>
+                                <DialogFooter>
+                                    <Button type="submit">
+                                        {editingSubscription ? '更新する' : '登録する'}
+                                    </Button>
+                                </DialogFooter>
+                            </form>
+                        </DialogContent>
+                    </Dialog>
+                </div>
             </div>
 
             {/* Subscription List */}

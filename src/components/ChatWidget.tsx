@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { AiConciergeService, AiMessage, UserContext } from '@/services/AiConciergeService';
@@ -7,9 +7,10 @@ import { GeminiService } from '@/services/GeminiService';
 
 interface ChatWidgetProps {
   currentContext?: UserContext;
+  onSelectEvent?: (eventId: string | null) => void;
 }
 
-export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
+export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<AiMessage[]>([
@@ -52,6 +53,34 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, isOpen]);
+
+  // Reset chat when context changes
+  useEffect(() => {
+    const greetingText = AiConciergeService.getGreetingMessage(currentContext);
+
+    // Determine default actions based on context
+    let actions = ['使い方を見る', '質問する'];
+    if (['marriage', 'birth', 'baby', 'moving', 'startup', 'care', 'retirement'].includes(currentContext)) {
+      actions = ['手続きの流れ', '必要書類', '給付金について'];
+    } else if (currentContext === 'subscription') {
+      actions = ['支払い予定', '解約について', '見直し提案'];
+    } else if (currentContext === 'simulator') {
+      actions = ['給付金を探す', 'シミュレーション開始'];
+    } else if (currentContext === 'memo') {
+      actions = ['メモの書き方', '整理のコツ'];
+    }
+
+    setMessages([{
+      id: `init-${Date.now()}`,
+      role: 'assistant',
+      content: greetingText,
+      timestamp: new Date(),
+      actions: actions,
+    }]);
+
+    // Optional: Don't force open, but maybe show indicator if needed
+    // setHasUnread(true); // Maybe too intrusive
+  }, [currentContext]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -217,7 +246,7 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
         {/* Proactive Bubble (if closed and has suggestion, and not minimized) */}
         {!isOpen && hasUnread && !isMinimized && (
           <div
-            className="absolute bottom-16 right-0 w-64 p-3 bg-white dark:bg-zinc-900 rounded-2xl rounded-tr-sm shadow-xl border border-border/50 animate-slide-up cursor-pointer hover:bg-muted/50 transition-colors"
+            className="hidden md:block absolute bottom-16 right-0 w-64 p-3 bg-white dark:bg-zinc-900 rounded-2xl rounded-tr-sm shadow-xl border border-border/50 animate-slide-up cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => { setIsOpen(true); setHasUnread(false); }}
           >
             <div className="flex items-start gap-3">
@@ -450,8 +479,35 @@ export function ChatWidget({ currentContext = 'general' }: ChatWidgetProps) {
           <div ref={messagesEndRef} />
         </div>
 
+        {/* Persistent Event Menu */}
+        <div className="px-4 py-2 bg-slate-50/50 dark:bg-zinc-900 border-t border-border/50 overflow-x-auto whitespace-nowrap scrollbar-hide z-10 relative">
+          <div className="flex gap-2 pb-1">
+            {[
+              { id: 'marriage', label: '結婚', icon: Heart, color: 'text-pink-500 bg-pink-50 border-pink-100' },
+              { id: 'birth', label: '出産', icon: Baby, color: 'text-orange-500 bg-orange-50 border-orange-100' },
+              { id: 'job', label: '転職', icon: Briefcase, color: 'text-sky-500 bg-sky-50 border-sky-100' },
+              { id: 'startup', label: '起業', icon: Rocket, color: 'text-purple-500 bg-purple-50 border-purple-100' },
+              { id: 'moving', label: '引越し', icon: Truck, color: 'text-emerald-500 bg-emerald-50 border-emerald-100' },
+              { id: 'care', label: '介護', icon: HandHeart, color: 'text-violet-500 bg-violet-50 border-violet-100' },
+            ].map((event) => (
+              <button
+                key={event.id}
+                onClick={() => onSelectEvent?.(event.id)}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:scale-105 active:scale-95",
+                  event.color,
+                  currentContext === event.id && "ring-2 ring-offset-1 ring-primary"
+                )}
+              >
+                <event.icon className="w-3.5 h-3.5" />
+                {event.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Input Area */}
-        <div className="p-4 bg-white dark:bg-zinc-900 border-t border-border/50">
+        <div className="p-4 bg-white dark:bg-zinc-900 border-t border-border/50 pt-2">
           <div className="flex gap-2">
             <input
               type="text"

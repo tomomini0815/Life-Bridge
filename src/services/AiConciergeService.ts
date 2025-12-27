@@ -6,7 +6,8 @@ export interface AiMessage {
     actions?: string[];
 }
 
-export type UserContext = 'general' | 'marriage' | 'birth' | 'job' | 'moving' | 'care' | 'startup' | 'baby' | 'retirement';
+export type UserContext = 'general' | 'marriage' | 'birth' | 'job' | 'moving' | 'care' | 'startup' | 'baby' | 'retirement' | 'memo' | 'subscription' | 'simulator' | 'settings';
+
 export type ChatMode = 'normal' | 'empathy';
 export type Intent = 'greeting' | 'baby_tired' | 'distress' | 'gratitude' | 'moving_deadline' | 'moving_general' | 'baby_money' | 'baby_general' | 'general_help';
 
@@ -212,11 +213,27 @@ export const AiConciergeService = {
         };
     },
 
+    // Helper: Get greeting based on context
+    getGreetingMessage: (context: UserContext): string => {
+        switch (context) {
+            case 'marriage': return 'ご結婚おめでとうございます！💍\n手続きや新生活の準備について、何でも聞いてくださいね。';
+            case 'birth':
+            case 'baby': return '赤ちゃんとの生活はいかがですか？👶\n手続きや育児の悩みなど、サポートさせてください。';
+            case 'moving': return '引越しの準備は順調ですか？📦\n期限のある手続きが多いので、一緒に確認していきましょう。';
+            case 'startup': return '起業への挑戦、応援します！🚀\n開業届や税務関係など、複雑な手続きをサポートします。';
+            case 'memo': return 'メモ帳へようこそ📝\n会話の内容をメモに残したり、アイデアを整理するお手伝いをします。';
+            case 'subscription': return 'サブスクリプション管理ですね💳\n固定費の見直しや、支払いリマインダーの設定ができますよ。';
+            case 'simulator': return '給付金シミュレーターです💰\nあなたの状況に合わせて、受け取れる可能性のある給付金を試算します。';
+            case 'settings': return '設定画面です⚙️\n通知設定や表示カスタマイズなど、使いやすいように調整しましょう。';
+            default: return 'こんにちは！LifeBridgeコンシェルジュです。\nどのようなライフイベントについてお手伝いしましょうか？';
+        }
+    },
+
     // Proactive suggestion based on context
     getProactiveSuggestion: (context: UserContext): AiMessage | null => {
         if (context === 'moving') {
             return {
-                id: 'proactive-1',
+                id: 'proactive-moving',
                 role: 'assistant',
                 content: '💡 引越しまであと2週間ですね。\nそろそろ「粗大ゴミの予約」をしておかないと間に合わないかもしれません。確認しますか？',
                 timestamp: new Date(),
@@ -225,11 +242,20 @@ export const AiConciergeService = {
         }
         if (context === 'baby') {
             return {
-                id: 'proactive-2',
+                id: 'proactive-baby',
                 role: 'assistant',
                 content: '👶 生後14日が経過しました。\n「出生届」の提出期限が今日までです！まだ提出されていないようでしたら、今すぐ確認しましょう。',
                 timestamp: new Date(),
                 actions: ['出生届を確認する'],
+            };
+        }
+        if (context === 'subscription') {
+            return {
+                id: 'proactive-sub',
+                role: 'assistant',
+                content: '🔔 今月のサブスク支払額が先月より1,200円増えています。\n使っていないサービスがないか、一度見直してみませんか？',
+                timestamp: new Date(),
+                actions: ['契約リストを確認'],
             };
         }
         return null;

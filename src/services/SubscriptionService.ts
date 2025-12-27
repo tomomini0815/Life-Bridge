@@ -96,38 +96,14 @@ export class SubscriptionService {
 
     // Schedule reminder via NotificationService
     private scheduleReminder(subscription: Subscription): void {
-        // Convert Subscription to a mock "Task" format expected by NotificationService
-        // or we might need to extend NotificationService to handle generic events more gracefully.
-        // For now, we reuse scheduleRemindersForTask by constructing a compatible object.
-
-        // Logic to determine the actual next date is complex (monthly/yearly), 
-        // but here we just take the explicitly set `nextPaymentDate`.
-        const taskMock = {
+        notificationService.scheduleSubscriptionReminder({
             id: subscription.id,
-            title: `支払い: ${subscription.name}`,
-            deadline: `${subscription.nextPaymentDate}`, // Format needs to be parseable or handled
-            status: 'todo' as const,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-            category: 'finance'
-        };
-
-        // Calculate specific date object
-        const deadlineDate = new Date(subscription.nextPaymentDate);
-
-        // We need to ensure NotificationService can handle this. 
-        // Existing logic: parseDeadline parses string like "X日以内". 
-        // We should check if we can pass a specific date or if we need to adapt NotificationService.
-        // Looking at NotificationService source:
-        // scheduleRemindersForTask(task, eventId, eventDate)
-        // -> parseDeadline(task.deadline, eventDate)
-
-        // If we pass a YYYY-MM-DD string to parseDeadline, the current regex /(\d+)日/ won't match.
-        // We should update NotificationService or adapt here.
-        // Let's rely on a direct call if possible, or assume we update NotificationService next.
-        // Actually, let's update NotificationService to handle 'YYYY-MM-DD' strings in parseDeadline.
-
-        notificationService.scheduleRemindersForTask(taskMock as any, 'subscription', new Date());
+            name: subscription.name,
+            nextPaymentDate: subscription.nextPaymentDate,
+            amount: subscription.amount,
+            currency: subscription.currency,
+            reminderDays: subscription.reminderDays
+        });
     }
 }
 

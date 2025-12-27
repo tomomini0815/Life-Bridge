@@ -18,6 +18,7 @@ import { DocumentScanner } from '@/components/DocumentScanner';
 import { ChatWidget } from '@/components/ChatWidget';
 import { UserContext } from '@/services/AiConciergeService';
 import { toast } from 'sonner';
+import { SearchService, SearchResult } from '@/services/SearchService';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { Minus } from 'lucide-react';
@@ -36,6 +37,10 @@ export function DashboardLayout() {
   });
   const [showGlobalScanner, setShowGlobalScanner] = useState(false);
   const [isScannerMinimized, setIsScannerMinimized] = useState(false);
+
+  // Search State
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
@@ -144,12 +149,78 @@ export function DashboardLayout() {
                 <div className="hidden md:flex items-center gap-2 flex-1">
                   <SidebarTrigger className="-ml-4 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <div className="relative w-96">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <div className="relative w-96 group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
                       placeholder="知りたいこと、やりたいことは何ですか..."
                       className="pl-10 h-10 w-full rounded-full bg-background border-input focus:border-primary focus:ring-primary/20 shadow-sm transition-all duration-300"
+                      onChange={(e) => {
+                        const query = e.target.value;
+                        if (query.length > 0) {
+                          const results = SearchService.getInstance().search(query);
+                          setSearchResults(results);
+                          setIsSearchOpen(true);
+                        } else {
+                          setSearchResults([]);
+                          setIsSearchOpen(false);
+                        }
+                      }}
+                      onFocus={() => {
+                        if (searchResults.length > 0) setIsSearchOpen(true);
+                      }}
+                      onBlur={() => {
+                        // Delay closing to allow clicking on results
+                        setTimeout(() => setIsSearchOpen(false), 200);
+                      }}
                     />
+
+                    {/* Search Results Dropdown */}
+                    {isSearchOpen && searchResults.length > 0 && (
+                      <div className="absolute top-12 left-0 w-full bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-lg overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="max-h-[60vh] overflow-y-auto py-2">
+                          {searchResults.map((result) => (
+                            <button
+                              key={`${result.type}-${result.id}`}
+                              className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors flex items-start gap-3 group/item"
+                              onClick={() => {
+                                if (result.type === 'page' && result.path) {
+                                  handleSelectPage(result.path);
+                                } else if (result.type === 'event' && result.eventId) {
+                                  handleSelectEvent(result.eventId);
+                                } else if (result.type === 'task' && result.eventId) {
+                                  handleSelectEvent(result.eventId);
+                                  // Optional: Scroll to task or highlight it
+                                }
+                                setIsSearchOpen(false);
+                              }}
+                            >
+                              <div className="mt-0.5 shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-lg">
+                                {result.icon || (result.type === 'page' ? '📄' : '🔍')}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors truncate">
+                                  {result.title}
+                                </div>
+                                <div className="text-xs text-muted-foreground truncate">
+                                  {result.description}
+                                </div>
+                                <div className="mt-1 flex items-center gap-1.5">
+                                  <span className={cn(
+                                    "text-[10px] px-1.5 py-0.5 rounded-full font-medium border",
+                                    result.type === 'event' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                                      result.type === 'task' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                                        "bg-slate-50 text-slate-600 border-slate-100"
+                                  )}>
+                                    {result.type === 'event' ? 'ライフイベント' :
+                                      result.type === 'task' ? 'タスク' : 'ページ'}
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -207,53 +278,68 @@ export function DashboardLayout() {
             {renderContent()}
           </main>
 
-          {/* Global Magic Scan FAB */}
-          <div className={cn(
-            "fixed z-40 animate-fade-in transition-all duration-300",
-            isScannerMinimized ? "bottom-24 right-4 md:right-6" : "bottom-24 right-4 md:right-6"
-          )}>
-            <div className="relative">
-              {!isScannerMinimized && (
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsScannerMinimized(true);
-                  }}
-                  size="icon"
-                  className="absolute -top-1 -left-1 z-50 h-6 w-6 rounded-full bg-slate-500 hover:bg-slate-600 text-white shadow-md border border-white"
-                >
-                  <Minus className="w-3 h-3" />
-                </Button>
-              )}
-
-              <Button
-                onClick={() => setShowGlobalScanner(true)}
-                className={cn(
-                  "rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group border border-white/10",
-                  isScannerMinimized
-                    ? "h-10 w-10 hover:scale-110"
-                    : "h-14 w-14 hover:scale-105"
-                )}
-              >
-                <ScanLine className={cn("transition-all", isScannerMinimized ? "w-5 h-5" : "w-6 h-6")} />
+          {/* Global Magic Scan FAB - Temporarily Disabled */}
+          {false && (
+            <div className={cn(
+              "fixed z-40 animate-fade-in transition-all duration-300",
+              isScannerMinimized ? "bottom-24 right-4 md:right-6" : "bottom-24 right-4 md:right-6"
+            )}>
+              <div className="relative">
                 {!isScannerMinimized && (
-                  <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 px-2 py-1 rounded-md shadow-sm pointer-events-none border border-border/50">
-                    Magic Scan
-                  </span>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsScannerMinimized(true);
+                    }}
+                    size="icon"
+                    className="absolute -top-1 -left-1 z-50 h-6 w-6 rounded-full bg-slate-500 hover:bg-slate-600 text-white shadow-md border border-white"
+                  >
+                    <Minus className="w-3 h-3" />
+                  </Button>
                 )}
-              </Button>
-            </div>
-          </div>
 
-          <DocumentScanner
-            isOpen={showGlobalScanner}
-            onClose={() => setShowGlobalScanner(false)}
-            onScanComplete={handleGlobalScanComplete}
-          />
+                <Button
+                  onClick={() => setShowGlobalScanner(true)}
+                  className={cn(
+                    "rounded-full bg-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group border border-white/10",
+                    isScannerMinimized
+                      ? "h-10 w-10 hover:scale-110"
+                      : "h-14 w-14 hover:scale-105"
+                  )}
+                >
+                  <ScanLine className={cn("transition-all", isScannerMinimized ? "w-5 h-5" : "w-6 h-6")} />
+                  {!isScannerMinimized && (
+                    <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium text-muted-foreground whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 px-2 py-1 rounded-md shadow-sm pointer-events-none border border-border/50">
+                      Magic Scan
+                    </span>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {false && (
+            <DocumentScanner
+              isOpen={showGlobalScanner}
+              onClose={() => setShowGlobalScanner(false)}
+              onScanComplete={handleGlobalScanComplete}
+            />
+          )}
         </div>
       </div>
 
-      <ChatWidget currentContext={(activeEvent || 'general') as UserContext} />
+      <ChatWidget
+        currentContext={
+          activeEvent ||
+          (activePage === 'memo' ? 'memo' :
+            activePage === 'reminders' ? 'subscription' :
+              activePage === 'simulator' ? 'simulator' :
+                activePage === 'settings' ? 'settings' :
+                  'general') as UserContext
+        }
+        onSelectEvent={handleSelectEvent}
+      />
     </SidebarProvider>
   );
 }
+

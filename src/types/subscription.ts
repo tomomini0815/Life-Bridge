@@ -11,6 +11,7 @@ export interface Subscription {
     description?: string;
     serviceUrl?: string;
     isEssential: boolean; // For optimization suggestions
+    reminderDays?: number[]; // Custom reminder timing (e.g. [0, 1, 3])
 }
 
 export const SUBSCRIPTION_CATEGORIES: Record<SubscriptionCategory, { label: string; color: string }> = {

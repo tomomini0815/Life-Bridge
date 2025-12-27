@@ -180,7 +180,15 @@ export function MemoManager() {
                             </div>
                         </div>
 
-                        {memo.checkboxItems && memo.checkboxItems.length > 0 ? (
+                        {/* Content */}
+                        {memo.content && (
+                            <p className="text-sm text-foreground/80 whitespace-pre-wrap break-words line-clamp-10 mb-3">
+                                {memo.content}
+                            </p>
+                        )}
+
+                        {/* Checkbox Items */}
+                        {memo.checkboxItems && memo.checkboxItems.length > 0 && (
                             <div className="space-y-1.5">
                                 {memo.checkboxItems.map((item) => (
                                     <label
@@ -204,10 +212,6 @@ export function MemoManager() {
                                     </label>
                                 ))}
                             </div>
-                        ) : (
-                            <p className="text-sm text-foreground/80 whitespace-pre-wrap break-words line-clamp-10">
-                                {memo.content}
-                            </p>
                         )}
 
                         {memo.tags && memo.tags.length > 0 && (

@@ -391,11 +391,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 <p className="text-xs text-white/60 truncate">Premium</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <Button variant="ghost" size="sm" className="h-8 w-full justify-start text-white/80 hover:bg-white/20 hover:text-white px-2">
-                <Settings className="w-3.5 h-3.5 mr-2" />
-                <span className="text-xs">設定</span>
-              </Button>
+            <div className="mt-2">
               <Button variant="ghost" size="sm" className="h-8 w-full justify-start text-white/80 hover:bg-white/20 hover:text-white px-2">
                 <LogOut className="w-3.5 h-3.5 mr-2" />
                 <span className="text-xs">ログアウト</span>

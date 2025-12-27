@@ -155,12 +155,12 @@ export class MemoService {
 
     // Create memo from chat message
     createMemoFromChat(messageContent: string, title?: string): Memo {
-        // Parse checkbox items from message if present
-        const checkboxItems = this.parseCheckboxItems(messageContent);
+        // Parse checkbox items from message and get cleaned content
+        const { checkboxItems, cleanedContent } = this.extractCheckboxItems(messageContent);
 
         return this.createMemo(
             title || 'チャットからのメモ',
-            messageContent,
+            cleanedContent,
             {
                 checkboxItems: checkboxItems.length > 0 ? checkboxItems : undefined,
                 category: 'chat',
@@ -169,24 +169,50 @@ export class MemoService {
         );
     }
 
-    // Parse checkbox items from text
-    private parseCheckboxItems(text: string): CheckboxItem[] {
+    // Extract checkbox items and return cleaned content
+    private extractCheckboxItems(text: string): { checkboxItems: CheckboxItem[], cleanedContent: string } {
         const items: CheckboxItem[] = [];
         const lines = text.split('\n');
+        const remainingLines: string[] = [];
 
         lines.forEach((line) => {
-            // Match patterns like "- [ ] item" or "□ item" or "☐ item"
-            const match = line.match(/^[\s-]*[\[□☐]\s*[\]]\s*(.+)$/);
+            // Match patterns:
+            // 1. Standard checkboxes: - [ ] item
+            // 2. Bullet points: - item, * item
+            // 3. Numbered lists: 1. item
+            // 4. Japanese bullets: ・ item
+            const match = line.match(/^\s*(?:- \[[ x]\]|-|\*|\d+\.|・)\s+(.+)$/);
+
             if (match) {
                 items.push({
                     id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-                    text: match[1].trim(),
+                    text: this.cleanMarkdown(match[1].trim()),
                     checked: false,
                 });
+            } else {
+                remainingLines.push(this.cleanMarkdown(line));
             }
         });
 
-        return items;
+        // Trim empty lines from start and end of content
+        const cleanedContent = remainingLines.join('\n').trim();
+
+        return { checkboxItems: items, cleanedContent };
+    }
+
+    // Helper: Remove markdown formatting (bold, italic)
+    private cleanMarkdown(text: string): string {
+        // Remove bold/italic markers (**text**, *text*, __text__, _text_)
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '$1') // Bold **
+            .replace(/\*(.*?)\*/g, '$1')     // Italic *
+            .replace(/__(.*?)__/g, '$1')     // Bold __
+            .replace(/_(.*?)_/g, '$1');      // Italic _
+    }
+
+    // Legacy parser (kept but effectively replaced by above)
+    private parseCheckboxItems(text: string): CheckboxItem[] {
+        return this.extractCheckboxItems(text).checkboxItems;
     }
 
     // Storage methods

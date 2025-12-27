@@ -8,12 +8,15 @@ export interface ReminderSettings {
 
 export interface ScheduledReminder {
   id: string;
-  taskId: string;
-  taskTitle: string;
+  type: 'task' | 'subscription';
+  targetId: string; // taskId or subscriptionId
+  title: string; // taskTitle or subscriptionName
   deadline: string;
   reminderDate: Date;
-  eventId: string;
+  eventId?: string;
   sent: boolean;
+  amount?: number;
+  currency?: string;
 }
 
 const STORAGE_KEY = 'lifebridge_reminder_settings';
@@ -96,9 +99,79 @@ export class NotificationService {
       return new Date(deadlineStr);
     }
 
-    // Handle specific dates if provided (future enhancement)
-    // For now, return null for non-parseable deadlines
+    // Try parsing as standard date
+    const date = new Date(deadlineStr);
+    if (!isNaN(date.getTime())) {
+      return date;
+    }
+
     return null;
+  }
+
+  // Schedule reminders for a subscription
+  scheduleSubscriptionReminder(
+    subscription: { id: string; name: string; nextPaymentDate: string; amount: number; currency: string; reminderDays?: number[] }
+  ): void {
+    if (!subscription.nextPaymentDate) return;
+
+    const deadlineDate = new Date(subscription.nextPaymentDate);
+    // Validate date
+    if (isNaN(deadlineDate.getTime())) return;
+
+    // Remove existing reminders for this subscription
+    this.scheduledReminders = this.scheduledReminders.filter(
+      (r) => !(r.type === 'subscription' && r.targetId === subscription.id)
+    );
+
+    // Use custom reminder days or default (1 day before and On the day)
+    // Default: Today(0), Yesterday(1), 3 Days before(3)
+    const reminderDays = subscription.reminderDays && subscription.reminderDays.length > 0
+      ? subscription.reminderDays
+      : [0, 1, 3];
+
+    reminderDays.forEach((daysBefore) => {
+      const reminderDate = new Date(deadlineDate);
+      reminderDate.setDate(reminderDate.getDate() - daysBefore);
+
+      // Set notification time (default 09:00)
+      if (this.settings.notificationTime && this.settings.notificationTime.includes(':')) {
+        const [hours, minutes] = this.settings.notificationTime.split(':');
+        reminderDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      } else {
+        reminderDate.setHours(9, 0, 0, 0);
+      }
+
+      const now = new Date();
+      let finalReminderTime = reminderDate.getTime();
+
+      // If the calculated reminder time has passed
+      if (finalReminderTime <= now.getTime()) {
+        // If it's today but the scheduled time has passed, schedule it for immediate future (5 seconds later)
+        // This ensures the user still receives the notification if they open the app late on the reminder day.
+        if (reminderDate.toDateString() === now.toDateString()) {
+          finalReminderTime = now.getTime() + 5000; // Schedule 5 seconds from now
+        } else {
+          // It's a past date (yesterday or before), so skip scheduling this reminder
+          return;
+        }
+      }
+
+      const reminder: ScheduledReminder = {
+        id: `sub-${subscription.id}-${daysBefore}d`,
+        type: 'subscription',
+        targetId: subscription.id,
+        title: subscription.name,
+        deadline: subscription.nextPaymentDate,
+        reminderDate: new Date(finalReminderTime), // Use the potentially adjusted time
+        sent: false,
+        amount: subscription.amount,
+        currency: subscription.currency
+      };
+
+      this.scheduledReminders.push(reminder);
+    });
+
+    this.saveReminders();
   }
 
   // Schedule reminders for a task
@@ -114,7 +187,7 @@ export class NotificationService {
 
     // Remove existing reminders for this task
     this.scheduledReminders = this.scheduledReminders.filter(
-      (r) => r.taskId !== task.id
+      (r) => !(r.type === 'task' && r.targetId === task.id)
     );
 
     // Create reminders based on settings
@@ -132,8 +205,9 @@ export class NotificationService {
       if (reminderDate > new Date()) {
         const reminder: ScheduledReminder = {
           id: `${task.id}-${daysBefore}d`,
-          taskId: task.id,
-          taskTitle: task.title,
+          type: 'task',
+          targetId: task.id,
+          title: task.title,
           deadline: task.deadline,
           reminderDate,
           eventId,
@@ -168,33 +242,99 @@ export class NotificationService {
     );
   }
 
+  // Send a test notification with sound
+  sendTestNotification(): void {
+    if (!this.isNotificationEnabled()) return;
+
+    this.playAlertSound();
+    new Notification('LifeBridge - 通知テスト', {
+      body: 'これはサブスクリプションリマインダーのテスト通知です。',
+      icon: '/favicon.ico',
+    });
+  }
+
+  // Play a pleasant notification sound using Web Audio API
+  private playAlertSound() {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+
+      const ctx = new AudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+
+      // "Ding" sound (Sine wave, high pitch, quick decay)
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, ctx.currentTime); // A5
+      oscillator.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.5); // Drop to A4
+
+      gainNode.gain.setValueAtTime(0.3, ctx.currentTime);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.5);
+    } catch (e) {
+      console.error('Failed to play notification sound:', e);
+    }
+  }
+
   // Send a notification
   private sendNotification(reminder: ScheduledReminder): void {
     if (!this.isNotificationEnabled()) return;
 
-    const notification = new Notification('LifeBridge - 期限リマインダー', {
-      body: `「${reminder.taskTitle}」の期限が近づいています\n期限: ${reminder.deadline}`,
-      icon: '/favicon.ico',
+    // Play sound
+    this.playAlertSound();
+
+    let title, body, tag;
+
+    if (reminder.type === 'subscription') {
+      title = `サブスクリプションの更新通知`;
+      const amountStr = reminder.currency === 'JPY'
+        ? `¥${reminder.amount?.toLocaleString()}`
+        : `$${reminder.amount?.toLocaleString()}`;
+      body = `「${reminder.title}」の支払日が近づいています\n金額: ${amountStr}\n更新日: ${reminder.deadline}`;
+      tag = `sub-${reminder.targetId}`;
+    } else {
+      title = 'LifeBridge - 期限リマインダー';
+      body = `「${reminder.title}」の期限が近づいています\n期限: ${reminder.deadline}`;
+      tag = reminder.id;
+    }
+
+    const notification = new Notification(title, {
+      body: body,
+      icon: '/favicon.ico', // Ideally replace with category icon
       badge: '/favicon.ico',
-      tag: reminder.id,
+      tag: tag,
       requireInteraction: false,
       data: {
-        taskId: reminder.taskId,
+        type: reminder.type,
+        id: reminder.targetId,
         eventId: reminder.eventId,
       },
     });
 
     notification.onclick = () => {
       window.focus();
-      // Navigate to the task (this would need to be handled by the app)
-      window.dispatchEvent(
-        new CustomEvent('navigate-to-task', {
-          detail: {
-            eventId: reminder.eventId,
-            taskId: reminder.taskId,
-          },
-        })
-      );
+
+      if (reminder.type === 'subscription') {
+        window.dispatchEvent(
+          new CustomEvent('navigate-to-subscription', {
+            detail: { subscriptionId: reminder.targetId }
+          })
+        );
+      } else {
+        window.dispatchEvent(
+          new CustomEvent('navigate-to-task', {
+            detail: {
+              eventId: reminder.eventId,
+              taskId: reminder.targetId,
+            },
+          })
+        );
+      }
       notification.close();
     };
 
@@ -252,7 +392,7 @@ export class NotificationService {
   // Clear all reminders for a task
   clearTaskReminders(taskId: string): void {
     this.scheduledReminders = this.scheduledReminders.filter(
-      (r) => r.taskId !== taskId
+      (r) => !(r.type === 'task' && r.targetId === taskId)
     );
     this.saveReminders();
   }
