@@ -388,7 +388,7 @@ export function SubscriptionManager() {
                         </div>
 
                         <div className="mb-4">
-                            <h3 className="font-bold text-lg mb-1">{sub.name}</h3>
+                            <h3 className="font-bold text-lg mb-1 truncate whitespace-nowrap" title={sub.name}>{sub.name}</h3>
                             <div className="flex items-baseline gap-1">
                                 <span className="text-xl font-bold font-mono">
                                     {sub.currency === 'JPY' ? '¥' : '$'}{sub.amount.toLocaleString()}
