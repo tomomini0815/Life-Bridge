@@ -522,7 +522,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
               onClick={handleSend}
               disabled={!input.trim() || isTyping}
               className={cn(
-                "h-11 w-11 rounded-xl hover:opacity-90 transition-all shadow-md",
+                "h-11 w-11 shrink-0 rounded-xl hover:opacity-90 transition-all shadow-md",
                 isEmpathyMode
                   ? "bg-gradient-to-r from-rose-400 to-orange-300 shadow-rose-500/20"
                   : "bg-gradient-to-r from-teal-500 to-emerald-600 shadow-teal-500/20"
