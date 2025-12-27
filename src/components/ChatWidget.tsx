@@ -305,7 +305,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
       {/* Chat window */}
       <div
         className={cn(
-          "fixed bottom-6 right-6 w-[380px] h-[600px] max-h-[80vh]",
+          "fixed bottom-4 right-4 left-4 md:left-auto md:bottom-6 md:right-6 md:w-[380px] h-[600px] max-h-[80vh]",
           "bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md rounded-3xl shadow-2xl border border-border/50",
           "flex flex-col overflow-hidden",
           "transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1) z-50 origin-bottom-right",
