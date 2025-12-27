@@ -74,9 +74,10 @@ export function SubscriptionManager() {
                     description: '通知音も鳴るかご確認ください（OSの音声設定による）'
                 });
             } catch (e) {
-                console.error('Notification failed:', e);
-                toast.error('通知の送信に失敗しました', {
-                    description: 'ブラウザのエラーが発生しました'
+                console.warn('Native notification failed (likely mobile restriction):', e);
+                // Fallback for mobile browsers where new Notification() might fail
+                toast.info('通知を送信しました', {
+                    description: '※端末により通知が表示されない場合があります。音や設定をご確認ください。'
                 });
             }
         } else {
