@@ -27,6 +27,17 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
   const [hasUnread, setHasUnread] = useState(false);
   const [isEmpathyMode, setIsEmpathyMode] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      if (input) {
+        textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 150)}px`;
+      }
+    }
+  }, [input]);
 
   // Proactive Messaging Trigger
   useEffect(() => {
@@ -508,14 +519,20 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
 
         {/* Input Area */}
         <div className="p-4 bg-white dark:bg-zinc-900 border-t border-border/50 pt-2">
-          <div className="flex gap-2">
-            <input
-              type="text"
+          <div className="flex gap-2 items-end">
+            <textarea
+              ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSend();
+                }
+              }}
               placeholder="メッセージを入力..."
-              className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-shadow"
+              rows={1}
+              className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-shadow resize-none overflow-y-auto min-h-[44px]"
             />
             <Button
               size="icon"
