@@ -532,7 +532,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
               }}
               placeholder="メッセージを入力..."
               rows={1}
-              className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-shadow resize-none overflow-y-auto min-h-[44px]"
+              className="flex-1 px-4 py-3 rounded-xl bg-slate-100 dark:bg-zinc-800 text-foreground placeholder:text-muted-foreground text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 transition-shadow resize-none overflow-y-auto min-h-[44px]"
             />
             <Button
               size="icon"
