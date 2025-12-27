@@ -200,10 +200,11 @@ export class MemoService {
         return { checkboxItems: items, cleanedContent };
     }
 
-    // Helper: Remove markdown formatting (bold, italic)
+    // Helper: Remove markdown formatting (bold, italic, headings)
     private cleanMarkdown(text: string): string {
-        // Remove bold/italic markers (**text**, *text*, __text__, _text_)
+        // Remove bold/italic markers and headings
         return text
+            .replace(/^#+\s+/gm, '')         // Headings (# Header)
             .replace(/\*\*(.*?)\*\*/g, '$1') // Bold **
             .replace(/\*(.*?)\*/g, '$1')     // Italic *
             .replace(/__(.*?)__/g, '$1')     // Bold __

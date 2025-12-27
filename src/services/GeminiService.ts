@@ -83,6 +83,8 @@ IMPORTANT RULES:
       FORMAT: 
         - For simple questions: 2-3 sentences with key information
         - For complex topics (subsidies, procedures): Use bullet points with clear structure
+        - When listing items, procedures, or requirements, ALWAYS use standard markdown checklist format: "- [ ] Item"
+        - Do NOT use bold (**text**) or italics (*text*) formatting. Clean plain text is preferred.
         - Always complete your thought - never end mid-sentence
       CONSTRAINT: Aim for completeness over brevity. Ensure all key information is included.
       `;

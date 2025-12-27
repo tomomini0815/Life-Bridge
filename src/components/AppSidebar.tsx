@@ -144,13 +144,22 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   return (
     <Sidebar collapsible="icon" className="!border-r-0 border-none transition-all duration-300 z-30" style={{ background: 'var(--sidebar-gradient)' }}>
       <SidebarHeader className="p-4 pb-2">
-        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
+        <button
+          onClick={() => {
+            onSelectEvent(null);
+            // Also close mobile sidebar if open
+            if (window.innerWidth < 768) {
+              setOpenMobile(false);
+            }
+          }}
+          className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center hover:opacity-80 transition-opacity w-full text-left"
+        >
           <LifeBridgeLogo className="w-10 h-10 group-data-[collapsible=icon]:w-8 group-data-[collapsible=icon]:h-8 transition-all duration-300" />
           <div className="flex flex-col group-data-[collapsible=icon]:hidden transition-opacity duration-200">
             <span className="font-bold text-lg tracking-tight text-white">LifeBridge</span>
             <span className="text-[10px] text-white/70 font-medium uppercase tracking-wider">AI Partner</span>
           </div>
-        </div>
+        </button>
       </SidebarHeader>
 
       <SidebarContent className="px-4 py-4 scrollbar-none">
