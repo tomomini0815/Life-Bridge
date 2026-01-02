@@ -4,23 +4,43 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Chrome, Loader2, Mail } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Chrome, Loader2, Mail, ArrowRight } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export function LoginPage() {
-    const { signInWithGoogle } = useAuth();
+    const { signInWithGoogle, signInWithEmail } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const handleGoogleLogin = async () => {
         setIsLoading(true);
         try {
             await signInWithGoogle();
-            // Redirect is handled by Supabase OAuth flow
+            // Redirect handled by OAuth
         } catch (error) {
             console.error(error);
             toast.error('Googleログインに失敗しました');
+            setIsLoading(false);
+        }
+    };
+
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!email || !password) return;
+        setIsLoading(true);
+        try {
+            await signInWithEmail(email, password);
+            toast.success("ログインしました");
+            navigate('/dashboard');
+        } catch (error: any) {
+            console.error(error);
+            toast.error('ログインに失敗しました', {
+                description: error.message
+            });
+        } finally {
             setIsLoading(false);
         }
     };
@@ -61,14 +81,43 @@ export function LoginPage() {
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-white dark:bg-zinc-900 px-2 text-muted-foreground">
-                                または
+                                またはメールアドレスでログイン
                             </span>
                         </div>
                     </div>
 
-                    {/* Placeholder for Email Login - Phase 2 */}
-                    <div className="text-center text-sm text-muted-foreground">
-                        <p>現在、Googleアカウントでのログインを推奨しています。</p>
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="email">メールアドレス</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="example@lifebridge.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">パスワード</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <Button type="submit" className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
+                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "ログイン"}
+                        </Button>
+                    </form>
+
+                    <div className="text-center text-sm">
+                        <span className="text-muted-foreground">アカウントをお持ちでないですか？ </span>
+                        <Link to="/signup" className="text-indigo-600 font-medium hover:underline">
+                            新規登録
+                        </Link>
                     </div>
                 </div>
             </div>
