@@ -179,8 +179,9 @@ export class TimelineService {
         - status: 'future'
         - scenario: 'current' or 'ideal'
 
-        Generate about 3-5 future events for EACH scenario (total 6-10 events).
-        Start from next year.
+        Generate about 5-8 future events for EACH scenario (total 10-16 events).
+        Start from next year and cover the timeline until the user is around 80 years old.
+        Ensure events are distributed across different life stages (30s, 40s, 50s, 60s, retirement, etc.).
         `;
 
         try {
