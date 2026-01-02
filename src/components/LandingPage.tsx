@@ -61,6 +61,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
         buttonText="無料で始める"
         secondaryButtonText="詳しく見る"
         onButtonClick={() => navigate('/dashboard')}
+        onLoginClick={() => navigate('/login')}
         onSecondaryButtonClick={() => {
           const featuresSection = document.getElementById('features');
           featuresSection?.scrollIntoView({ behavior: 'smooth' });

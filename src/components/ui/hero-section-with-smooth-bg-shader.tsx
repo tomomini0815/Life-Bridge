@@ -11,6 +11,7 @@ interface HeroSectionProps {
     secondaryButtonText?: string
     onButtonClick?: () => void
     onSecondaryButtonClick?: () => void
+    onLoginClick?: () => void
     colors?: string[]
     distortion?: number
     swirl?: number
@@ -30,6 +31,7 @@ export function HeroSection({
     secondaryButtonText = "Learn More",
     onButtonClick,
     onSecondaryButtonClick,
+    onLoginClick,
     colors = ["#72b9bb", "#b5d9d9", "#ffd1bd", "#ffebe0", "#8cc5b8", "#dbf4a4"],
     distortion = 0.8,
     swirl = 0.6,
@@ -127,7 +129,9 @@ export function HeroSection({
                             LifeBridge
                         </span>
                     </div>
-                    <button className="px-6 py-2.5 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md border border-white/20 dark:border-white/10 text-sm font-semibold hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 hover:scale-105">
+                    <button
+                        onClick={onLoginClick}
+                        className="px-6 py-2.5 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md border border-white/20 dark:border-white/10 text-sm font-semibold hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 hover:scale-105">
                         ログイン
                     </button>
                 </div>
