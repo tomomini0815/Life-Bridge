@@ -8,6 +8,18 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
 
+// Helper to translate Supabase errors
+const getErrorMessage = (error: any) => {
+    const message = error.message.toLowerCase();
+    if (message.includes('email not confirmed')) {
+        return 'メールアドレスの確認が完了していません。\n登録時に入力したメールアドレスに届いている確認メール内のリンクをクリックしてください。';
+    }
+    if (message.includes('invalid login credentials')) {
+        return 'メールアドレスまたはパスワードが間違っています。';
+    }
+    return '予期せぬエラーが発生しました。もう一度お試しください。';
+};
+
 export function LoginPage() {
     const { signInWithGoogle, signInWithEmail } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +50,8 @@ export function LoginPage() {
         } catch (error: any) {
             console.error(error);
             toast.error('ログインに失敗しました', {
-                description: error.message
+                description: getErrorMessage(error),
+                duration: 5000, // Longer duration for reading
             });
         } finally {
             setIsLoading(false);

@@ -8,6 +8,21 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
 
+// Helper to translate Supabase errors
+const getErrorMessage = (error: any) => {
+    const message = error.message.toLowerCase();
+    if (message.includes('user already registered')) {
+        return 'このメールアドレスは既に登録されています。\nログイン画面からログインしてください。';
+    }
+    if (message.includes('password should be at least')) {
+        return 'パスワードは6文字以上で設定してください。';
+    }
+    if (message.includes('invalid email')) {
+        return '正しいメールアドレスを入力してください。';
+    }
+    return '登録中にエラーが発生しました。しばらく経ってから再度お試しください。';
+};
+
 export function SignupPage() {
     const { signUp, signInWithGoogle } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +54,8 @@ export function SignupPage() {
         } catch (error: any) {
             console.error(error);
             toast.error('登録に失敗しました', {
-                description: error.message
+                description: getErrorMessage(error),
+                duration: 5000,
             });
         } finally {
             setIsLoading(false);
