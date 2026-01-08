@@ -164,9 +164,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
       <SidebarContent className="px-4 py-4 scrollbar-none">
         <SidebarGroup>
-          <SidebarGroupLabel className={cn("px-4 text-xs font-semibold text-primary-foreground/60 uppercase tracking-wider mb-2", isCollapsed && "sr-only")}>
-            Menu
-          </SidebarGroupLabel>
+
           <SidebarGroupContent>
             <SidebarMenu className="relative gap-0">
               {/* Sliding Active Indicator */}
@@ -253,9 +251,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         </SidebarGroup>
 
         <SidebarGroup>
-          <SidebarGroupLabel className={cn("px-4 text-xs font-semibold text-primary-foreground/60 uppercase tracking-wider mb-2", isCollapsed && "sr-only")}>
-            Tools
-          </SidebarGroupLabel>
+
           <SidebarGroupContent>
             <SidebarMenu className="relative gap-0">
               {/* Sliding Active Indicator for Tools */}
@@ -347,10 +343,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupLabel className={cn("px-4 text-xs font-semibold text-primary-foreground/60 uppercase tracking-wider mb-2", isCollapsed && "sr-only")}>
-            Settings
-          </SidebarGroupLabel>
+        <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {settingsItems.map((item) => {
