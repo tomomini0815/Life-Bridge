@@ -12,6 +12,7 @@ import {
   SidebarHeader,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
 import {
   Home,
   Heart,
@@ -250,6 +251,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <Separator className="my-2 bg-white/10" />
+
         <SidebarGroup>
 
           <SidebarGroupContent>
@@ -343,6 +346,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupContent>
         </SidebarGroup>
 
+        <Separator className="my-2 bg-white/10" />
+
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
@@ -379,7 +384,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
+      </SidebarContent >
 
       <SidebarFooter className="p-6">
         {!isCollapsed ? (
@@ -410,6 +415,6 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </div>
         )}
       </SidebarFooter>
-    </Sidebar>
+    </Sidebar >
   );
 }
