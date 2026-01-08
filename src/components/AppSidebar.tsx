@@ -251,7 +251,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-2 bg-white/10" />
+        <Separator className="my-1 bg-white/10" />
 
         <SidebarGroup>
 
@@ -346,7 +346,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-2 bg-white/10" />
+        <Separator className="my-1 bg-white/10" />
 
         <SidebarGroup>
           <SidebarGroupContent>
