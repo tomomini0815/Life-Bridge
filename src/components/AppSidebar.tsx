@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
   SidebarContent,
@@ -44,6 +45,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePage }: AppSidebarProps) {
   const { state } = useSidebar();
+  const { user, signOut } = useAuth();
 
   // Detect if we're on mobile
   const [isMobile, setIsMobile] = useState(false);
@@ -390,16 +392,31 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         {!isCollapsed ? (
           <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm border border-white/10 transition-all duration-300">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg flex-shrink-0">
-                T
-              </div>
+              {user?.user_metadata?.avatar_url ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt={user.user_metadata.full_name || "User"}
+                  className="w-8 h-8 rounded-full shadow-lg flex-shrink-0 object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg flex-shrink-0">
+                  {user?.email?.charAt(0).toUpperCase() || "U"}
+                </div>
+              )}
               <div className="overflow-hidden">
-                <p className="text-sm font-bold text-white truncate">Tomomi</p>
-                <p className="text-xs text-white/60 truncate">Premium</p>
+                <p className="text-sm font-bold text-white truncate">
+                  {user?.user_metadata?.full_name || user?.email?.split('@')[0] || "Guest User"}
+                </p>
+                <p className="text-xs text-white/60 truncate">{user?.email || "Sign in required"}</p>
               </div>
             </div>
             <div className="mt-2">
-              <Button variant="ghost" size="sm" className="h-8 w-full justify-start text-white/80 hover:bg-white/20 hover:text-white px-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-full justify-start text-white/80 hover:bg-white/20 hover:text-white px-2"
+                onClick={() => signOut()}
+              >
                 <LogOut className="w-3.5 h-3.5 mr-2" />
                 <span className="text-xs">ログアウト</span>
               </Button>
@@ -408,9 +425,17 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         ) : (
           <div className="flex justify-center">
             <div className="bg-white/10 rounded-2xl p-1.5 backdrop-blur-sm border border-white/10">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer">
-                T
-              </div>
+              {user?.user_metadata?.avatar_url ? (
+                <img
+                  src={user.user_metadata.avatar_url}
+                  alt={user.user_metadata.full_name || "User"}
+                  className="w-8 h-8 rounded-full shadow-lg cursor-pointer object-cover"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer">
+                  {user?.email?.charAt(0).toUpperCase() || "U"}
+                </div>
+              )}
             </div>
           </div>
         )}
