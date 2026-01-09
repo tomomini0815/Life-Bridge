@@ -1,0 +1,31 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Bridge Design 2: Arch Bridge with LB -->
+  <defs>
+    <linearGradient id="bridgeMint2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5eead4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+    <filter id="bridgeShadow2">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#bridgeMint2)"/>
+  
+  <g filter="url(#bridgeShadow2)">
+    <!-- Large arch bridge -->
+    <path d="M 120 320 Q 256 180 392 320" stroke="white" stroke-width="25" fill="none" stroke-linecap="round"/>
+    <path d="M 120 320 Q 256 200 392 320" stroke="white" stroke-width="15" fill="none" stroke-linecap="round" opacity="0.5"/>
+    
+    <!-- Bridge supports/pillars -->
+    <rect x="120" y="320" width="30" height="60" rx="5" fill="white"/>
+    <rect x="362" y="320" width="30" height="60" rx="5" fill="white"/>
+    
+    <!-- LB integrated into bridge structure -->
+    <text x="180" y="300" font-family="Arial, sans-serif" font-size="100" font-weight="900" fill="white" opacity="0.9">L</text>
+    <text x="280" y="300" font-family="Arial, sans-serif" font-size="100" font-weight="900" fill="white" opacity="0.9">B</text>
+    
+    <!-- Bridge deck -->
+    <rect x="120" y="310" width="272" height="15" rx="3" fill="white"/>
+  </g>
+</svg>

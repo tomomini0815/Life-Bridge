@@ -1,0 +1,35 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Rotated B as Bridge - Option 1 -->
+  <defs>
+    <linearGradient id="rotatedMint1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ee7b7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+    <filter id="rotatedGlow1">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#rotatedMint1)"/>
+  
+  <g filter="url(#rotatedGlow1)">
+    <!-- L pillar on left -->
+    <path d="M 100 160 L 100 360 L 180 360 L 180 320 L 140 320 L 140 160 Z" fill="white"/>
+    
+    <!-- Rotated B as bridge arch (90 degrees) -->
+    <g transform="translate(256, 280) rotate(-90)">
+      <path d="M -120 0 L 120 0 L 120 40 C 120 65 105 80 80 80 L 80 50 C 80 35 73 25 60 20 C 73 15 80 5 80 -10 L 80 -40 C 80 -65 105 -80 120 -80 L 120 -40 Z M 40 -50 L 80 -50 C 90 -50 95 -45 95 -35 L 95 -15 C 95 -5 90 0 80 0 L 40 0 Z M 40 30 L 80 30 C 90 30 95 35 95 45 L 95 65 C 95 75 90 80 80 80 L 40 80 Z" 
+            fill="white" opacity="0.95"/>
+    </g>
+    
+    <!-- L pillar on right -->
+    <path d="M 372 160 L 372 360 L 412 360 L 412 320 L 412 160 Z" fill="white"/>
+    
+    <!-- Bridge deck -->
+    <rect x="100" y="270" width="312" height="20" rx="5" fill="white" opacity="0.8"/>
+  </g>
+</svg>

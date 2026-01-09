@@ -1,0 +1,38 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Exact Grownest - Version 2 (More Accurate) -->
+  <defs>
+    <linearGradient id="exactMint2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#5eead4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2dd4bf;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#exactMint2)"/>
+  
+  <g transform="translate(256, 275)">
+    <!-- Four decorative dots matching reference -->
+    <circle cx="-100" cy="-100" r="9" fill="white"/>
+    <circle cx="-33" cy="-110" r="11" fill="white"/>
+    <circle cx="33" cy="-110" r="11" fill="white"/>
+    <circle cx="100" cy="-100" r="9" fill="white"/>
+    
+    <!-- Complete bridge structure -->
+    <!-- Left section with trapezoid pillars and arch -->
+    <path d="M -150 -50 L -140 -60 L -120 -60 L -110 -50 L -110 15 L -150 15 Z" fill="white"/>
+    <path d="M -110 -50 Q -95 -65 -80 -50 L -80 15 L -110 15 Z" fill="white"/>
+    <path d="M -80 -50 L -70 -60 L -50 -60 L -40 -50 L -40 15 L -80 15 Z" fill="white"/>
+    
+    <!-- Center section (larger) with trapezoid pillars and arch -->
+    <path d="M -20 -60 L -10 -70 L 10 -70 L 20 -60 L 20 15 L -20 15 Z" fill="white"/>
+    <path d="M 20 -60 Q 50 -85 80 -60 L 80 15 L 20 15 Z" fill="white"/>
+    <path d="M 80 -60 L 70 -70 L 50 -70 L 40 -60 L 40 15 L 80 15 Z" fill="white"/>
+    
+    <!-- Right section with trapezoid pillars and arch -->
+    <path d="M 40 -50 L 50 -60 L 70 -60 L 80 -50 L 80 15 L 40 15 Z" fill="white"/>
+    <path d="M 80 -50 Q 95 -65 110 -50 L 110 15 L 80 15 Z" fill="white"/>
+    <path d="M 110 -50 L 120 -60 L 140 -60 L 150 -50 L 150 15 L 110 15 Z" fill="white"/>
+    
+    <!-- Horizontal bridge deck -->
+    <rect x="-150" y="10" width="300" height="18" rx="4" fill="white"/>
+  </g>
+</svg>

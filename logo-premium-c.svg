@@ -1,0 +1,33 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Premium Option C: Sophisticated Monogram -->
+  <defs>
+    <radialGradient id="premiumMintC" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#a7f3d0;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </radialGradient>
+    <filter id="elegantShadow">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.2"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#premiumMintC)"/>
+  
+  <!-- Decorative rings -->
+  <circle cx="256" cy="256" r="190" stroke="white" stroke-width="2" fill="none" opacity="0.2"/>
+  <circle cx="256" cy="256" r="210" stroke="white" stroke-width="1" fill="none" opacity="0.15"/>
+  
+  <!-- Sophisticated overlapping monogram -->
+  <g filter="url(#elegantShadow)" transform="translate(256, 256)">
+    <!-- L with elegant proportions -->
+    <path d="M -100 -110 L -100 110 L -50 110 L -50 80 L -70 80 L -70 -110 Z" 
+          fill="white"/>
+    
+    <!-- B overlapping with L, sharing vertical line -->
+    <path d="M -70 -110 L -70 110 L 10 110 C 40 110 60 90 60 60 L 60 30 C 60 15 53 5 40 0 C 53 -5 60 -15 60 -30 L 60 -70 C 60 -100 40 -110 10 -110 Z M -30 -75 L 10 -75 C 22 -75 30 -67 30 -55 L 30 -35 C 30 -23 22 -15 10 -15 L -30 -15 Z M -30 20 L 10 20 C 22 20 30 28 30 40 L 30 65 C 30 77 22 85 10 85 L -30 85 Z" 
+          fill="white"/>
+    
+    <!-- Subtle connecting element -->
+    <circle cx="-70" cy="0" r="6" fill="white" opacity="0.6"/>
+  </g>
+</svg>

@@ -1,0 +1,23 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Option 2: Overlapping LB with Heart/Bridge Symbol -->
+  <circle cx="256" cy="256" r="256" fill="url(#mint2)"/>
+  
+  <defs>
+    <linearGradient id="mint2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#98D8C8;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5FD4A8;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Heart/Bridge shape in background -->
+  <path d="M 256 200 C 256 200 220 170 190 170 C 160 170 140 190 140 220 C 140 260 256 320 256 320 C 256 320 372 260 372 220 C 372 190 352 170 322 170 C 292 170 256 200 256 200 Z" fill="white" opacity="0.2"/>
+  
+  <!-- Stylized overlapping LB -->
+  <g filter="url(#shadow2)">
+    <path d="M 150 200 L 150 350 L 230 350 L 230 310 L 190 310 L 190 200 Z" fill="white"/>
+    <path d="M 220 200 L 220 350 L 300 350 C 330 350 350 330 350 300 L 350 270 C 350 255 343 245 330 240 C 343 235 350 225 350 210 L 350 250 C 350 220 330 200 300 200 Z M 260 240 L 300 240 C 310 240 315 245 315 255 L 315 270 C 315 280 310 285 300 285 L 260 285 Z M 260 310 L 300 310 C 310 310 315 305 315 295 L 315 280 C 315 270 310 265 300 265 L 260 265 Z" fill="white"/>
+  </g>
+</svg>

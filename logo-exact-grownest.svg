@@ -1,0 +1,46 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Exact Grownest Recreation -->
+  <defs>
+    <linearGradient id="exactMint" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6ee7b7;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#34d399;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <circle cx="256" cy="256" r="256" fill="url(#exactMint)"/>
+  
+  <g transform="translate(256, 280)">
+    <!-- Four dots on top - exact positions from reference -->
+    <circle cx="-105" cy="-105" r="10" fill="white"/>
+    <circle cx="-35" cy="-115" r="12" fill="white"/>
+    <circle cx="35" cy="-115" r="12" fill="white"/>
+    <circle cx="105" cy="-105" r="10" fill="white"/>
+    
+    <!-- Left arch section -->
+    <!-- Left pillar -->
+    <path d="M -155 -55 L -145 -65 L -125 -65 L -115 -55 L -115 10 L -155 10 Z" fill="white"/>
+    <!-- Left arch opening (inverted U) -->
+    <ellipse cx="-135" cy="-55" rx="20" ry="15" fill="url(#exactMint)"/>
+    <!-- Right side of left section -->
+    <path d="M -115 -55 L -105 -65 L -85 -65 L -75 -55 L -75 10 L -115 10 Z" fill="white"/>
+    
+    <!-- Center arch section (larger) -->
+    <!-- Left pillar of center -->
+    <path d="M -55 -65 L -45 -75 L -25 -75 L -15 -65 L -15 10 L -55 10 Z" fill="white"/>
+    <!-- Center arch opening (larger inverted U) -->
+    <ellipse cx="0" cy="-65" rx="35" ry="25" fill="url(#exactMint)"/>
+    <!-- Right pillar of center -->
+    <path d="M 15 -65 L 25 -75 L 45 -75 L 55 -65 L 55 10 L 15 10 Z" fill="white"/>
+    
+    <!-- Right arch section -->
+    <!-- Left side of right section -->
+    <path d="M 75 -55 L 85 -65 L 105 -65 L 115 -55 L 115 10 L 75 10 Z" fill="white"/>
+    <!-- Right arch opening (inverted U) -->
+    <ellipse cx="135" cy="-55" rx="20" ry="15" fill="url(#exactMint)"/>
+    <!-- Right pillar -->
+    <path d="M 155 -55 L 145 -65 L 125 -65 L 115 -55 L 115 10 L 155 10 Z" fill="white"/>
+    
+    <!-- Bridge deck (horizontal platform) -->
+    <rect x="-155" y="5" width="310" height="20" rx="3" fill="white"/>
+  </g>
+</svg>
