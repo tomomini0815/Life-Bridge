@@ -352,7 +352,54 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
         <SidebarGroup>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
+            <SidebarMenu className="relative gap-0">
+              {/* Sliding Active Indicator for Settings */}
+              {(() => {
+                const settingsActiveIndex = settingsItems.findIndex((item) => {
+                  const isSettingsPage = item.title === '設定';
+                  const isHelpPage = item.title === 'ヘルプ';
+                  return (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
+                });
+
+                return settingsActiveIndex !== -1 ? (
+                  <div
+                    className={cn(
+                      "absolute left-0 z-10 bg-white dark:bg-background transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] origin-left pointer-events-none",
+                      isCollapsed ? "h-12" : "h-12"
+                    )}
+                    style={{
+                      top: `${settingsActiveIndex * (isCollapsed ? 3 : 3)}rem`,
+                      width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
+                      borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
+                      marginRight: '-1.5rem',
+                      paddingRight: '1.5rem',
+                      left: isCollapsed ? "-0.5rem" : "0",
+                    }}
+                  >
+                    {/* Top Curve */}
+                    <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                      <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {isCollapsed ? (
+                          <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
+                        ) : (
+                          <path d="M24 24H0C14 24 24 14 24 0V24Z" className="fill-white dark:fill-background" />
+                        )}
+                      </svg>
+                    </div>
+                    {/* Bottom Curve */}
+                    <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                      <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
+                        {isCollapsed ? (
+                          <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />
+                        ) : (
+                          <path d="M24 0H0C14 0 24 10 24 24V0Z" className="fill-white dark:fill-background" />
+                        )}
+                      </svg>
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
               {settingsItems.map((item) => {
                 const isSettingsPage = item.title === '設定';
                 const isHelpPage = item.title === 'ヘルプ';
@@ -370,15 +417,33 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                           }
                         }
                       }}
-                      className={cn(
-                        "text-primary-foreground/80 hover:bg-white/10 hover:text-white transition-colors duration-200 rounded-2xl h-11 pl-4 text-base font-medium",
-                        isCollapsed && "justify-center pl-0",
-                        isActive && "bg-white/10 text-white"
-                      )}
                       tooltip={isCollapsed ? item.title : undefined}
+                      className={cn(
+                        "w-full h-12 text-base font-medium transition-[color,transform] duration-300 relative group z-20",
+                        isCollapsed ? "justify-center pl-0 gap-0" : "justify-start pl-4",
+                        isActive
+                          ? "text-primary hover:text-primary bg-transparent hover:bg-transparent data-[active=true]:bg-transparent"
+                          : "text-sidebar-foreground hover:bg-sidebar-accent"
+                      )}
+                      style={{
+                        borderRadius: isActive && !isCollapsed ? "40px 0 0 40px" : "16px"
+                      }}
                     >
-                      <item.icon className="w-5 h-5 mr-3 flex-shrink-0" />
-                      {!isCollapsed && <span>{item.title}</span>}
+                      <item.icon
+                        className={cn(
+                          "transition-transform duration-300 flex-shrink-0",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
+                          isCollapsed ? "mr-0" : "mr-2",
+                          isActive ? "scale-110" : "group-hover:scale-110"
+                        )}
+                      />
+
+                      {!isCollapsed && (
+                        <>
+                          <span className="relative z-10">{item.title}</span>
+                          {isActive && <ChevronRight className="ml-auto w-5 h-5 opacity-50" />}
+                        </>
+                      )}
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
@@ -388,7 +453,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         </SidebarGroup>
       </SidebarContent >
 
-      <SidebarFooter className="p-6">
+      <SidebarFooter className={cn("transition-all duration-300", isCollapsed ? "p-2" : "p-6")}>
         {!isCollapsed ? (
           <div className="bg-white/10 rounded-2xl p-4 backdrop-blur-sm border border-white/10 transition-all duration-300">
             <div className="flex items-center gap-3 mb-3">
@@ -424,15 +489,15 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </div>
         ) : (
           <div className="flex justify-center">
-            <div className="bg-white/10 rounded-2xl p-1.5 backdrop-blur-sm border border-white/10">
+            <div className="bg-white/10 rounded-2xl p-1.5 backdrop-blur-sm border border-white/10 flex-shrink-0">
               {user?.user_metadata?.avatar_url ? (
                 <img
                   src={user.user_metadata.avatar_url}
                   alt={user.user_metadata.full_name || "User"}
-                  className="w-8 h-8 rounded-full shadow-lg cursor-pointer object-cover"
+                  className="w-8 h-8 rounded-full shadow-lg cursor-pointer object-cover flex-shrink-0"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-300 to-orange-400 flex items-center justify-center text-xs font-bold text-white shadow-lg cursor-pointer flex-shrink-0">
                   {user?.email?.charAt(0).toUpperCase() || "U"}
                 </div>
               )}

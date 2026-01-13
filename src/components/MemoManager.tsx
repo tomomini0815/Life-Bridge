@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Memo, CheckboxItem } from '@/types/memo';
 import { memoService } from '@/services/MemoService';
+import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import {
     Plus,
@@ -12,6 +13,7 @@ import {
     X,
     StickyNote,
     Palette,
+    Loader2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -20,6 +22,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 const MEMO_COLORS = [
     { name: 'default', bg: 'bg-white dark:bg-zinc-900', border: 'border-gray-200 dark:border-zinc-700' },
@@ -32,6 +35,7 @@ const MEMO_COLORS = [
 ];
 
 export function MemoManager() {
+    const { user } = useAuth();
     const [memos, setMemos] = useState<Memo[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [editingId, setEditingId] = useState<string | null>(null);
@@ -40,14 +44,31 @@ export function MemoManager() {
     const [isCreating, setIsCreating] = useState(false);
     const [newTitle, setNewTitle] = useState('');
     const [newContent, setNewContent] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        loadMemos();
-    }, []);
+        if (user) {
+            loadMemos();
+        } else {
+            setMemos([]);
+            setIsLoading(false);
+        }
+    }, [user]);
 
-    const loadMemos = () => {
-        const allMemos = memoService.getAllMemos();
-        setMemos(allMemos);
+    const loadMemos = async () => {
+        if (!user) return;
+
+        setIsLoading(true);
+        try {
+            await memoService.setUser(user.id);
+            const allMemos = memoService.getAllMemos();
+            setMemos(allMemos);
+        } catch (error) {
+            console.error('Failed to load memos:', error);
+            toast.error('メモの読み込みに失敗しました');
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const filteredMemos = searchQuery
@@ -57,17 +78,23 @@ export function MemoManager() {
     const pinnedMemos = filteredMemos.filter(m => m.isPinned);
     const unpinnedMemos = filteredMemos.filter(m => !m.isPinned);
 
-    const handleCreate = () => {
+    const handleCreate = async () => {
         if (!newTitle.trim() && !newContent.trim()) return;
 
-        memoService.createMemo(
-            newTitle.trim() || '無題のメモ',
-            newContent
-        );
-        setNewTitle('');
-        setNewContent('');
-        setIsCreating(false);
-        loadMemos();
+        try {
+            await memoService.createMemo(
+                newTitle.trim() || '無題のメモ',
+                newContent
+            );
+            setNewTitle('');
+            setNewContent('');
+            setIsCreating(false);
+            await loadMemos();
+            toast.success('メモを作成しました');
+        } catch (error) {
+            console.error('Failed to create memo:', error);
+            toast.error('メモの作成に失敗しました');
+        }
     };
 
     const handleEdit = (memo: Memo) => {
@@ -76,30 +103,52 @@ export function MemoManager() {
         setEditContent(memo.content);
     };
 
-    const handleSaveEdit = () => {
+    const handleSaveEdit = async () => {
         if (!editingId) return;
 
-        memoService.updateMemo(editingId, {
-            title: editTitle.trim() || '無題のメモ',
-            content: editContent,
-        });
-        setEditingId(null);
-        loadMemos();
+        try {
+            await memoService.updateMemo(editingId, {
+                title: editTitle.trim() || '無題のメモ',
+                content: editContent,
+            });
+            setEditingId(null);
+            await loadMemos();
+            toast.success('メモを更新しました');
+        } catch (error) {
+            console.error('Failed to update memo:', error);
+            toast.error('メモの更新に失敗しました');
+        }
     };
 
-    const handleDelete = (id: string) => {
-        memoService.deleteMemo(id);
-        loadMemos();
+    const handleDelete = async (id: string) => {
+        try {
+            await memoService.deleteMemo(id);
+            await loadMemos();
+            toast.success('メモを削除しました');
+        } catch (error) {
+            console.error('Failed to delete memo:', error);
+            toast.error('メモの削除に失敗しました');
+        }
     };
 
-    const handleTogglePin = (id: string) => {
-        memoService.togglePin(id);
-        loadMemos();
+    const handleTogglePin = async (id: string) => {
+        try {
+            await memoService.togglePin(id);
+            await loadMemos();
+        } catch (error) {
+            console.error('Failed to toggle pin:', error);
+            toast.error('ピン留めの切り替えに失敗しました');
+        }
     };
 
-    const handleToggleCheckbox = (memoId: string, itemId: string) => {
-        memoService.toggleCheckboxItem(memoId, itemId);
-        loadMemos();
+    const handleToggleCheckbox = async (memoId: string, itemId: string) => {
+        try {
+            await memoService.toggleCheckboxItem(memoId, itemId);
+            await loadMemos();
+        } catch (error) {
+            console.error('Failed to toggle checkbox:', error);
+            toast.error('チェックボックスの更新に失敗しました');
+        }
     };
 
     const MemoCard = ({ memo }: { memo: Memo }) => {
@@ -312,8 +361,15 @@ export function MemoManager() {
                 </button>
             )}
 
+            {/* Loading State */}
+            {isLoading && (
+                <div className="flex justify-center items-center py-16">
+                    <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                </div>
+            )}
+
             {/* Pinned Memos */}
-            {pinnedMemos.length > 0 && (
+            {!isLoading && pinnedMemos.length > 0 && (
                 <div>
                     <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 px-1">
                         ピン留め済み
@@ -327,7 +383,7 @@ export function MemoManager() {
             )}
 
             {/* Other Memos */}
-            {unpinnedMemos.length > 0 && (
+            {!isLoading && unpinnedMemos.length > 0 && (
                 <div>
                     {pinnedMemos.length > 0 && (
                         <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3 px-1">
@@ -342,7 +398,7 @@ export function MemoManager() {
                 </div>
             )}
 
-            {filteredMemos.length === 0 && (
+            {!isLoading && filteredMemos.length === 0 && (
                 <div className="text-center py-16">
                     <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-4">
                         <StickyNote className="w-8 h-8 text-muted-foreground/50" />
