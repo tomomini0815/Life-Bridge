@@ -3,8 +3,8 @@ import { UserProfile } from '@/types/benefit';
 const PROFILE_KEY = 'lifebridge_user_profile_v2';
 
 const DEFAULT_PROFILE: UserProfile = {
-    name: 'Tomomi',
-    annualIncome: 5000000,
+    name: '',
+    annualIncome: 0,
     employmentStatus: ['employed'],
     hasSpouse: false,
     numberOfChildren: 0,

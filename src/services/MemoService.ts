@@ -40,7 +40,8 @@ export class MemoService {
         this.currentUserId = userId;
         if (userId) {
             await this.loadMemos();
-            await this.migrateFromLocalStorage();
+            await this.loadMemos();
+            // await this.migrateFromLocalStorage();
         } else {
             this.memos = [];
         }

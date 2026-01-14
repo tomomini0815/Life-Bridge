@@ -155,7 +155,7 @@ export function Settings() {
     const toolItems = MENU_ITEMS.filter(item => item.category === 'tools');
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6 animate-fade-in pb-12">
+        <div className="w-full space-y-6 animate-fade-in pb-12">
             {/* Header */}
             <div className="flex items-start gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg shrink-0">
@@ -215,11 +215,14 @@ export function Settings() {
                                         <Input
                                             id="income"
                                             type="number"
-                                            value={profile.annualIncome}
+                                            value={profile.annualIncome === 0 ? '' : profile.annualIncome}
                                             onChange={(e) => setProfile({ ...profile, annualIncome: parseInt(e.target.value) || 0 })}
                                             placeholder="5000000"
+                                            className="pr-10"
                                         />
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">円</span>
+                                        <div className="absolute right-3 top-0 h-10 flex items-center pointer-events-none">
+                                            <span className="text-muted-foreground text-sm">円</span>
+                                        </div>
                                     </div>
                                 </div>
 

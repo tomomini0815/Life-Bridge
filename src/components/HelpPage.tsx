@@ -29,7 +29,7 @@ export function HelpPage() {
     ];
 
     return (
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in pb-12">
+        <div className="w-full space-y-8 animate-fade-in pb-12">
             {/* Header */}
             <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-lg">

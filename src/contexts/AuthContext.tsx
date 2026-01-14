@@ -10,6 +10,7 @@ interface AuthContextType {
     signInWithGoogle: () => Promise<void>;
     signInWithEmail: (email: string, password: string) => Promise<void>;
     signUp: (email: string, password: string) => Promise<void>;
+    resendVerificationEmail: (email: string) => Promise<void>;
     signOut: () => Promise<void>;
 }
 
@@ -20,6 +21,7 @@ const AuthContext = createContext<AuthContextType>({
     signInWithGoogle: async () => { },
     signInWithEmail: async () => { },
     signUp: async () => { },
+    resendVerificationEmail: async () => { },
     signOut: async () => { },
 });
 
@@ -80,6 +82,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const resendVerificationEmail = async (email: string) => {
+        const { error } = await supabase.auth.resend({
+            type: 'signup',
+            email,
+            options: {
+                emailRedirectTo: `${window.location.origin}/dashboard`,
+            },
+        });
+        if (error) throw error;
+    };
+
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
         if (error) throw error;
@@ -88,7 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUp, resendVerificationEmail, signOut }}>
             {children}
         </AuthContext.Provider>
     );

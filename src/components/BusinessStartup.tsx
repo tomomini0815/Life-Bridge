@@ -297,6 +297,44 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
                                 <p className="text-xs font-semibold text-primary mt-1">タスク完了</p>
                             </div>
                         </div>
+
+                        {/* Benefits Card */}
+                        {totalBenefits > 0 && (
+                            <>
+                                <div className="group glass-medium rounded-3xl p-6 shadow-soft border-2 border-transparent hover:border-green-500/10 transition-all duration-300 hover-lift">
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                                            <Coins className="w-5 h-5 text-green-600" />
+                                        </div>
+                                        <p className="text-sm font-medium text-muted-foreground">税制優遇</p>
+                                    </div>
+                                    <p className="text-3xl font-bold text-foreground mb-2">
+                                        ¥{totalBenefits.toLocaleString()}
+                                    </p>
+                                    <div className="inline-flex items-center gap-1.5 text-xs font-medium text-green-700 bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-lg">
+                                        <CheckCircle2 className="w-3.5 h-3.5" />
+                                        申請済み: ¥{claimedBenefits.toLocaleString()}
+                                    </div>
+                                </div>
+
+                                {/* Remaining Benefits Card */}
+                                <div className="group rounded-3xl p-6 shadow-soft border-2 border-amber-200/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 hover:border-amber-300/50 transition-all duration-300 hover-lift relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -mr-16 -mt-16 animate-pulse-soft" />
+                                    <div className="flex items-center gap-3 mb-4 relative z-10">
+                                        <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
+                                            <Sparkles className="w-5 h-5 text-amber-600" />
+                                        </div>
+                                        <p className="text-sm font-medium text-amber-700 dark:text-amber-500">まだもらえます！</p>
+                                    </div>
+                                    <p className="text-3xl font-bold text-amber-700 dark:text-amber-500 mb-2 relative z-10">
+                                        ¥{remainingBenefits.toLocaleString()}
+                                    </p>
+                                    <p className="text-xs font-medium text-amber-600 dark:text-amber-400 relative z-10">
+                                        あと{currentTasks.filter(t => !t.completed && t.benefitAmount).length}件の申請で獲得可能です
+                                    </p>
+                                </div>
+                            </>
+                        )}
                     </div>
 
                     {/* Achievement Banner */}

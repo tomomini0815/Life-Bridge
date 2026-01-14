@@ -125,7 +125,8 @@ export class TimelineService {
         this.currentUserId = userId;
         if (userId) {
             await this.loadEvents();
-            await this.migrateFromLocalStorage();
+            await this.loadEvents();
+            // await this.migrateFromLocalStorage();
         } else {
             this.events = [];
         }

@@ -38,7 +38,8 @@ export class SubscriptionService {
         this.currentUserId = userId;
         if (userId) {
             await this.loadSubscriptions();
-            await this.migrateFromLocalStorage();
+            await this.loadSubscriptions();
+            // await this.migrateFromLocalStorage();
         } else {
             this.subscriptions = [];
         }

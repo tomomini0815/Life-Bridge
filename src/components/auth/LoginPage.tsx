@@ -21,10 +21,11 @@ const getErrorMessage = (error: any) => {
 };
 
 export function LoginPage() {
-    const { signInWithGoogle, signInWithEmail, user } = useAuth();
+    const { signInWithGoogle, signInWithEmail, resendVerificationEmail, user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showResend, setShowResend] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -49,16 +50,38 @@ export function LoginPage() {
         e.preventDefault();
         if (!email || !password) return;
         setIsLoading(true);
+        setShowResend(false);
         try {
             await signInWithEmail(email, password);
             toast.success("ログインしました");
             navigate('/dashboard');
         } catch (error: any) {
             console.error(error);
+            const errorMessage = getErrorMessage(error);
             toast.error('ログインに失敗しました', {
-                description: getErrorMessage(error),
-                duration: 5000, // Longer duration for reading
+                description: errorMessage,
+                duration: 5000,
             });
+            if (error.message.toLowerCase().includes('email not confirmed')) {
+                setShowResend(true);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendEmail = async () => {
+        if (!email) return;
+        setIsLoading(true);
+        try {
+            await resendVerificationEmail(email);
+            toast.success('確認メールを再送信しました', {
+                description: 'メールボックスを確認してください。迷惑メールフォルダもご確認ください。',
+            });
+            setShowResend(false);
+        } catch (error) {
+            console.error(error);
+            toast.error('メールの再送信に失敗しました');
         } finally {
             setIsLoading(false);
         }
@@ -130,6 +153,19 @@ export function LoginPage() {
                         <Button type="submit" className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
                             {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "ログイン"}
                         </Button>
+
+                        {showResend && (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full h-12 border-amber-200 bg-amber-50 text-amber-900 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-100 dark:border-amber-800"
+                                onClick={handleResendEmail}
+                                disabled={isLoading}
+                            >
+                                <Mail className="mr-2 h-4 w-4" />
+                                確認メールを再送信する
+                            </Button>
+                        )}
                     </form>
 
                     <div className="text-center text-sm">
