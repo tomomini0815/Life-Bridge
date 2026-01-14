@@ -72,6 +72,15 @@ export class SubscriptionService {
             if (data) {
                 this.subscriptions = data.map(row => this.rowToSubscription(row as unknown as SubscriptionRow));
                 this.notifyChange();
+
+                // Sync reminders: Remove orphans then reschedule active ones
+                notificationService.syncSubscriptionReminders(this.subscriptions.map(s => s.id));
+
+                this.subscriptions.forEach(sub => {
+                    if (sub.reminderDays && sub.reminderDays.length > 0) {
+                        this.scheduleReminder(sub);
+                    }
+                });
             }
         } catch (e) {
             console.error('Failed to load subscriptions:', e);
@@ -122,7 +131,7 @@ export class SubscriptionService {
 
     private notifyChange() {
         if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('subscriptionsChanged', { detail: this.subscriptions }));
+            window.dispatchEvent(new CustomEvent('subscriptionsChanged', { detail: [...this.subscriptions] }));
         }
     }
 
@@ -195,7 +204,7 @@ export class SubscriptionService {
                 this.subscriptions[index] = updatedSub;
                 this.notifyChange();
 
-                if (updates.nextPaymentDate || updates.name) {
+                if (updates.nextPaymentDate || updates.name || updates.reminderDays) {
                     this.scheduleReminder(updatedSub);
                 }
             }
@@ -221,7 +230,7 @@ export class SubscriptionService {
 
             this.subscriptions = this.subscriptions.filter(s => s.id !== id);
             this.notifyChange();
-            notificationService.clearTaskReminders(id);
+            notificationService.clearSubscriptionReminders(id);
             return true;
 
         } catch (e) {

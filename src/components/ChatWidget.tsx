@@ -485,12 +485,23 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
                       onClick={(e) => {
                         e.stopPropagation();
                         // Import memoService dynamically to avoid circular deps
-                        import('@/services/MemoService').then(({ memoService }) => {
-                          memoService.createMemoFromChat(message.content);
+                        import('@/services/MemoService').then(async ({ memoService }) => {
+                          if (user) {
+                            await memoService.setUser(user.id);
+                          }
+
+                          const result = await memoService.createMemoFromChat(message.content);
+
                           import('sonner').then(({ toast }) => {
-                            toast.success('メモに保存しました', {
-                              description: 'メモ帳から確認できます',
-                            });
+                            if (result) {
+                              toast.success('メモに保存しました', {
+                                description: 'メモ帳から確認できます',
+                              });
+                            } else {
+                              toast.error('保存に失敗しました', {
+                                description: 'ログイン状態を確認してください',
+                              });
+                            }
                           });
                         });
                       }}

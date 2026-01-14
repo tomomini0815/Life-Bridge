@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { notificationService, ScheduledReminder } from '@/services/NotificationService';
+import { subscriptionService } from '@/services/SubscriptionService';
 import { cn } from '@/lib/utils';
 import { Bell, BellOff, Clock, Check, X, AlertCircle, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { SubscriptionManager } from './SubscriptionManager';
+import { toast } from 'sonner';
 
 export function ReminderSettings() {
     const [enabled, setEnabled] = useState(false);
@@ -18,7 +20,32 @@ export function ReminderSettings() {
         loadSettings();
         checkPermission();
         loadReminders();
+
+        const handleSubsChange = () => loadReminders();
+        window.addEventListener('subscriptionsChanged', handleSubsChange);
+        return () => window.removeEventListener('subscriptionsChanged', handleSubsChange);
     }, []);
+
+    // ... existing functions ...
+
+    const handleToggleReminder = async (reminder: ScheduledReminder) => {
+        if (reminder.type === 'subscription') {
+            // Toggle OFF (since it's in the list, it's ON)
+            // If we supported ON, we'd need to know the original subscription state, but here we assume we are removing it.
+            // Actually, let's just clear it.
+            // The user asked for "ON/OFF". If it's in the list, it's ON. Toggle -> OFF.
+            // When OFF, it will be removed from the list. 
+            // So we just set reminderDays to empty.
+            await subscriptionService.updateSubscription(reminder.targetId, { reminderDays: [] });
+            toast.success('リマインダーをOFFにしました');
+            loadReminders(); // Refresh immediately
+        } else {
+            // For tasks, we clear reminders
+            notificationService.clearTaskReminders(reminder.targetId);
+            toast.success('リマインダーをOFFにしました');
+            loadReminders();
+        }
+    };
 
     const loadSettings = () => {
         const settings = notificationService.getSettings();
@@ -35,8 +62,11 @@ export function ReminderSettings() {
     };
 
     const loadReminders = () => {
-        const reminders = notificationService.getUpcomingReminders();
-        setUpcomingReminders(reminders);
+        // Show all scheduled reminders, not just upcoming ones
+        const reminders = notificationService.getScheduledReminders();
+        // Filter out sent reminders that are too old (optional, but good for cleanup)
+        // For now, let's show all valid scheduled reminders
+        setUpcomingReminders(reminders.filter(r => !r.sent || new Date().getTime() - new Date(r.reminderDate).getTime() < 86400000));
     };
 
     const handleRequestPermission = async () => {
@@ -199,37 +229,58 @@ export function ReminderSettings() {
 
                         {upcomingReminders.length > 0 ? (
                             <div className="space-y-3">
-                                {upcomingReminders.map((reminder) => (
+                                {Array.from(
+                                    upcomingReminders.reduce((acc, reminder) => {
+                                        const key = `${reminder.type}-${reminder.targetId}`;
+                                        if (!acc.has(key)) {
+                                            acc.set(key, { ...reminder, allReminders: [] });
+                                        }
+                                        acc.get(key).allReminders.push(reminder);
+                                        return acc;
+                                    }, new Map())
+                                        .values()
+                                ).map((group: any) => (
                                     <div
-                                        key={reminder.id}
+                                        key={group.id}
                                         className="p-4 rounded-xl bg-muted/30 border border-border/50"
                                     >
                                         <div className="flex items-start justify-between">
                                             <div className="flex-1">
                                                 <h3 className="font-bold text-foreground mb-1">
-                                                    {reminder.taskTitle}
+                                                    {group.title}
                                                 </h3>
                                                 <p className="text-sm text-muted-foreground mb-2">
-                                                    期限: {reminder.deadline}
+                                                    期限: {group.deadline}
                                                 </p>
-                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                    <Clock className="w-3 h-3" />
-                                                    <span>
-                                                        {new Date(reminder.reminderDate).toLocaleString('ja-JP', {
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                            hour: '2-digit',
-                                                            minute: '2-digit',
-                                                        })}
-                                                        に通知
-                                                    </span>
+                                                <div className="flex flex-col gap-1">
+                                                    {group.allReminders.sort((a: any, b: any) => new Date(a.reminderDate).getTime() - new Date(b.reminderDate).getTime()).map((r: any) => (
+                                                        <div key={r.id} className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                            <Clock className="w-3 h-3" />
+                                                            <span>
+                                                                {new Date(r.reminderDate).toLocaleString('ja-JP', {
+                                                                    month: 'long',
+                                                                    day: 'numeric',
+                                                                    hour: '2-digit',
+                                                                    minute: '2-digit',
+                                                                })}
+                                                                に通知
+                                                                {r.sent && <span className="ml-2 text-green-600">(送信済み)</span>}
+                                                            </span>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
-                                            {reminder.sent && (
-                                                <span className="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-700">
-                                                    送信済み
-                                                </span>
-                                            )}
+                                            <div className="flex flex-col items-end gap-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-8 px-3 text-muted-foreground hover:bg-destructive/10 hover:text-destructive gap-1 rounded-full border border-border hover:border-destructive/30"
+                                                    onClick={() => handleToggleReminder(group)}
+                                                >
+                                                    <BellOff className="w-3 h-3 fill-current" />
+                                                    <span className="text-xs font-bold">通知OFF</span>
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

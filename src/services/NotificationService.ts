@@ -125,7 +125,8 @@ export class NotificationService {
 
     // Use custom reminder days or default (1 day before and On the day)
     // Default: Today(0), Yesterday(1), 3 Days before(3)
-    const reminderDays = subscription.reminderDays && subscription.reminderDays.length > 0
+    // IMPORTANT: If reminderDays is [], it means NO reminders (OFF). Check for undefined/null to apply default.
+    const reminderDays = (subscription.reminderDays !== undefined && subscription.reminderDays !== null)
       ? subscription.reminderDays
       : [0, 1, 3];
 
@@ -249,7 +250,7 @@ export class NotificationService {
     this.playAlertSound();
     new Notification('LifeBridge - 通知テスト', {
       body: 'これはサブスクリプションリマインダーのテスト通知です。',
-      icon: '/favicon.ico',
+      icon: '/lb-logo.png',
     });
   }
 
@@ -305,8 +306,8 @@ export class NotificationService {
 
     const notification = new Notification(title, {
       body: body,
-      icon: '/favicon.ico', // Ideally replace with category icon
-      badge: '/favicon.ico',
+      icon: '/lb-logo.png', // Ideally replace with category icon
+      badge: '/lb-logo.png',
       tag: tag,
       requireInteraction: false,
       data: {
@@ -393,6 +394,22 @@ export class NotificationService {
   clearTaskReminders(taskId: string): void {
     this.scheduledReminders = this.scheduledReminders.filter(
       (r) => !(r.type === 'task' && r.targetId === taskId)
+    );
+    this.saveReminders();
+  }
+
+  // Clear all reminders for a subscription
+  clearSubscriptionReminders(subscriptionId: string): void {
+    this.scheduledReminders = this.scheduledReminders.filter(
+      (r) => !(r.type === 'subscription' && r.targetId === subscriptionId)
+    );
+    this.saveReminders();
+  }
+
+  // Sync subscription reminders (remove orphans)
+  syncSubscriptionReminders(activeSubscriptionIds: string[]): void {
+    this.scheduledReminders = this.scheduledReminders.filter(
+      (r) => r.type !== 'subscription' || activeSubscriptionIds.includes(r.targetId)
     );
     this.saveReminders();
   }

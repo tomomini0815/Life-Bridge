@@ -35,6 +35,8 @@ export class MemoService {
 
     // Set current user and load their memos
     async setUser(userId: string | null): Promise<void> {
+        if (this.currentUserId === userId) return;
+
         this.currentUserId = userId;
         if (userId) {
             await this.loadMemos();
@@ -243,6 +245,17 @@ export class MemoService {
         );
     }
 
+    // Update memo from raw text (parsing checkboxes)
+    async updateMemoFromText(id: string, title: string, rawContent: string): Promise<Memo | null> {
+        const { checkboxItems, cleanedContent } = this.extractCheckboxItems(rawContent);
+
+        return await this.updateMemo(id, {
+            title,
+            content: cleanedContent,
+            checkboxItems: checkboxItems.length > 0 ? checkboxItems : [],
+        });
+    }
+
     // Extract checkbox items and return cleaned content
     private extractCheckboxItems(text: string): { checkboxItems: CheckboxItem[], cleanedContent: string } {
         const items: CheckboxItem[] = [];
@@ -253,10 +266,13 @@ export class MemoService {
             const match = line.match(/^\s*(?:- \[[ x]\]|-|\*|\d+\.|・)\s+(.+)$/);
 
             if (match) {
+                // Check if explicitly checked in markdown
+                const isChecked = /^\s*- \[x\]/i.test(line);
+
                 items.push({
                     id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                     text: this.cleanMarkdown(match[1].trim()),
-                    checked: false,
+                    checked: isChecked,
                 });
             } else {
                 remainingLines.push(this.cleanMarkdown(line));
