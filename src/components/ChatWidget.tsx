@@ -5,6 +5,9 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { AiConciergeService, AiMessage, UserContext } from '@/services/AiConciergeService';
 import { GeminiService } from '@/services/GeminiService';
+import { chatService } from '@/services/ChatService';
+import { useAuth } from '@/contexts/AuthContext';
+
 
 interface ChatWidgetProps {
   currentContext?: UserContext;
@@ -12,6 +15,7 @@ interface ChatWidgetProps {
 }
 
 export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWidgetProps) {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<AiMessage[]>([
@@ -71,6 +75,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
     const greetingText = AiConciergeService.getGreetingMessage(currentContext);
 
     // Determine default actions based on context
+    // Determine default actions based on context
     let actions = ['使い方を見る', '質問する'];
     if (['marriage', 'birth', 'baby', 'moving', 'startup', 'care', 'retirement'].includes(currentContext)) {
       actions = ['手続きの流れ', '必要書類', '給付金について'];
@@ -82,17 +87,35 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
       actions = ['メモの書き方', '整理のコツ'];
     }
 
-    setMessages([{
-      id: `init-${Date.now()}`,
-      role: 'assistant',
-      content: greetingText,
-      timestamp: new Date(),
-      actions: actions,
-    }]);
+    // If user is logged in, load history, otherwise show greeting
+    if (user) {
+      chatService.setUser(user.id);
+      chatService.loadMessages().then(history => {
+        if (history.length > 0) {
+          setMessages(history);
+        } else {
+          setMessages([{
+            id: `init-${Date.now()}`,
+            role: 'assistant',
+            content: greetingText,
+            timestamp: new Date(),
+            actions: actions,
+          }]);
+        }
+      });
+    } else {
+      setMessages([{
+        id: `init-${Date.now()}`,
+        role: 'assistant',
+        content: greetingText,
+        timestamp: new Date(),
+        actions: actions,
+      }]);
+    }
 
     // Optional: Don't force open, but maybe show indicator if needed
     // setHasUnread(true); // Maybe too intrusive
-  }, [currentContext]);
+  }, [currentContext, user]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -148,6 +171,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
           actions: []
         };
         setMessages(prev => [...prev, geminiMsg]);
+        if (user) chatService.saveMessage(geminiMsg);
       } else {
         // Fallback to Rule-Based AI Concierge
         const response = await AiConciergeService.processMessage(
@@ -157,6 +181,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
           [...messages, userMsg]
         );
         setMessages(prev => [...prev, response]);
+        if (user) chatService.saveMessage(response);
       }
     } catch (e: any) {
       console.error('Chat error:', e);
@@ -212,13 +237,15 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
         }
 
         if (responseContent) {
-          setMessages(prev => [...prev, {
+          const aiMsg: AiMessage = {
             id: Date.now().toString(),
             role: 'assistant',
             content: responseContent,
             timestamp: new Date(),
             actions: []
-          }]);
+          };
+          setMessages(prev => [...prev, aiMsg]);
+          if (user) chatService.saveMessage(aiMsg);
         } else {
           const res = await AiConciergeService.processMessage(
             action,
@@ -227,6 +254,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
             [...messages, userMsg]
           );
           setMessages(prev => [...prev, res]);
+          if (user) chatService.saveMessage(res);
         }
       } catch (e: any) {
         console.error('Action error:', e);

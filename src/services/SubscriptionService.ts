@@ -1,15 +1,31 @@
-import { Subscription } from '@/types/subscription';
+import { Subscription, SubscriptionCategory } from '@/types/subscription';
 import { notificationService } from './NotificationService';
+import { supabase } from '@/lib/supabase';
 
 const STORAGE_KEY = 'lifebridge_subscriptions';
+
+// Internal row interface
+interface SubscriptionRow {
+    id: string;
+    user_id: string;
+    name: string;
+    amount: number;
+    currency: string;
+    billing_cycle: string;
+    next_payment_date: string;
+    category: string;
+    is_essential: boolean;
+    reminder_days: number[] | null;
+    created_at: string;
+    updated_at: string;
+}
 
 export class SubscriptionService {
     private static instance: SubscriptionService;
     private subscriptions: Subscription[] = [];
+    private currentUserId: string | null = null;
 
-    private constructor() {
-        this.subscriptions = this.loadSubscriptions();
-    }
+    private constructor() { }
 
     static getInstance(): SubscriptionService {
         if (!SubscriptionService.instance) {
@@ -18,83 +34,202 @@ export class SubscriptionService {
         return SubscriptionService.instance;
     }
 
-    // Load subscriptions from local storage
-    private loadSubscriptions(): Subscription[] {
-        if (typeof window === 'undefined') return [];
+    async setUser(userId: string | null): Promise<void> {
+        this.currentUserId = userId;
+        if (userId) {
+            await this.loadSubscriptions();
+            await this.migrateFromLocalStorage();
+        } else {
+            this.subscriptions = [];
+        }
+    }
+
+    private rowToSubscription(row: SubscriptionRow): Subscription {
+        return {
+            id: row.id,
+            name: row.name,
+            amount: row.amount,
+            currency: (row.currency as 'JPY' | 'USD') || 'JPY',
+            billingCycle: (row.billing_cycle as 'monthly' | 'yearly') || 'monthly',
+            nextPaymentDate: row.next_payment_date,
+            category: (row.category as SubscriptionCategory) || 'entertainment',
+            isEssential: row.is_essential,
+            reminderDays: row.reminder_days || [],
+        };
+    }
+
+    private async loadSubscriptions(): Promise<void> {
+        if (!this.currentUserId) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('subscriptions')
+                .select('*')
+                .eq('user_id', this.currentUserId);
+
+            if (error) throw error;
+
+            if (data) {
+                this.subscriptions = data.map(row => this.rowToSubscription(row as unknown as SubscriptionRow));
+                this.notifyChange();
+            }
+        } catch (e) {
+            console.error('Failed to load subscriptions:', e);
+        }
+    }
+
+    private async migrateFromLocalStorage(): Promise<void> {
+        if (!this.currentUserId) return;
+        const migrationKey = `${STORAGE_KEY}_migrated_${this.currentUserId}`;
+        if (localStorage.getItem(migrationKey)) return;
 
         try {
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                return JSON.parse(stored);
+            if (!stored) {
+                localStorage.setItem(migrationKey, 'true');
+                return;
             }
+
+            const localSubs: Subscription[] = JSON.parse(stored);
+            if (localSubs.length === 0) {
+                localStorage.setItem(migrationKey, 'true');
+                return;
+            }
+
+            console.log(`Migrating ${localSubs.length} subscriptions...`);
+            const subsToInsert = localSubs.map(s => ({
+                user_id: this.currentUserId,
+                name: s.name,
+                amount: s.amount,
+                currency: s.currency,
+                billing_cycle: s.billingCycle,
+                next_payment_date: s.nextPaymentDate,
+                category: s.category,
+                is_essential: s.isEssential,
+                reminder_days: s.reminderDays
+            }));
+
+            const { error } = await supabase.from('subscriptions').insert(subsToInsert);
+            if (error) throw error;
+
+            localStorage.setItem(migrationKey, 'true');
+            await this.loadSubscriptions();
+
         } catch (e) {
-            console.error('Failed to load subscriptions', e);
+            console.error('Migration failed:', e);
         }
-        return [];
     }
 
-    // Save subscriptions to local storage
-    private saveSubscriptions(): void {
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(this.subscriptions));
-            // Dispatch event for reactive updates if needed across components
+    private notifyChange() {
+        if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('subscriptionsChanged', { detail: this.subscriptions }));
-        } catch (e) {
-            console.error('Failed to save subscriptions', e);
         }
     }
 
-    // Get all subscriptions
     getSubscriptions(): Subscription[] {
         return [...this.subscriptions];
     }
 
-    // Add a new subscription
-    addSubscription(subscription: Omit<Subscription, 'id'>): Subscription {
-        const newSubscription: Subscription = {
-            ...subscription,
-            id: crypto.randomUUID(),
-        };
+    async addSubscription(subscription: Omit<Subscription, 'id'>): Promise<Subscription | null> {
+        if (!this.currentUserId) return null;
 
-        this.subscriptions.push(newSubscription);
-        this.saveSubscriptions();
-        this.scheduleReminder(newSubscription);
+        try {
+            const { data, error } = await supabase
+                .from('subscriptions')
+                .insert({
+                    user_id: this.currentUserId,
+                    name: subscription.name,
+                    amount: subscription.amount,
+                    currency: subscription.currency,
+                    billing_cycle: subscription.billingCycle,
+                    next_payment_date: subscription.nextPaymentDate,
+                    category: subscription.category,
+                    is_essential: subscription.isEssential,
+                    reminder_days: subscription.reminderDays
+                })
+                .select()
+                .single();
 
-        return newSubscription;
-    }
+            if (error) throw error;
 
-    // Update an existing subscription
-    updateSubscription(id: string, updates: Partial<Subscription>): Subscription | null {
-        const index = this.subscriptions.findIndex(s => s.id === id);
-        if (index === -1) return null;
+            const newSub = this.rowToSubscription(data as unknown as SubscriptionRow);
+            this.subscriptions.push(newSub);
+            this.notifyChange();
+            this.scheduleReminder(newSub);
+            return newSub;
 
-        const updatedSubscription = { ...this.subscriptions[index], ...updates };
-        this.subscriptions[index] = updatedSubscription;
-        this.saveSubscriptions();
-
-        // Reschedule reminder if date or name changed
-        if (updates.nextPaymentDate || updates.name) {
-            this.scheduleReminder(updatedSubscription);
+        } catch (e) {
+            console.error('Add subscription failed:', e);
+            return null;
         }
-
-        return updatedSubscription;
     }
 
-    // Delete a subscription
-    deleteSubscription(id: string): void {
-        const subscription = this.subscriptions.find(s => s.id === id);
-        if (!subscription) return;
+    async updateSubscription(id: string, updates: Partial<Subscription>): Promise<Subscription | null> {
+        if (!this.currentUserId) return null;
 
-        this.subscriptions = this.subscriptions.filter(s => s.id !== id);
-        this.saveSubscriptions();
+        try {
+            // Map to snake_case
+            const dbUpdates: any = {};
+            if (updates.name !== undefined) dbUpdates.name = updates.name;
+            if (updates.amount !== undefined) dbUpdates.amount = updates.amount;
+            if (updates.currency !== undefined) dbUpdates.currency = updates.currency;
+            if (updates.billingCycle !== undefined) dbUpdates.billing_cycle = updates.billingCycle;
+            if (updates.nextPaymentDate !== undefined) dbUpdates.next_payment_date = updates.nextPaymentDate;
+            if (updates.category !== undefined) dbUpdates.category = updates.category;
+            if (updates.isEssential !== undefined) dbUpdates.is_essential = updates.isEssential;
+            if (updates.reminderDays !== undefined) dbUpdates.reminder_days = updates.reminderDays;
 
-        // Cancel reminders for this subscription
-        // Note: NotificationService handles cancelling by TaskID. 
-        // We'll use subscription ID as the "TaskID" context for reminders.
-        notificationService.clearTaskReminders(id);
+            const { data, error } = await supabase
+                .from('subscriptions')
+                .update(dbUpdates)
+                .eq('id', id)
+                .eq('user_id', this.currentUserId)
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            const updatedSub = this.rowToSubscription(data as unknown as SubscriptionRow);
+            const index = this.subscriptions.findIndex(s => s.id === id);
+            if (index !== -1) {
+                this.subscriptions[index] = updatedSub;
+                this.notifyChange();
+
+                if (updates.nextPaymentDate || updates.name) {
+                    this.scheduleReminder(updatedSub);
+                }
+            }
+            return updatedSub;
+
+        } catch (e) {
+            console.error('Update subscription failed:', e);
+            return null;
+        }
     }
 
-    // Schedule reminder via NotificationService
+    async deleteSubscription(id: string): Promise<boolean> {
+        if (!this.currentUserId) return false;
+
+        try {
+            const { error } = await supabase
+                .from('subscriptions')
+                .delete()
+                .eq('id', id)
+                .eq('user_id', this.currentUserId);
+
+            if (error) throw error;
+
+            this.subscriptions = this.subscriptions.filter(s => s.id !== id);
+            this.notifyChange();
+            notificationService.clearTaskReminders(id);
+            return true;
+
+        } catch (e) {
+            console.error('Delete subscription failed:', e);
+            return false;
+        }
+    }
+
     private scheduleReminder(subscription: Subscription): void {
         notificationService.scheduleSubscriptionReminder({
             id: subscription.id,

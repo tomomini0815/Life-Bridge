@@ -10,8 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from 'sonner';
 import { subscriptionService } from '@/services/SubscriptionService';
 import { notificationService } from '@/services/NotificationService';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function SubscriptionManager() {
+    const { user } = useAuth();
     const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingSubscription, setEditingSubscription] = useState<Subscription | null>(null);
@@ -42,6 +44,9 @@ export function SubscriptionManager() {
 
     // Initial load and event listener
     useEffect(() => {
+        if (user) {
+            subscriptionService.setUser(user.id);
+        }
         setSubscriptions(subscriptionService.getSubscriptions());
 
         const handleChange = (e: CustomEvent<Subscription[]>) => {
@@ -112,14 +117,14 @@ export function SubscriptionManager() {
         return { monthlyTotal, yearlyTotal, categoryTotals };
     }, [subscriptions]);
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         if (confirm('本当に削除しますか？')) {
-            subscriptionService.deleteSubscription(id);
+            await subscriptionService.deleteSubscription(id);
             toast.success('サブスクリプションを削除しました');
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
 
@@ -135,10 +140,10 @@ export function SubscriptionManager() {
         };
 
         if (editingSubscription) {
-            subscriptionService.updateSubscription(editingSubscription.id, subData);
+            await subscriptionService.updateSubscription(editingSubscription.id, subData);
             toast.success('サブスクリプションを更新しました');
         } else {
-            subscriptionService.addSubscription(subData);
+            await subscriptionService.addSubscription(subData);
             toast.success('サブスクリプションを追加しました');
         }
 

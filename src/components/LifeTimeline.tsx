@@ -24,7 +24,10 @@ import {
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TimelineGenerator } from './TimelineGenerator';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export function LifeTimeline() {
+    const { user } = useAuth();
     const [events, setEvents] = useState<TimelineEvent[]>([]);
     const [scenario, setScenario] = useState<TimelineScenario>('current');
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -35,10 +38,22 @@ export function LifeTimeline() {
     const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
 
     useEffect(() => {
+        if (user) {
+            timelineService.setUser(user.id).then(() => {
+                loadEvents();
+            });
+        }
+    }, [user]);
+
+    useEffect(() => {
         loadEvents();
     }, [scenario]);
 
     const loadEvents = () => {
+        // Since loadEvents in service is async but getEvents is sync (from cache),
+        // we can still use getEvents nicely, assuming data is loaded.
+        // But to be safe, we could re-fetch?
+        // Actually, helper setUser calls loadEvents inside service.
         setEvents(timelineService.getEvents(scenario));
     };
 
@@ -59,7 +74,7 @@ export function LifeTimeline() {
         setIsDialogOpen(true);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (!formData.year || !formData.title || !formData.description || !formData.status || !formData.iconName) {
             // Basic validation
             alert('年、タイトル、詳細、ステータス、アイコンは必須です。');
@@ -69,17 +84,17 @@ export function LifeTimeline() {
         const eventData = { ...formData, scenario } as Omit<TimelineEvent, 'id'>;
 
         if (editingEvent) {
-            timelineService.updateEvent(editingEvent.id, eventData);
+            await timelineService.updateEvent(editingEvent.id, eventData);
         } else {
-            timelineService.addEvent(eventData);
+            await timelineService.addEvent(eventData);
         }
         loadEvents();
         setIsDialogOpen(false);
     };
 
-    const handleDelete = (id: string) => {
+    const handleDelete = async (id: string) => {
         if (confirm('このイベントを削除してもよろしいですか？')) {
-            timelineService.deleteEvent(id);
+            await timelineService.deleteEvent(id);
             loadEvents();
         }
     };

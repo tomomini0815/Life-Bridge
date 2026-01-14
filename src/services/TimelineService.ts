@@ -1,6 +1,6 @@
 import { Baby, Briefcase, GraduationCap, Heart, Home, Star, Trophy, Users, Plane, Car, Building, Church } from 'lucide-react';
 import React from 'react';
-
+import { supabase } from '@/lib/supabase';
 import { GeminiService } from './GeminiService';
 import { Task } from '../types/lifeEvent';
 
@@ -16,6 +16,21 @@ export interface TimelineEvent {
     iconName: string;
     scenario: TimelineScenario;
     tasks?: Task[];
+}
+
+// Internal Supabase Row Interface
+interface TimelineEventRow {
+    id: string;
+    user_id: string;
+    year: string;
+    title: string;
+    description: string;
+    status: string;
+    icon_name: string;
+    scenario: string;
+    tasks: Task[] | null;
+    created_at: string;
+    updated_at: string;
 }
 
 export const ICON_MAP: Record<string, React.ElementType> = {
@@ -92,9 +107,10 @@ export interface UserInputForAI {
 export class TimelineService {
     private static instance: TimelineService;
     private events: TimelineEvent[] = [];
+    private currentUserId: string | null = null;
 
     private constructor() {
-        this.loadEvents();
+        // Initial state is empty until setUser is called
     }
 
     static getInstance(): TimelineService {
@@ -104,49 +120,200 @@ export class TimelineService {
         return TimelineService.instance;
     }
 
-    private loadEvents() {
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-            this.events = JSON.parse(stored);
-            // Migration: Add scenario if missing
-            if (this.events.length > 0 && !this.events[0].scenario) {
-                this.events = this.events.map(e => ({ ...e, scenario: 'current' }));
-            }
+    // Set user and load data
+    async setUser(userId: string | null): Promise<void> {
+        this.currentUserId = userId;
+        if (userId) {
+            await this.loadEvents();
+            await this.migrateFromLocalStorage();
         } else {
-            this.events = [...DEFAULT_EVENTS];
-            this.saveEvents();
+            this.events = [];
         }
     }
 
-    private saveEvents() {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.events));
+    // Helper: Convert DB row to Domain Object
+    private rowToEvent(row: TimelineEventRow): TimelineEvent {
+        return {
+            id: row.id,
+            year: row.year,
+            title: row.title,
+            description: row.description || '',
+            status: (row.status as TimelineStatus) || 'future',
+            iconName: row.icon_name || 'star',
+            scenario: (row.scenario as TimelineScenario) || 'current',
+            tasks: row.tasks || undefined,
+        };
+    }
+
+    // Load events from Supabase
+    private async loadEvents(): Promise<void> {
+        if (!this.currentUserId) return;
+
+        try {
+            const { data, error } = await supabase
+                .from('timeline_events')
+                .select('*')
+                .eq('user_id', this.currentUserId);
+
+            if (error) throw error;
+
+            if (data) {
+                this.events = data.map(row => this.rowToEvent(row as unknown as TimelineEventRow));
+                this.sortEvents();
+            }
+        } catch (e) {
+            console.error('Failed to load timeline events:', e);
+            // Fallback? Using default?
+            // If error, maybe keep events empty to avoid overwriting remote with defaults
+        }
+    }
+
+    // Migrate from LocalStorage
+    private async migrateFromLocalStorage(): Promise<void> {
+        if (!this.currentUserId) return;
+
+        const migrationKey = `${STORAGE_KEY}_migrated_${this.currentUserId}`;
+        if (localStorage.getItem(migrationKey)) return;
+
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (!stored) {
+                // If no local data, maybe insert defaults? 
+                // Let's NOT insert defaults automatically to DB to keep it clean, 
+                // unless it's a completely new user. 
+                // But for now, just mark migrated.
+                localStorage.setItem(migrationKey, 'true');
+                return;
+            }
+
+            const localEvents: TimelineEvent[] = JSON.parse(stored);
+            if (localEvents.length === 0) {
+                localStorage.setItem(migrationKey, 'true');
+                return;
+            }
+
+            console.log(`Migrating ${localEvents.length} timeline events...`);
+
+            const eventsToInsert = localEvents.map(e => ({
+                user_id: this.currentUserId,
+                year: e.year,
+                title: e.title,
+                description: e.description,
+                status: e.status,
+                icon_name: e.iconName,
+                scenario: e.scenario || 'current', // Handle migration
+                tasks: e.tasks || null,
+            }));
+
+            const { error } = await supabase.from('timeline_events').insert(eventsToInsert);
+
+            if (error) throw error;
+
+            localStorage.setItem(migrationKey, 'true');
+            await this.loadEvents(); // Reload to get IDs
+
+        } catch (e) {
+            console.error('Migration failed:', e);
+        }
     }
 
     getEvents(scenario: TimelineScenario = 'current'): TimelineEvent[] {
         return this.events.filter(e => e.scenario === scenario);
     }
 
-    addEvent(event: Omit<TimelineEvent, 'id'>): TimelineEvent {
-        const newEvent = { ...event, id: crypto.randomUUID() };
-        this.events.push(newEvent);
-        this.sortEvents();
-        this.saveEvents();
-        return newEvent;
+    async addEvent(event: Omit<TimelineEvent, 'id'>): Promise<TimelineEvent | null> {
+        if (!this.currentUserId) {
+            // Fallback for non-logged in (preview)? 
+            // Ideally we force login, but for now allow memory-only if no user?
+            // No, let's enforce user check or return null
+            console.warn("No user logged in, cannot save event");
+            return null;
+        }
+
+        try {
+            const { data, error } = await supabase
+                .from('timeline_events')
+                .insert({
+                    user_id: this.currentUserId,
+                    year: event.year,
+                    title: event.title,
+                    description: event.description,
+                    status: event.status,
+                    icon_name: event.iconName,
+                    scenario: event.scenario,
+                    tasks: event.tasks || null
+                })
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            const newEvent = this.rowToEvent(data as unknown as TimelineEventRow);
+            this.events.push(newEvent);
+            this.sortEvents();
+            return newEvent;
+        } catch (e) {
+            console.error('Add event failed:', e);
+            return null;
+        }
     }
 
-    updateEvent(id: string, updates: Partial<Omit<TimelineEvent, 'id'>>): TimelineEvent | null {
-        const index = this.events.findIndex(e => e.id === id);
-        if (index === -1) return null;
+    async updateEvent(id: string, updates: Partial<Omit<TimelineEvent, 'id'>>): Promise<TimelineEvent | null> {
+        if (!this.currentUserId) return null;
 
-        this.events[index] = { ...this.events[index], ...updates };
-        this.sortEvents();
-        this.saveEvents();
-        return this.events[index];
+        try {
+            // Map camelCase to snake_case for DB
+            const dbUpdates: any = {};
+            if (updates.year !== undefined) dbUpdates.year = updates.year;
+            if (updates.title !== undefined) dbUpdates.title = updates.title;
+            if (updates.description !== undefined) dbUpdates.description = updates.description;
+            if (updates.status !== undefined) dbUpdates.status = updates.status;
+            if (updates.iconName !== undefined) dbUpdates.icon_name = updates.iconName;
+            if (updates.scenario !== undefined) dbUpdates.scenario = updates.scenario;
+            if (updates.tasks !== undefined) dbUpdates.tasks = updates.tasks;
+
+            const { data, error } = await supabase
+                .from('timeline_events')
+                .update(dbUpdates)
+                .eq('id', id)
+                .eq('user_id', this.currentUserId)
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            const updatedEvent = this.rowToEvent(data as unknown as TimelineEventRow);
+            const index = this.events.findIndex(e => e.id === id);
+            if (index !== -1) {
+                this.events[index] = updatedEvent;
+                this.sortEvents();
+            }
+            return updatedEvent;
+
+        } catch (e) {
+            console.error('Update event failed:', e);
+            return null;
+        }
     }
 
-    deleteEvent(id: string) {
-        this.events = this.events.filter(e => e.id !== id);
-        this.saveEvents();
+    async deleteEvent(id: string): Promise<boolean> {
+        if (!this.currentUserId) return false;
+
+        try {
+            const { error } = await supabase
+                .from('timeline_events')
+                .delete()
+                .eq('id', id)
+                .eq('user_id', this.currentUserId);
+
+            if (error) throw error;
+
+            this.events = this.events.filter(e => e.id !== id);
+            return true;
+        } catch (e) {
+            console.error('Delete event failed:', e);
+            return false;
+        }
     }
 
     private sortEvents() {
@@ -160,6 +327,7 @@ export class TimelineService {
 
     async generateAiEvents(input: UserInputForAI): Promise<void> {
         if (!GeminiService.isEnabled()) throw new Error("AI Service Unavailable");
+        if (!this.currentUserId) throw new Error("User must be logged in to save AI events");
 
         const prompt = `
         Create two life timelines for a user based on the following input:
@@ -181,25 +349,17 @@ export class TimelineService {
 
         Generate about 5-8 future events for EACH scenario (total 10-16 events).
         Start from next year and cover the timeline until the user is around 80 years old.
-        Ensure events are distributed across different life stages (30s, 40s, 50s, 60s, retirement, etc.).
+        Ensure events are distributed across different life stages.
         `;
 
         try {
             const jsonStr = await GeminiService.generateText(prompt, "You are a JSON generator. Output valid JSON only, no markdown code blocks.");
-            // Clean markdown if present
             const cleanJson = jsonStr.replace(/```json/g, '').replace(/```/g, '').trim();
             const newEvents = JSON.parse(cleanJson);
 
-            // Filter out existing future events to replace them, or just append?
-            // Let's replace 'future' events for simplicity, or maybe just add them.
-            // For now, let's keep existing 'completed'/'active' events and remove all 'future' events to avoid duplicates
-            // before adding new ones. But user might have manually added future events.
-            // Let's just ADD new events for now.
-            // Actually, best strictly to clear previous AI generated stuff... but we don't track 'isAiGenerated'.
-            // Let's just append. User can delete.
-
-            newEvents.forEach((e: any) => {
-                this.addEvent({
+            // Add events sequentially
+            for (const e of newEvents) {
+                await this.addEvent({
                     year: e.year,
                     title: e.title,
                     description: e.description,
@@ -207,7 +367,7 @@ export class TimelineService {
                     status: 'future',
                     scenario: e.scenario
                 });
-            });
+            }
 
         } catch (e) {
             console.error("AI Generation Failed", e);
