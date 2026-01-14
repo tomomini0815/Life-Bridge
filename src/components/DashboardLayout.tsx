@@ -138,12 +138,15 @@ export function DashboardLayout() {
               {/* Left: Site Name (Mobile) / Sidebar Trigger + Search (Desktop) */}
               <div className="flex items-center gap-2 flex-1">
                 {/* Mobile: Site Name */}
-                <div className="md:hidden flex items-center gap-2">
+                <button
+                  className="md:hidden flex items-center gap-2 hover:opacity-80 transition-opacity"
+                  onClick={() => handleSelectEvent(null)}
+                >
                   <LifeBridgeLogo className="w-8 h-8" />
                   <span className="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-600 to-emerald-600 dark:from-teal-400 dark:to-emerald-400">
                     LifeBridge
                   </span>
-                </div>
+                </button>
 
                 {/* Desktop: Sidebar Trigger + Search */}
                 <div className="hidden md:flex items-center gap-2 flex-1">
