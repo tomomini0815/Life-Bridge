@@ -1,6 +1,6 @@
 import { UserProfile } from '@/types/benefit';
 
-const PROFILE_KEY = 'lifebridge_user_profile_v2';
+const BASE_PROFILE_KEY = 'lifebridge_profile_';
 
 const DEFAULT_PROFILE: UserProfile = {
     name: '',
@@ -11,28 +11,74 @@ const DEFAULT_PROFILE: UserProfile = {
     childrenAges: []
 };
 
-export const profileService = {
+class ProfileService {
+    private static instance: ProfileService;
+    private currentUserId: string | null = null;
+    private profileCache: UserProfile | null = null;
+
+    private constructor() { }
+
+    static getInstance(): ProfileService {
+        if (!ProfileService.instance) {
+            ProfileService.instance = new ProfileService();
+        }
+        return ProfileService.instance;
+    }
+
+    setUserId(userId: string | null) {
+        if (this.currentUserId === userId) return;
+        this.currentUserId = userId;
+        this.profileCache = null; // Clear cache on user change
+
+        // Notify change immediately so UI updates
+        const profile = this.getProfile();
+        this.notifySubscribers(profile);
+    }
+
+    private getStorageKey(): string {
+        if (!this.currentUserId) return 'lifebridge_guest_profile';
+        return `${BASE_PROFILE_KEY}${this.currentUserId}`;
+    }
+
     getProfile(): UserProfile {
-        const stored = localStorage.getItem(PROFILE_KEY);
+        if (this.profileCache) return this.profileCache;
+
+        const key = this.getStorageKey();
+        const stored = localStorage.getItem(key);
+
         if (stored) {
             try {
-                return { ...DEFAULT_PROFILE, ...JSON.parse(stored) };
+                this.profileCache = { ...DEFAULT_PROFILE, ...JSON.parse(stored) };
             } catch (e) {
                 console.error('Failed to parse profile:', e);
+                this.profileCache = { ...DEFAULT_PROFILE };
             }
+        } else {
+            // Try to migrate from old key if it exists and hasn't been migrated
+            // But only for the first logged in user? Or maybe just ignore old key to be safe.
+            // Let's stick to fresh start for specific users to ensure isolation.
+            this.profileCache = { ...DEFAULT_PROFILE };
         }
-        return DEFAULT_PROFILE;
-    },
+
+        return this.profileCache!;
+    }
 
     updateProfile(data: Partial<UserProfile>) {
         const current = this.getProfile();
         const updated = { ...current, ...data };
-        localStorage.setItem(PROFILE_KEY, JSON.stringify(updated));
 
-        // Dispatch event for components to listen
-        window.dispatchEvent(new CustomEvent('userProfileUpdated', { detail: updated }));
+        const key = this.getStorageKey();
+        localStorage.setItem(key, JSON.stringify(updated));
+
+        this.profileCache = updated;
+        this.notifySubscribers(updated);
+
         return updated;
-    },
+    }
+
+    private notifySubscribers(profile: UserProfile) {
+        window.dispatchEvent(new CustomEvent('userProfileUpdated', { detail: profile }));
+    }
 
     // Subscribe to changes
     subscribe(callback: (profile: UserProfile) => void) {
@@ -43,4 +89,6 @@ export const profileService = {
         window.addEventListener('userProfileUpdated', handler);
         return () => window.removeEventListener('userProfileUpdated', handler);
     }
-};
+}
+
+export const profileService = ProfileService.getInstance();

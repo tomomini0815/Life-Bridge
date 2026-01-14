@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { LifeEventType } from '@/types/lifeEvent';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -24,7 +24,11 @@ import { Separator } from '@/components/ui/separator';
 import { Minus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { useAuth } from '@/contexts/AuthContext';
+import { profileService } from '@/services/ProfileService';
+
 export function DashboardLayout() {
+  const { user } = useAuth();
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
   const [activePage, setActivePage] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<Record<string, string[]>>({
@@ -41,6 +45,11 @@ export function DashboardLayout() {
   // Search State
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+  // Sync user ID with ProfileService
+  useEffect(() => {
+    profileService.setUserId(user?.id || null);
+  }, [user]);
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
