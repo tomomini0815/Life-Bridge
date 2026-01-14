@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   Sidebar,
@@ -46,8 +48,20 @@ interface AppSidebarProps {
 export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePage }: AppSidebarProps) {
   const { state } = useSidebar();
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
 
-  // Detect if we're on mobile
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      toast.success('ログアウトしました');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast.error('ログアウトに失敗しました');
+    }
+  };
+
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -502,7 +516,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 variant="ghost"
                 size="sm"
                 className="h-8 w-full justify-start text-white/80 hover:bg-white/20 hover:text-white px-2"
-                onClick={() => signOut()}
+                onClick={handleLogout}
               >
                 <LogOut className="w-3.5 h-3.5 mr-2" />
                 <span className="text-xs">ログアウト</span>

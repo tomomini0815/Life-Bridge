@@ -53,6 +53,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             provider: 'google',
             options: {
                 redirectTo: `${window.location.origin}/dashboard`,
+                queryParams: {
+                    prompt: 'select_account',
+                },
             },
         });
         if (error) throw error;
@@ -94,10 +97,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     const signOut = async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
-        setUser(null);
-        setSession(null);
+        try {
+            await supabase.auth.signOut();
+        } catch (error) {
+            console.error('Error during sign out:', error);
+        } finally {
+            setUser(null);
+            setSession(null);
+        }
     };
 
     return (
