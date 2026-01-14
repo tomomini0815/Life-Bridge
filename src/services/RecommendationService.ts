@@ -58,8 +58,8 @@ export const recommendationService = {
 
         // 2. Profile-based Static Recommendations
 
-        // If profile is incomplete (e.g. income is 0 or default), suggest updating it
-        if (profile.annualIncome === 5000000 && profile.numberOfChildren === 0 && !profile.hasSpouse && profile.employmentStatus.includes('employed') && profile.employmentStatus.length === 1) {
+        // If profile is incomplete (e.g. income is 0 or name is empty), suggest updating it
+        if (profile.annualIncome === 0 || !profile.name) {
             // Simple check for default values - might be improved
             recommendations.push({
                 id: 'update-profile',

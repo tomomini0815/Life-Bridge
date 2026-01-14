@@ -96,7 +96,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
-  const [userName, setUserName] = useState('Tomomi');
+  const [userName, setUserName] = useState('ゲスト');
   const [expandedRecId, setExpandedRecId] = useState<string | null>(null);
 
   // Recommendations
@@ -111,12 +111,12 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
     // Initial load
     const profile = profileService.getProfile();
-    if (profile.name) setUserName(profile.name);
+    setUserName(profile.name || 'ゲスト');
     fetchRecommendations(profile);
 
     // Subscribe to changes
     const unsubscribe = profileService.subscribe((updatedProfile) => {
-      setUserName(updatedProfile.name || 'Tomomi');
+      setUserName(updatedProfile.name || 'ゲスト');
       fetchRecommendations(updatedProfile);
     });
 
