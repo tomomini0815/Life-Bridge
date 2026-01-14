@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
 import { AiConciergeService, AiMessage, UserContext } from '@/services/AiConciergeService';
 import { GeminiService } from '@/services/GeminiService';
@@ -391,7 +392,45 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
                     )
                 )}
               >
-                <p className="whitespace-pre-line">{message.content}</p>
+                <div className="whitespace-pre-line text-xs leading-relaxed">
+                  {message.role === 'assistant' ? (
+                    <div>
+                      {message.content.split('\n').map((line, i) => {
+                        // Check for list items (supports -, *, 1., and [ ])
+                        const isList = /^[ \t]*([-*]|\d+\.|\[[ x]?\])[ \t]+/.test(line);
+
+                        if (isList) {
+                          // Extract content after the marker
+                          const content = line.replace(/^[ \t]*([-*]|\d+\.|\[[ x]?\])[ \t]+/, '');
+                          // Check if it was already marked as completed in markdown
+                          const isChecked = /^[ \t]*\[x\]/.test(line);
+                          const itemId = `msg-${message.id}-item-${i}`;
+
+                          return (
+                            <div key={i} className="flex items-start gap-2 my-1.5 group/item">
+                              <div className="mt-0.5 shrink-0">
+                                <Checkbox
+                                  id={itemId}
+                                  defaultChecked={isChecked}
+                                  className="border-slate-300 data-[state=checked]:bg-teal-500 data-[state=checked]:border-teal-500"
+                                />
+                              </div>
+                              <label
+                                htmlFor={itemId}
+                                className="cursor-pointer peer-disabled:cursor-not-allowed peer-disabled:opacity-70 select-text"
+                              >
+                                {content}
+                              </label>
+                            </div>
+                          );
+                        }
+                        return <div key={i}>{line || <br />}</div>;
+                      })}
+                    </div>
+                  ) : (
+                    message.content
+                  )}
+                </div>
 
                 {/* Action buttons for AI messages */}
                 {message.role === 'assistant' && (
