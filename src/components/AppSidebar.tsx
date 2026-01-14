@@ -67,7 +67,11 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   // Initialize state from localStorage to avoid flash of incorrect content
   const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
     if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem('lifebridge_menu_visibility');
+      // Note: user might be null here on first render, so we might default to guest or wait for useEffect.
+      // But we can try to get from user if hook provides check.
+      // For now, simple check.
+      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+      const stored = localStorage.getItem(key);
       if (stored) {
         try {
           return JSON.parse(stored);
@@ -79,8 +83,25 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
     return {}; // Default fallbacks (all visible imply true if not explicitly false)
   });
 
-  // Listen for settings changes from Settings component
+  // Listen for settings changes and user changes
   useEffect(() => {
+    const loadSettings = () => {
+      if (typeof window !== 'undefined') {
+        const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          try {
+            setMenuVisibility(JSON.parse(stored));
+          } catch (e) {
+            console.error('Failed to parse menu visibility settings:', e);
+          }
+        } else {
+          setMenuVisibility({});
+        }
+      }
+    };
+    loadSettings();
+
     const handleSettingsChange = (event: CustomEvent) => {
       setMenuVisibility(event.detail);
     };
@@ -89,7 +110,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
     // Also handle storage events for cross-tab synchronization
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'lifebridge_menu_visibility' && event.newValue) {
+      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+      if (event.key === key && event.newValue) {
         try {
           setMenuVisibility(JSON.parse(event.newValue));
         } catch (e) {
@@ -104,7 +126,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
       window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [user]);
 
   const menuItems = [
     { title: 'ホーム', icon: Home, id: null, type: 'event' as const },

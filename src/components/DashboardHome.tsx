@@ -94,7 +94,10 @@ const iconMap: Record<string, React.ElementType> = {
   care: HandHeart,
 };
 
+import { useAuth } from '@/contexts/AuthContext';
+
 export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
   const [userName, setUserName] = useState('ゲスト');
   const [expandedRecId, setExpandedRecId] = useState<string | null>(null);
@@ -129,13 +132,17 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
     // Load initial settings
     const loadSettings = () => {
       if (typeof window !== 'undefined') {
-        const stored = localStorage.getItem('lifebridge_menu_visibility');
+        const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+        const stored = localStorage.getItem(key);
         if (stored) {
           try {
             setMenuVisibility(JSON.parse(stored));
           } catch (e) {
             console.error('Failed to parse menu settings:', e);
           }
+        } else {
+          // Default to all visible if nothing stored
+          setMenuVisibility({});
         }
       }
     };
@@ -147,7 +154,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
     };
 
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === 'lifebridge_menu_visibility' && event.newValue) {
+      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+      if (event.key === key && event.newValue) {
         try {
           setMenuVisibility(JSON.parse(event.newValue));
         } catch (e) {
@@ -163,7 +171,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
       window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
       window.removeEventListener('storage', handleStorageChange);
     };
-  }, []);
+  }, [user]);
 
   const visibleLifeEvents = lifeEvents.filter(event => menuVisibility[event.id] !== false);
 

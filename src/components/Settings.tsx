@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { User, Moon, Sun, Trash2, RefreshCw, CreditCard, Users, Briefcase as BriefcaseIcon } from 'lucide-react';
 import { profileService } from '@/services/ProfileService';
+import { useAuth } from '@/contexts/AuthContext';
 import { UserProfile } from '@/types/benefit';
 
 interface MenuVisibilitySettings {
@@ -55,28 +56,36 @@ const DEFAULT_SETTINGS: MenuVisibilitySettings = {
 const STORAGE_KEY = 'lifebridge_menu_visibility';
 const THEME_KEY = 'lifebridge_theme';
 
+
+
 export function Settings() {
+    const { user } = useAuth();
     const [settings, setSettings] = useState<MenuVisibilitySettings>(DEFAULT_SETTINGS);
     const [hasChanges, setHasChanges] = useState(false);
     const [profile, setProfile] = useState<UserProfile>(profileService.getProfile());
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-    // Load settings from localStorage
+    const getStorageKey = () => user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+
+    // Load settings from localStorage when user changes
     useEffect(() => {
-        // Menu Visibility
-        const storedSettings = localStorage.getItem(STORAGE_KEY);
+        const key = getStorageKey();
+        const storedSettings = localStorage.getItem(key);
         if (storedSettings) {
             try {
                 const parsed = JSON.parse(storedSettings);
                 setSettings({ ...DEFAULT_SETTINGS, ...parsed });
             } catch (e) {
                 console.error('Failed to parse settings:', e);
+                setSettings(DEFAULT_SETTINGS);
             }
+        } else {
+            setSettings(DEFAULT_SETTINGS);
         }
+    }, [user]);
 
-        // Profile is initialized from service directly in useState
-
-        // Theme
+    // Load theme on mount
+    useEffect(() => {
         const storedTheme = localStorage.getItem(THEME_KEY);
         if (storedTheme) {
             setTheme(storedTheme as 'light' | 'dark');
@@ -103,7 +112,8 @@ export function Settings() {
     };
 
     const handleSave = () => {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+        const key = getStorageKey();
+        localStorage.setItem(key, JSON.stringify(settings));
         setHasChanges(false);
         toast.success('設定を保存しました', {
             description: 'サイドメニューの表示設定を更新しました',
