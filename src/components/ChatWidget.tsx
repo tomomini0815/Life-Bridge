@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
@@ -92,7 +92,16 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
       chatService.setUser(user.id);
       chatService.loadMessages().then(history => {
         if (history.length > 0) {
-          setMessages(history);
+          // Add actions to the last assistant message
+          const updatedHistory = [...history];
+          const lastAssistantIndex = updatedHistory.findLastIndex(m => m.role === 'assistant');
+          if (lastAssistantIndex !== -1) {
+            updatedHistory[lastAssistantIndex] = {
+              ...updatedHistory[lastAssistantIndex],
+              actions: actions
+            };
+          }
+          setMessages(updatedHistory);
         } else {
           setMessages([{
             id: `init-${Date.now()}`,
@@ -198,6 +207,45 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
       setMessages(prev => [...prev, fallbackMsg]);
     } finally {
       setIsTyping(false);
+    }
+  };
+
+  const handleClearHistory = async () => {
+    if (!user) return;
+
+    const confirmed = window.confirm('会話履歴をクリアしますか？この操作は取り消せません。');
+    if (!confirmed) return;
+
+    const success = await chatService.clearMessages();
+    if (success) {
+      // Reset to initial greeting
+      const greetingText = AiConciergeService.getGreetingMessage(currentContext);
+      let actions = ['使い方を見る', '質問する'];
+      if (['marriage', 'birth', 'baby', 'moving', 'startup', 'care', 'retirement'].includes(currentContext)) {
+        actions = ['手続きの流れ', '必要書類', '給付金について'];
+      } else if (currentContext === 'subscription') {
+        actions = ['支払い予定', '解約について', '見直し提案'];
+      } else if (currentContext === 'simulator') {
+        actions = ['給付金を探す', 'シミュレーション開始'];
+      } else if (currentContext === 'memo') {
+        actions = ['メモの書き方', '整理のコツ'];
+      }
+
+      setMessages([{
+        id: `init-${Date.now()}`,
+        role: 'assistant',
+        content: greetingText,
+        timestamp: new Date(),
+        actions: actions,
+      }]);
+
+      import('sonner').then(({ toast }) => {
+        toast.success('会話履歴をクリアしました');
+      });
+    } else {
+      import('sonner').then(({ toast }) => {
+        toast.error('履歴のクリアに失敗しました');
+      });
     }
   };
 
@@ -384,12 +432,23 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
               </div>
             </div>
           </div>
-          <button
-            onClick={() => setIsOpen(false)}
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {user && (
+              <button
+                onClick={handleClearHistory}
+                className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
+                title="新しい会話を始める"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            )}
+            <button
+              onClick={() => setIsOpen(false)}
+              className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors text-white"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Messages Area */}
@@ -569,30 +628,41 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
         </div>
 
         {/* Persistent Event Menu */}
-        <div className="px-4 py-2 bg-slate-50/50 dark:bg-zinc-900 border-t border-border/50 overflow-x-auto whitespace-nowrap scrollbar-hide z-10 relative">
-          <div className="flex gap-2 pb-1">
-            {[
-              { id: 'marriage', label: '結婚', icon: Heart, color: 'text-pink-500 bg-pink-50 border-pink-100' },
-              { id: 'birth', label: '出産', icon: Baby, color: 'text-orange-500 bg-orange-50 border-orange-100' },
-              { id: 'job', label: '転職', icon: Briefcase, color: 'text-sky-500 bg-sky-50 border-sky-100' },
-              { id: 'startup', label: '起業', icon: Rocket, color: 'text-purple-500 bg-purple-50 border-purple-100' },
-              { id: 'moving', label: '引越し', icon: Truck, color: 'text-emerald-500 bg-emerald-50 border-emerald-100' },
-              { id: 'care', label: '介護', icon: HandHeart, color: 'text-violet-500 bg-violet-50 border-violet-100' },
-            ].map((event) => (
-              <button
-                key={event.id}
-                onClick={() => onSelectEvent?.(event.id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:scale-105 active:scale-95",
-                  event.color,
-                  currentContext === event.id && "ring-2 ring-offset-1 ring-primary"
-                )}
-              >
-                <event.icon className="w-3.5 h-3.5" />
-                {event.label}
-              </button>
-            ))}
+        <div className="relative">
+          <div
+            className="px-4 py-2 bg-slate-50/50 dark:bg-zinc-900 border-t border-border/50 overflow-x-auto z-10 relative"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#cbd5e1 transparent'
+            }}
+          >
+            <div className="flex gap-2 pb-1 flex-nowrap">
+              {[
+                { id: 'marriage', label: '結婚', icon: Heart, color: 'text-pink-500 bg-pink-50 border-pink-100' },
+                { id: 'birth', label: '出産', icon: Baby, color: 'text-orange-500 bg-orange-50 border-orange-100' },
+                { id: 'job', label: '転職', icon: Briefcase, color: 'text-sky-500 bg-sky-50 border-sky-100' },
+                { id: 'startup', label: '起業', icon: Rocket, color: 'text-purple-500 bg-purple-50 border-purple-100' },
+                { id: 'moving', label: '引越し', icon: Truck, color: 'text-emerald-500 bg-emerald-50 border-emerald-100' },
+                { id: 'care', label: '介護', icon: HandHeart, color: 'text-violet-500 bg-violet-50 border-violet-100' },
+              ].map((event) => (
+                <button
+                  key={event.id}
+                  onClick={() => onSelectEvent?.(event.id)}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all hover:scale-105 active:scale-95 flex-shrink-0",
+                    event.color,
+                    currentContext === event.id && "ring-2 ring-offset-1 ring-primary"
+                  )}
+                >
+                  <event.icon className="w-3.5 h-3.5" />
+                  {event.label}
+                </button>
+              ))}
+            </div>
           </div>
+          {/* Gradient overlays to indicate scrollability */}
+          <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50/90 to-transparent dark:from-zinc-900/90 pointer-events-none z-20" />
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50/90 to-transparent dark:from-zinc-900/90 pointer-events-none z-20" />
         </div>
 
         {/* Input Area */}

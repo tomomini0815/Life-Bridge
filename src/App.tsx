@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import { TermsOfService } from "./components/TermsOfService";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { CommercialTransactionAct } from "./components/CommercialTransactionAct";
+import { HelpPage } from "./components/HelpPage";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LoginPage } from "@/components/auth/LoginPage";
 import { SignupPage } from "@/components/auth/SignupPage";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/commercial-transaction" element={<CommercialTransactionAct />} />
+            <Route path="/help" element={<HelpPage />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

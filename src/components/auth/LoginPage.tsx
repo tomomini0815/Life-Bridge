@@ -167,7 +167,7 @@ export function LoginPage() {
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
+                        <Button type="submit" className="w-full h-12 bg-gradient-to-r from-emerald-400 to-cyan-500 hover:from-emerald-500 hover:to-cyan-600 text-white shadow-md font-semibold" disabled={isLoading}>
                             {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "ログイン"}
                         </Button>
 

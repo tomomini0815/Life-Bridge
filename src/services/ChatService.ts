@@ -83,6 +83,23 @@ export class ChatService {
             actions: row.actions || undefined,
         };
     }
+
+    async clearMessages(): Promise<boolean> {
+        if (!this.currentUserId) return false;
+
+        try {
+            const { error } = await supabase
+                .from('chat_messages')
+                .delete()
+                .eq('user_id', this.currentUserId);
+
+            if (error) throw error;
+            return true;
+        } catch (e) {
+            console.error('Failed to clear chat messages:', e);
+            return false;
+        }
+    }
 }
 
 export const chatService = ChatService.getInstance();

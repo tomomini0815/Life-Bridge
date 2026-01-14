@@ -345,6 +345,12 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
               >
                 特定商取引法
               </button>
+              <button
+                onClick={() => navigate('/help')}
+                className="hover:text-foreground transition-colors"
+              >
+                お問い合わせ
+              </button>
             </div>
 
             <p className="text-sm text-muted-foreground">

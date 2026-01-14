@@ -167,7 +167,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
   const settingsItems = [
     { title: '設定', icon: Settings },
-    { title: 'ヘルプ', icon: HelpCircle },
+    { title: 'お問い合わせ', icon: HelpCircle },
   ];
 
   const { setOpenMobile } = useSidebar();
@@ -393,7 +393,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               {(() => {
                 const settingsActiveIndex = settingsItems.findIndex((item) => {
                   const isSettingsPage = item.title === '設定';
-                  const isHelpPage = item.title === 'ヘルプ';
+                  const isHelpPage = item.title === 'お問い合わせ';
                   return (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
                 });
 
@@ -438,7 +438,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
 
               {settingsItems.map((item) => {
                 const isSettingsPage = item.title === '設定';
-                const isHelpPage = item.title === 'ヘルプ';
+                const isHelpPage = item.title === 'お問い合わせ';
                 const isActive = (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
 
                 return (
