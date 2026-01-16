@@ -77,17 +77,17 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
     // Determine default actions based on context
     // Context-specific actions mapping
     const contextActions: Record<string, string[]> = {
-      marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告'],
-      birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入'],
-      job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について'],
-      moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分'],
-      startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入'],
-      care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について'],
-      subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し'],
-      simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト'],
-      memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け'],
-      settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定'],
-      general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問']
+      marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告', 'その他'],
+      birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入', 'その他'],
+      job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について', 'その他'],
+      moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分', 'その他'],
+      startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入', 'その他'],
+      care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について', 'その他'],
+      subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し', 'その他'],
+      simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト', 'その他'],
+      memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け', 'その他'],
+      settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定', 'その他'],
+      general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問', 'その他']
     };
 
     // Determine default actions based on context
@@ -276,6 +276,35 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
   };
 
   const handleActionClick = (action: string) => {
+    // Handle "Other" action
+    if (action === 'その他') {
+      const secondaryContextActions: Record<string, string[]> = {
+        marriage: ['新居探し', '結婚指輪', 'ハネムーン', '扶養の手続き', '結婚式場選び'],
+        birth: ['命名', 'お宮参り', '内祝い', '学資保険', '保育園探し'],
+        job: ['履歴書の書き方', '面接対策', 'スキルアップ支援', '退職願の書き方'],
+        moving: ['近隣への挨拶', '運転免許証の住所変更', '火災保険', 'ダンボール手配', '荷造りリスト'],
+        startup: ['資金調達', '事業計画書', '税理士探し', 'オフィス選び', '名刺作成'],
+        care: ['施設探し', '成年後見制度', '実家の片付け', '遺言書作成'],
+        subscription: ['無料体験の解約忘れ', '家族プランの検討', '年間契約のほうがお得？'],
+        simulator: ['扶養控除', '医療費控除', 'iDeCo', 'NISA'],
+        memo: ['共有設定', 'バックアップ', '検索'],
+        settings: ['プライバシー設定', '言語設定', 'ログアウト'],
+        general: ['お問い合わせ', '利用規約', '運営会社']
+      };
+
+      const otherActions = secondaryContextActions[currentContext] || secondaryContextActions.general;
+
+      const aiMsg: AiMessage = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: '他にはこのような項目があります。',
+        timestamp: new Date(),
+        actions: otherActions
+      };
+      setMessages(prev => [...prev, aiMsg]);
+      return;
+    }
+
     const userMsg: AiMessage = {
       id: Date.now().toString(),
       role: 'user',

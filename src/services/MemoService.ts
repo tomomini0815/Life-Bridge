@@ -233,13 +233,14 @@ export class MemoService {
 
     // Create memo from chat message
     async createMemoFromChat(messageContent: string, title?: string): Promise<Memo | null> {
-        const { checkboxItems, cleanedContent } = this.extractCheckboxItems(messageContent);
+        // user requested to keep formatting as is, so we don't extract checkboxes anymore
+        // const { checkboxItems, cleanedContent } = this.extractCheckboxItems(messageContent);
 
         return await this.createMemo(
             title || 'チャットからのメモ',
-            cleanedContent,
+            messageContent, // Use raw content to preserve formatting/order
             {
-                checkboxItems: checkboxItems.length > 0 ? checkboxItems : undefined,
+                checkboxItems: undefined, // Don't create separate checklist
                 category: 'chat',
                 tags: ['AI'],
             }

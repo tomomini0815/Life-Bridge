@@ -231,6 +231,8 @@ export const AiConciergeService = {
 
     // Proactive suggestion based on context
     getProactiveSuggestion: (context: UserContext): AiMessage | null => {
+        // Disabled per user request
+        /*
         if (context === 'moving') {
             return {
                 id: 'proactive-moving',
@@ -240,6 +242,7 @@ export const AiConciergeService = {
                 actions: ['粗大ゴミ予約を確認'],
             };
         }
+        */
         if (context === 'baby') {
             return {
                 id: 'proactive-baby',
