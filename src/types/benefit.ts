@@ -16,6 +16,7 @@ export interface UserProfile {
     businessStartDate?: string;
     hasBlueTaxReturn?: boolean;
     isSmallBusinessMutualAidJoined?: boolean;
+    settings?: any; // MenuVisibilitySettings
 }
 
 export interface BenefitResult {

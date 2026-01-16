@@ -11,6 +11,8 @@ const DEFAULT_PROFILE: UserProfile = {
     childrenAges: []
 };
 
+import { supabase } from '@/lib/supabase';
+
 class ProfileService {
     private static instance: ProfileService;
     private currentUserId: string | null = null;
@@ -25,10 +27,15 @@ class ProfileService {
         return ProfileService.instance;
     }
 
-    setUserId(userId: string | null) {
+    async setUserId(userId: string | null) {
         if (this.currentUserId === userId) return;
         this.currentUserId = userId;
         this.profileCache = null; // Clear cache on user change
+
+        // Fetch fresh profile from Supabase if logged in
+        if (userId) {
+            await this.fetchProfileFromSupabase(userId);
+        }
 
         // Notify change immediately so UI updates
         const profile = this.getProfile();
@@ -36,12 +43,41 @@ class ProfileService {
     }
 
     private getStorageKey(): string {
-        if (!this.currentUserId) return 'lifebridge_guest_profile';
-        return `${BASE_PROFILE_KEY}${this.currentUserId}`;
+        return 'lifebridge_guest_profile';
+    }
+
+    private async fetchProfileFromSupabase(userId: string) {
+        try {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('profile_data')
+                .eq('id', userId)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                console.error('Error fetching profile:', error);
+                return;
+            }
+
+            if (data?.profile_data) {
+                // Merge with default to ensure all fields exist
+                this.profileCache = { ...DEFAULT_PROFILE, ...data.profile_data };
+                this.notifySubscribers(this.profileCache!);
+            }
+        } catch (error) {
+            console.error('Unexpected error fetching profile:', error);
+        }
     }
 
     getProfile(): UserProfile {
         if (this.profileCache) return this.profileCache;
+
+        // If logged in but cache empty (e.g. first load before fetch completes), return default
+        // The fetch logic in setUserId will eventually populate it.
+        // If guest, use local storage.
+        if (this.currentUserId) {
+            return DEFAULT_PROFILE;
+        }
 
         const key = this.getStorageKey();
         const stored = localStorage.getItem(key);
@@ -54,24 +90,46 @@ class ProfileService {
                 this.profileCache = { ...DEFAULT_PROFILE };
             }
         } else {
-            // Try to migrate from old key if it exists and hasn't been migrated
-            // But only for the first logged in user? Or maybe just ignore old key to be safe.
-            // Let's stick to fresh start for specific users to ensure isolation.
             this.profileCache = { ...DEFAULT_PROFILE };
         }
 
         return this.profileCache!;
     }
 
-    updateProfile(data: Partial<UserProfile>) {
+    async updateProfile(data: Partial<UserProfile>) {
         const current = this.getProfile();
         const updated = { ...current, ...data };
-
-        const key = this.getStorageKey();
-        localStorage.setItem(key, JSON.stringify(updated));
-
         this.profileCache = updated;
         this.notifySubscribers(updated);
+
+        if (this.currentUserId) {
+            try {
+                // Upsert to Supabase
+                // We assume a 'profiles' table exists. 
+                // Since we don't know the exact schema, we'll try to save to a JSONB column 'profile_data'
+                // We'll also try to save key fields if possible, but for now just the JSON blob for flexibility.
+                const { error } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: this.currentUserId,
+                        profile_data: updated,
+                        updated_at: new Date().toISOString(),
+                    });
+
+                if (error) {
+                    // Fallback: If 'profile_data' column doesn't exist, this will fail.
+                    // As a backup strategy for this specific app's potential schema:
+                    // The user might not have migrated DB yet.
+                    console.error('Failed to save profile to Supabase:', error);
+                }
+            } catch (error) {
+                console.error('Error saving profile:', error);
+            }
+        } else {
+            // Guest mode
+            const key = this.getStorageKey();
+            localStorage.setItem(key, JSON.stringify(updated));
+        }
 
         return updated;
     }

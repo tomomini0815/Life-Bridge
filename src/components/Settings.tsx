@@ -65,24 +65,12 @@ export function Settings() {
     const [profile, setProfile] = useState<UserProfile>(profileService.getProfile());
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-    const getStorageKey = () => user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
-
-    // Load settings from localStorage when user changes
+    // Initialize settings from profile or defaults
     useEffect(() => {
-        const key = getStorageKey();
-        const storedSettings = localStorage.getItem(key);
-        if (storedSettings) {
-            try {
-                const parsed = JSON.parse(storedSettings);
-                setSettings({ ...DEFAULT_SETTINGS, ...parsed });
-            } catch (e) {
-                console.error('Failed to parse settings:', e);
-                setSettings(DEFAULT_SETTINGS);
-            }
-        } else {
-            setSettings(DEFAULT_SETTINGS);
+        if (profile.settings) {
+            setSettings(prev => ({ ...prev, ...profile.settings }));
         }
-    }, [user]);
+    }, [profile]);
 
     // Load theme on mount
     useEffect(() => {
@@ -112,8 +100,11 @@ export function Settings() {
     };
 
     const handleSave = () => {
-        const key = getStorageKey();
-        localStorage.setItem(key, JSON.stringify(settings));
+        // Save settings to profile
+        profileService.updateProfile({
+            settings: settings
+        });
+
         setHasChanges(false);
         toast.success('設定を保存しました', {
             description: 'サイドメニューの表示設定を更新しました',
