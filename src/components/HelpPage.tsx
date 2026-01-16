@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,10 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Separator } from '@/components/ui/separator';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Mail, MessageCircle, FileQuestion, BookOpen, ExternalLink, Lightbulb, Bug, CheckCircle2, AlertCircle, Search, UserPlus, Calendar, ListChecks, FileText, Sparkles, Zap, TrendingUp } from 'lucide-react';
+import { HelpCircle, Mail, MessageCircle, FileQuestion, BookOpen, ExternalLink, Lightbulb, Bug, CheckCircle2, AlertCircle, Search, UserPlus, Calendar, ListChecks, FileText, Sparkles, Zap, TrendingUp, ArrowLeft } from 'lucide-react';
 import { FeedbackCategory, SubcategoryOption } from '@/types/feedback';
 import { feedbackService } from '@/services/FeedbackService';
 import { useAuth } from '@/contexts/AuthContext';
+
+interface HelpPageProps {
+    isStandalone?: boolean;
+}
 
 interface FormData {
     category: FeedbackCategory | '';
@@ -22,7 +27,8 @@ interface FormData {
     email: string;
 }
 
-export function HelpPage() {
+export function HelpPage({ isStandalone = false }: HelpPageProps) {
+    const navigate = useNavigate();
     const { user } = useAuth();
     const [formData, setFormData] = useState<FormData>({
         category: '',
@@ -231,7 +237,7 @@ export function HelpPage() {
         }
     };
 
-    return (
+    const content = (
         <div className="w-full space-y-8 animate-fade-in pb-12">
             {/* Header */}
             <div className="flex items-center gap-4">
@@ -629,4 +635,24 @@ export function HelpPage() {
             </Card>
         </div>
     );
+
+    if (isStandalone) {
+        return (
+            <div className="min-h-screen bg-background">
+                <div className="container mx-auto px-4 py-16 max-w-7xl">
+                    <Button
+                        variant="ghost"
+                        onClick={() => navigate('/')}
+                        className="mb-8"
+                    >
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        ホームに戻る
+                    </Button>
+                    {content}
+                </div>
+            </div>
+        );
+    }
+
+    return content;
 }

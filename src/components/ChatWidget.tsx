@@ -75,27 +75,46 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
     const greetingText = AiConciergeService.getGreetingMessage(currentContext);
 
     // Determine default actions based on context
+    // Context-specific actions mapping
+    const contextActions: Record<string, string[]> = {
+      marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告'],
+      birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入'],
+      job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について'],
+      moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分'],
+      startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入'],
+      care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について'],
+      subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し'],
+      simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト'],
+      memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け'],
+      settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定'],
+      general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問']
+    };
+
     // Determine default actions based on context
-    let actions = ['使い方を見る', '質問する'];
-    if (['marriage', 'birth', 'baby', 'moving', 'startup', 'care', 'retirement'].includes(currentContext)) {
-      actions = ['手続きの流れ', '必要書類', '給付金について'];
-    } else if (currentContext === 'subscription') {
-      actions = ['支払い予定', '解約について', '見直し提案'];
-    } else if (currentContext === 'simulator') {
-      actions = ['給付金を探す', 'シミュレーション開始'];
-    } else if (currentContext === 'memo') {
-      actions = ['メモの書き方', '整理のコツ'];
-    }
+    const actions = contextActions[currentContext] || contextActions.general;
 
     // If user is logged in, load history, otherwise show greeting
     if (user) {
       chatService.setUser(user.id);
       chatService.loadMessages().then(history => {
         if (history.length > 0) {
-          // Add actions to the last assistant message
+          // Add context-specific actions to the last message if it's from assistant
+          // But only if we are switching contexts (logic improvement could be needed here, 
+          // but for now, forcing fresh actions on the latest assistant message ensures relevance)
           const updatedHistory = [...history];
-          const lastAssistantIndex = updatedHistory.findLastIndex(m => m.role === 'assistant');
+          // Determine default actions based on context
+          // Fix for environment where findLastIndex might not be available
+          let lastAssistantIndex = -1;
+          for (let i = updatedHistory.length - 1; i >= 0; i--) {
+            if (updatedHistory[i].role === 'assistant') {
+              lastAssistantIndex = i;
+              break;
+            }
+          }
+
           if (lastAssistantIndex !== -1) {
+            // Only update simple actions, preserve specialized ones if needed
+            // For now, overwrite to ensure context relevance
             updatedHistory[lastAssistantIndex] = {
               ...updatedHistory[lastAssistantIndex],
               actions: actions
@@ -220,16 +239,23 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWi
     if (success) {
       // Reset to initial greeting
       const greetingText = AiConciergeService.getGreetingMessage(currentContext);
-      let actions = ['使い方を見る', '質問する'];
-      if (['marriage', 'birth', 'baby', 'moving', 'startup', 'care', 'retirement'].includes(currentContext)) {
-        actions = ['手続きの流れ', '必要書類', '給付金について'];
-      } else if (currentContext === 'subscription') {
-        actions = ['支払い予定', '解約について', '見直し提案'];
-      } else if (currentContext === 'simulator') {
-        actions = ['給付金を探す', 'シミュレーション開始'];
-      } else if (currentContext === 'memo') {
-        actions = ['メモの書き方', '整理のコツ'];
-      }
+      // Context-specific actions mapping (Must match the one in useEffect, ideally refactor to constant)
+      const contextActions: Record<string, string[]> = {
+        marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告'],
+        birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入'],
+        job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について'],
+        moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分'],
+        startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入'],
+        care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について'],
+        subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し'],
+        simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト'],
+        memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け'],
+        settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定'],
+        general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問']
+      };
+
+      // Determine default actions based on context
+      const actions = contextActions[currentContext] || contextActions.general;
 
       setMessages([{
         id: `init-${Date.now()}`,
