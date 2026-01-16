@@ -27,6 +27,10 @@ const AuthContext = createContext<AuthContextType>({
 
 export const useAuth = () => useContext(AuthContext);
 
+import { profileService } from '@/services/ProfileService';
+
+// ... (imports remain the same)
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
     const [session, setSession] = useState<Session | null>(null);
@@ -37,12 +41,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+            // Initialize profile service
+            profileService.setUserId(session?.user?.id ?? null);
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session);
             setUser(session?.user ?? null);
             setLoading(false);
+            // Update profile service
+            profileService.setUserId(session?.user?.id ?? null);
         });
 
         return () => subscription.unsubscribe();

@@ -72,6 +72,14 @@ export function Settings() {
         }
     }, [profile]);
 
+    // Subscribe to profile updates
+    useEffect(() => {
+        const unsubscribe = profileService.subscribe((updatedProfile) => {
+            setProfile(updatedProfile);
+        });
+        return unsubscribe;
+    }, []);
+
     // Load theme on mount
     useEffect(() => {
         const storedTheme = localStorage.getItem(THEME_KEY);
