@@ -151,7 +151,7 @@ export function LoginPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="example@lifebridge.com"
+                                placeholder="example@lifebridgeapp.jp"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required

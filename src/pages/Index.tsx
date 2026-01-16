@@ -2,9 +2,18 @@ import { lifeEvents } from '@/data/lifeEvents';
 import { LandingPage } from '@/components/LandingPage';
 import { ChatWidget } from '@/components/ChatWidget';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
+  const { user } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSelectEvent = () => {
     navigate('/dashboard');

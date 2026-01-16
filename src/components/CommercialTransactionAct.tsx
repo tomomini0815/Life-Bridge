@@ -54,7 +54,7 @@ export function CommercialTransactionAct() {
 
                         <div className="border-t border-border pt-4">
                             <h3 className="text-lg font-semibold mb-2">メールアドレス</h3>
-                            <p className="text-muted-foreground">support@lifebridge.app</p>
+                            <p className="text-muted-foreground">support@lifebridgeapp.jp</p>
                         </div>
 
                         <div className="border-t border-border pt-4">
