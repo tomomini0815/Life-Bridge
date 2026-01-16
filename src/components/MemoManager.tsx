@@ -134,6 +134,16 @@ export function MemoManager() {
         }
     };
 
+    const handleInlineContentUpdate = async (memoId: string, newContent: string) => {
+        try {
+            await memoService.updateMemo(memoId, { content: newContent });
+            await loadMemos();
+        } catch (error) {
+            console.error('Failed to update inline content:', error);
+            toast.error('メモの更新に失敗しました');
+        }
+    };
+
     return (
         <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
             <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
@@ -243,6 +253,7 @@ export function MemoManager() {
                                 onDelete={handleDelete}
                                 onTogglePin={handleTogglePin}
                                 onToggleCheckbox={handleToggleCheckbox}
+                                onContentUpdate={handleInlineContentUpdate}
                             />
                         ))}
                     </div>
@@ -273,6 +284,7 @@ export function MemoManager() {
                                 onDelete={handleDelete}
                                 onTogglePin={handleTogglePin}
                                 onToggleCheckbox={handleToggleCheckbox}
+                                onContentUpdate={handleInlineContentUpdate}
                             />
                         ))}
                     </div>

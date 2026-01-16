@@ -38,6 +38,7 @@ interface MemoCardProps {
     onDelete: (id: string) => void;
     onTogglePin: (id: string) => void;
     onToggleCheckbox: (memoId: string, itemId: string) => void;
+    onContentUpdate?: (memoId: string, content: string) => void;
 }
 
 export function MemoCard({
@@ -52,9 +53,60 @@ export function MemoCard({
     onEditStart,
     onDelete,
     onTogglePin,
-    onToggleCheckbox
+    onToggleCheckbox,
+    onContentUpdate
 }: MemoCardProps) {
     const colorScheme = MEMO_COLORS[0]; // Default color for now
+
+    // Helper to toggle inline markdown checkbox
+    const handleToggleInline = (index: number, line: string) => {
+        if (!onContentUpdate) return;
+
+        const lines = memo.content.split('\n');
+        // Check if line matches pattern
+        if (lines[index] !== line) return; // safety check
+
+        const isChecked = /^[-*] \[x\]/.test(line);
+        const newStatus = isChecked ? ' ' : 'x';
+        lines[index] = line.replace(/^([-*] \[)[ x](\])/, `$1${newStatus}$2`);
+
+        onContentUpdate(memo.id, lines.join('\n'));
+    }
+
+    // Helper to render content with checkboxes
+    const renderContent = (content: string) => {
+        return content.split('\n').map((line, i) => {
+            const checkboxMatch = line.match(/^([-*] \[)([ x])(\]) (.*)$/);
+            if (checkboxMatch) {
+                const isChecked = checkboxMatch[2] === 'x';
+                const text = checkboxMatch[4];
+                return (
+                    <div key={i} className="flex items-start gap-2 min-h-[1.5em] group/line cursor-pointer" onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleInline(i, line);
+                    }}>
+                        <div className={cn(
+                            "mt-1 w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0",
+                            isChecked ? "bg-blue-500 border-blue-500 text-white" : "border-gray-300 bg-white dark:bg-zinc-800"
+                        )}>
+                            {isChecked && <Check className="w-3 h-3" />}
+                        </div>
+                        <span className={cn(
+                            "text-sm flex-1 break-words leading-relaxed",
+                            isChecked && "line-through text-muted-foreground opacity-70"
+                        )}>
+                            {text}
+                        </span>
+                    </div>
+                );
+            }
+            return (
+                <p key={i} className="text-sm text-foreground/80 whitespace-pre-wrap break-words min-h-[1.2em]">
+                    {line || '\u00A0'}
+                </p>
+            );
+        });
+    };
 
     return (
         <div
@@ -132,14 +184,14 @@ export function MemoCard({
 
                     {/* Content */}
                     {memo.content && (
-                        <p className="text-sm text-foreground/80 whitespace-pre-wrap break-words line-clamp-10 mb-3">
-                            {memo.content}
-                        </p>
+                        <div className="space-y-0.5 mb-3">
+                            {renderContent(memo.content)}
+                        </div>
                     )}
 
-                    {/* Checkbox Items */}
+                    {/* Old Checkbox Items (Legacy support) */}
                     {memo.checkboxItems && memo.checkboxItems.length > 0 && (
-                        <div className="space-y-1.5">
+                        <div className="space-y-1.5 mt-2 border-t pt-2 border-border/20">
                             {memo.checkboxItems.map((item) => (
                                 <label
                                     key={item.id}
