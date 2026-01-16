@@ -17,6 +17,7 @@ export interface UserProfile {
     hasBlueTaxReturn?: boolean;
     isSmallBusinessMutualAidJoined?: boolean;
     settings?: any; // MenuVisibilitySettings
+    theme?: 'light' | 'dark';
 }
 
 export interface BenefitResult {

@@ -65,10 +65,18 @@ export function Settings() {
     const [profile, setProfile] = useState<UserProfile>(profileService.getProfile());
     const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-    // Initialize settings from profile or defaults
+    // Initialize settings and theme from profile or defaults
     useEffect(() => {
         if (profile.settings) {
             setSettings(prev => ({ ...prev, ...profile.settings }));
+        }
+        if (profile.theme) {
+            setTheme(profile.theme);
+            if (profile.theme === 'dark') {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
         }
     }, [profile]);
 
@@ -80,24 +88,28 @@ export function Settings() {
         return unsubscribe;
     }, []);
 
-    // Load theme on mount
+    // Load initial theme from localStorage as fallback (system preference handled in index.html usually or here)
+    // But we prioritize profile if available.
     useEffect(() => {
-        const storedTheme = localStorage.getItem(THEME_KEY);
-        if (storedTheme) {
-            setTheme(storedTheme as 'light' | 'dark');
-            if (storedTheme === 'dark') {
-                document.documentElement.classList.add('dark');
+        // Only if profile theme is not yet set (e.g. initial load or guest)
+        if (!profile.theme) {
+            const storedTheme = localStorage.getItem(THEME_KEY);
+            if (storedTheme) {
+                setTheme(storedTheme as 'light' | 'dark');
+                if (storedTheme === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
             } else {
-                document.documentElement.classList.remove('dark');
-            }
-        } else {
-            // Check system preference
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                setTheme('dark');
-                document.documentElement.classList.add('dark');
+                // Check system preference
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    setTheme('dark');
+                    document.documentElement.classList.add('dark');
+                }
             }
         }
-    }, []);
+    }, [profile.theme]);
 
     const handleToggle = (id: keyof MenuVisibilitySettings) => {
         setSettings(prev => ({
@@ -110,7 +122,8 @@ export function Settings() {
     const handleSave = () => {
         // Save settings to profile
         profileService.updateProfile({
-            settings: settings
+            settings: settings,
+            theme: theme
         });
 
         setHasChanges(false);
@@ -140,6 +153,11 @@ export function Settings() {
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         setTheme(newTheme);
+
+        // Update profile immediately for theme
+        profileService.updateProfile({ theme: newTheme });
+
+        // Also keep localStorage as backup/cache for immediate load on refresh
         localStorage.setItem(THEME_KEY, newTheme);
 
         if (newTheme === 'dark') {
