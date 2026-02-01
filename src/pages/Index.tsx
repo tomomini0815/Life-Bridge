@@ -1,5 +1,5 @@
 import { lifeEvents } from '@/data/lifeEvents';
-import { LandingPage } from '@/components/LandingPage';
+import { LandingPageTest } from '@/components/LandingPageTest';
 import { ChatWidget } from '@/components/ChatWidget';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -21,7 +21,7 @@ const Index = () => {
 
   return (
     <>
-      <LandingPage events={lifeEvents} onSelectEvent={handleSelectEvent} />
+      <LandingPageTest events={lifeEvents} onSelectEvent={handleSelectEvent} />
       <ChatWidget />
     </>
   );

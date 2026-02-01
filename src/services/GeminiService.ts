@@ -2,7 +2,11 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 import { AiMessage, UserContext, ChatMode } from "./AiConciergeService";
 
 // Helper to get API Key safely
-const getApiKey = () => import.meta.env.VITE_GEMINI_API_KEY;
+const getApiKey = () => {
+    const key = import.meta.env.VITE_GEMINI_API_KEY;
+    if (!key || key === 'your_gemini_api_key_here' || key === '') return null;
+    return key;
+};
 
 export const GeminiService = {
     isEnabled: () => !!getApiKey(),

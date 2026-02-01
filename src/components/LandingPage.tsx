@@ -5,6 +5,7 @@ import { Heart, Shield, Sparkles, ArrowRight, CheckCircle, Zap, Church, Baby, Br
 import { useNavigate } from 'react-router-dom';
 import { HeroSection } from '@/components/ui/hero-section-with-smooth-bg-shader';
 import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
+import { ScrollReveal } from '@/components/ui/ScrollReveal';
 import { useMemo } from 'react';
 interface LandingPageProps {
   events: LifeEvent[];
@@ -95,13 +96,10 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature, index) => (
-              <div
+              <ScrollReveal
                 key={feature.title}
-                className="group relative p-8 rounded-3xl bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 animate-slide-up opacity-0"
-                style={{
-                  animationDelay: `${index * 0.1}s`,
-                  animationFillMode: 'forwards',
-                }}
+                className="group relative p-8 rounded-3xl bg-white/40 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2"
+                delay={index * 0.1}
               >
                 {/* Gradient Glow Effect */}
                 <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
@@ -117,7 +115,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
                     {feature.description}
                   </p>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -142,14 +140,11 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
 
           <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
             {events.map((event, index) => (
-              <div
+              <ScrollReveal
                 key={event.id}
                 onClick={() => onSelectEvent(event)}
-                className="group relative p-8 rounded-3xl bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:bg-white/50 dark:hover:bg-black/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 cursor-pointer animate-slide-up opacity-0"
-                style={{
-                  animationDelay: `${index * 0.1}s`,
-                  animationFillMode: 'forwards',
-                }}
+                className="group relative p-8 rounded-3xl bg-white/30 dark:bg-black/20 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:bg-white/50 dark:hover:bg-black/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:-translate-y-2 cursor-pointer"
+                delay={index * 0.1}
               >
                 {/* Gradient Glow Effect */}
                 <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-teal-500/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" />
@@ -178,7 +173,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
                     </div>
                   </div>
                 </div>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
@@ -242,10 +237,10 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
                 color: 'from-fuchsia-400 to-pink-500',
               },
             ].map((problem, index) => (
-              <div
+              <ScrollReveal
                 key={index}
-                className="group relative p-8 rounded-3xl bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/60 dark:hover:bg-black/40 transition-all duration-500 hover:scale-105 hover:shadow-2xl animate-slide-up opacity-0"
-                style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
+                className="group relative p-8 rounded-3xl bg-white/40 dark:bg-black/30 backdrop-blur-xl border border-white/30 dark:border-white/10 hover:bg-white/60 dark:hover:bg-black/40 transition-all duration-500 hover:scale-105 hover:shadow-2xl"
+                delay={index * 0.1}
               >
                 {/* Icon */}
                 <div className="flex items-start gap-4 mb-4">
@@ -266,7 +261,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
 
                 {/* Hover effect decoration */}
                 <div className={`absolute inset-0 rounded-3xl bg-gradient-to-br ${problem.color} opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none`} />
-              </div>
+              </ScrollReveal>
             ))}
           </div>
 
@@ -287,10 +282,10 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* CTA Section */}
-      <section className="py-20">
+      < section className="py-20" >
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center relative overflow-hidden rounded-3xl p-16 shadow-xl">
             {/* Gradient Background */}
@@ -313,10 +308,10 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             </div>
           </div>
         </div>
-      </section>
+      </section >
 
       {/* Footer */}
-      <footer className="py-12 border-t border-border/50 bg-background/80 backdrop-blur-md">
+      < footer className="py-12 border-t border-border/50 bg-background/80 backdrop-blur-md" >
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
@@ -358,7 +353,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             </p>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }

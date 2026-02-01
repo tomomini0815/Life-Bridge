@@ -32,15 +32,15 @@ export function HeroSection({
     onButtonClick,
     onSecondaryButtonClick,
     onLoginClick,
-    colors = ["#72b9bb", "#b5d9d9", "#ffd1bd", "#ffebe0", "#8cc5b8", "#dbf4a4"],
-    distortion = 0.8,
-    swirl = 0.6,
-    speed = 0.42,
+    colors = ["#e0f2f1", "#b2dfdb", "#e8f5e9", "#c8e6c9", "#f1f8e9", "#ffffff"],
+    distortion = 0.5,
+    swirl = 0.4,
+    speed = 0.3,
     offsetX = 0.08,
     className = "",
     showStats = false,
     stats = [],
-    titleFontWeight = "font-bold",
+    titleFontWeight = "font-serif",
 }: HeroSectionProps) {
     const [dimensions, setDimensions] = useState({ width: 1920, height: 1080 })
     const [mounted, setMounted] = useState(false)
@@ -90,10 +90,10 @@ export function HeroSection({
     }
 
     return (
-        <section className={`relative w-full min-h-screen overflow-hidden bg-background flex items-center justify-center ${className}`}>
+        <section className={`relative w-full overflow-hidden bg-background flex flex-col ${className}`}>
             {/* Animated Mesh Gradient Background */}
             <div className="fixed inset-0 w-screen h-screen">
-                {mounted && !isMobile && (
+                {mounted && (
                     <>
                         <MeshGradient
                             width={dimensions.width}
@@ -106,72 +106,66 @@ export function HeroSection({
                             speed={speed}
                             offsetX={offsetX}
                         />
-                        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-white/5 to-white/20 dark:via-black/5 dark:to-black/20" />
+                        <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-white/40 via-white/10 to-transparent dark:from-black/40 dark:via-black/10" />
                     </>
-                )}
-                {/* Static gradient for mobile devices */}
-                {isMobile && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-teal-100 via-emerald-50 to-cyan-100 dark:from-teal-950 dark:via-emerald-950 dark:to-cyan-950" />
                 )}
             </div>
 
             {/* Floating Navigation */}
             <nav
                 className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrollY > 50
-                    ? 'bg-white/80 dark:bg-black/80 backdrop-blur-xl shadow-lg border-b border-white/20 dark:border-white/10'
+                    ? 'bg-white/70 dark:bg-black/70 backdrop-blur-md shadow-sm border-b border-white/20'
                     : 'bg-transparent'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
                     <div className="flex items-center gap-3 group cursor-pointer">
-                        <LifeBridgeLogo className="w-12 h-12 shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110" />
-                        <span className="text-2xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                        <LifeBridgeLogo className="w-10 h-10 drop-shadow-md transition-all duration-300 group-hover:scale-110" />
+                        <span className="text-xl font-serif font-bold text-foreground/80 tracking-wide">
                             LifeBridge
                         </span>
                     </div>
                     <button
                         onClick={onLoginClick}
-                        className="px-6 py-2.5 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md border border-white/20 dark:border-white/10 text-sm font-semibold hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 hover:scale-105">
+                        className="px-6 py-2 rounded-full bg-white/40 backdrop-blur-md border border-white/40 text-sm font-medium hover:bg-white/60 transition-all duration-300 hover:shadow-md">
                         ログイン
                     </button>
                 </div>
             </nav>
 
             {/* Hero Content */}
-            <div className="relative z-10 max-w-7xl mx-auto px-6 w-full pt-32 pb-20">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 w-full pt-32 pb-16">
                 <div className="text-center max-w-5xl mx-auto">
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/20 dark:bg-black/20 backdrop-blur-xl border border-white/30 dark:border-white/10 text-sm font-semibold mb-8 animate-fade-in shadow-lg hover:scale-105 transition-transform duration-300 cursor-pointer group">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                        <Sparkles className="w-4 h-4 text-teal-600 dark:text-teal-400 group-hover:rotate-12 transition-transform duration-300" />
-                        <span className="bg-gradient-to-r from-teal-700 to-emerald-700 dark:from-teal-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                    <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white/40 backdrop-blur-md border border-white/40 text-sm font-medium mb-8 animate-fade-in shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
+                        <Sparkles className="w-4 h-4 text-emerald-500 group-hover:rotate-12 transition-transform duration-300" />
+                        <span className="text-foreground/70 tracking-wide">
                             人生の転機をスムーズに
                         </span>
                     </div>
 
                     {/* Main Headline */}
-                    <h1 className={`${titleFontWeight} text-foreground text-balance mb-8 animate-slide-up leading-[1.1] tracking-tight`}>
-                        <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl mb-4">
+                    <h1 className={`${titleFontWeight} text-foreground text-balance mb-8 animate-slide-up leading-tight tracking-tight`}>
+                        <span className="block text-3xl sm:text-5xl md:text-6xl lg:text-7xl mb-4 text-foreground/80">
                             {title}
                         </span>
-                        <span className="block text-6xl sm:text-7xl md:text-8xl lg:text-9xl bg-gradient-to-r from-teal-500 via-emerald-500 to-cyan-500 bg-clip-text text-transparent animate-gradient-x">
+                        <span className="block text-4xl sm:text-6xl md:text-7xl lg:text-8xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent animate-gradient-x drop-shadow-sm font-sans font-bold">
                             {highlightText}
                         </span>
                     </h1>
 
                     {/* Description */}
-                    <p className="text-xl sm:text-2xl md:text-3xl text-foreground/80 dark:text-foreground/90 text-balance max-w-4xl mx-auto leading-relaxed mb-12 animate-slide-up font-light" style={{ animationDelay: '0.1s' }}>
+                    <p className="text-base sm:text-lg md:text-xl text-foreground/60 text-balance max-w-2xl mx-auto leading-relaxed mb-12 animate-slide-up px-4 sm:px-0" style={{ animationDelay: '0.1s' }}>
                         {description}
                     </p>
 
                     {/* CTA Buttons */}
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-slide-up" style={{ animationDelay: '0.2s' }}>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-20 animate-slide-up w-full sm:w-auto px-6" style={{ animationDelay: '0.2s' }}>
                         <button
                             onClick={handleButtonClick}
-                            className="group relative px-8 py-5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-lg font-bold shadow-2xl shadow-teal-500/50 hover:shadow-3xl hover:shadow-teal-500/60 transition-all duration-300 hover:scale-105 overflow-hidden"
+                            className="group relative w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-emerald-400/90 to-teal-400/90 text-white text-lg font-bold shadow-lg shadow-emerald-200 hover:shadow-xl hover:shadow-emerald-300 hover:scale-105 transition-all duration-300 overflow-hidden"
                         >
-                            <div className="absolute inset-0 bg-gradient-to-r from-teal-400 to-emerald-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            <span className="relative flex items-center gap-2">
+                            <span className="relative flex items-center justify-center gap-2 z-10">
                                 {buttonText}
                                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
                             </span>
@@ -180,34 +174,36 @@ export function HeroSection({
                         {secondaryButtonText && (
                             <button
                                 onClick={handleSecondaryButtonClick}
-                                className="px-8 py-5 rounded-2xl bg-white/20 dark:bg-black/20 backdrop-blur-xl border-2 border-white/30 dark:border-white/10 text-lg font-bold hover:bg-white/30 dark:hover:bg-black/30 transition-all duration-300 hover:scale-105 shadow-lg"
+                                className="w-full sm:w-auto px-10 py-4 rounded-full bg-white/50 backdrop-blur-md border border-white/60 text-lg font-medium hover:bg-white/70 transition-all duration-300 hover:shadow-lg text-foreground/80"
                             >
                                 {secondaryButtonText}
                             </button>
                         )}
                     </div>
 
-                    {/* Stats */}
+                    {/* Professional Circular Stats */}
                     {showStats && stats.length > 0 && (
-                        <div className="grid grid-cols-3 gap-8 max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.3s' }}>
-                            {stats.map((stat, index) => (
-                                <div
-                                    key={stat.label}
-                                    className="group p-6 rounded-3xl bg-white/10 dark:bg-black/10 backdrop-blur-xl border border-white/20 dark:border-white/10 hover:bg-white/20 dark:hover:bg-black/20 transition-all duration-300 hover:scale-105 hover:shadow-xl"
-                                >
-                                    <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mb-2">
-                                        {stat.value}
-                                    </p>
-                                    <p className="text-sm md:text-base text-foreground/70 dark:text-foreground/80 font-medium">
-                                        {stat.label}
-                                    </p>
-                                </div>
-                            ))}
+                        <div className="animate-slide-up w-full max-w-5xl mx-auto px-4" style={{ animationDelay: '0.3s' }}>
+                            <div className="flex flex-wrap justify-center gap-6 md:gap-12">
+                                {stats.map((stat, index) => (
+                                    <div key={stat.label} className="flex flex-col items-center gap-3 group cursor-default">
+                                        <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white/60 backdrop-blur-xl border border-white/50 shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-500 flex items-center justify-center relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                            <p className="text-xl md:text-2xl font-bold text-emerald-600/90 z-10">
+                                                {stat.value}
+                                            </p>
+                                        </div>
+                                        <p className="text-xs md:text-sm text-foreground/60 font-medium tracking-wide">
+                                            {stat.label}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
 
                     {/* Trust Indicators */}
-                    <div className="flex items-center justify-center gap-6 mt-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                    <div className="flex items-center justify-center gap-6 mt-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
                         <div className="flex items-center gap-2 text-sm text-foreground/60 dark:text-foreground/70">
                             <Shield className="w-4 h-4 text-emerald-500" />
                             <span>安全・安心</span>

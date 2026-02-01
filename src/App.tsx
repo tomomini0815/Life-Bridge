@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import DashboardPage from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import TestLanding from "./pages/TestLanding";
 import { TermsOfService } from "./components/TermsOfService";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { CommercialTransactionAct } from "./components/CommercialTransactionAct";
@@ -80,6 +81,7 @@ const App = () => {
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/commercial-transaction" element={<CommercialTransactionAct />} />
               <Route path="/help" element={<HelpPage isStandalone={true} />} />
+              <Route path="/test" element={<TestLanding />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

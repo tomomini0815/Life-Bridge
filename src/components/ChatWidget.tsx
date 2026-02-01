@@ -12,12 +12,24 @@ import { useAuth } from '@/contexts/AuthContext';
 interface ChatWidgetProps {
   currentContext?: UserContext;
   onSelectEvent?: (eventId: string | null) => void;
+  externalIsOpen?: boolean;
 }
 
-export function ChatWidget({ currentContext = 'general', onSelectEvent }: ChatWidgetProps) {
+export function ChatWidget({ currentContext = 'general', onSelectEvent, externalIsOpen }: ChatWidgetProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+
+  // Sync with external open state if provided
+  useEffect(() => {
+    if (externalIsOpen !== undefined) {
+      setIsOpen(externalIsOpen);
+      if (externalIsOpen) {
+        setIsMinimized(false);
+      }
+    }
+  }, [externalIsOpen]);
+
   const [messages, setMessages] = useState<AiMessage[]>([
     {
       id: 'init',
