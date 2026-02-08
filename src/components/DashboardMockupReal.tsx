@@ -44,7 +44,7 @@ export function DashboardMockupReal() {
             </div>
 
             {/* iPhone 15 Pro Mockup (Front View, Floating) */}
-            <div className="absolute -bottom-6 right-[2%] md:-bottom-12 md:right-[5%] lg:right-[10%] w-[160px] md:w-[260px] z-30 transition-all duration-700 hover:scale-[1.05]">
+            <div className="absolute -bottom-6 right-[2%] md:bottom-[5%] md:right-[5%] lg:right-[10%] w-[160px] md:w-[260px] z-30 transition-all duration-700 hover:scale-[1.05]">
 
                 {/* Phone Frame */}
                 <div className="relative aspect-[9/19.5] rounded-[2.8rem] bg-[#1a1a1a] p-[8px] border-[1px] border-slate-700 shadow-3xl overflow-hidden ring-1 ring-white/10">
