@@ -185,7 +185,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                     </div>
 
                     {/* Bottom: Wide Hero Image (Roadmap) */}
-                    <div className="w-full max-w-[1200px] relative animate-fade-in-up delay-200 pointer-events-none -z-10 mb-[-100px] md:mb-[-220px]">
+                    <div className="w-full max-w-[1200px] relative animate-fade-in-up delay-200 pointer-events-none -z-10 mb-0 md:mb-[-220px]">
                         {/* Image with crop effect via mix-blend-mode and negative margins */}
                         <div className="relative transform scale-[1.2] md:scale-110 origin-center mt-[-40px] md:mt-[-340px]">
                             <img
@@ -200,7 +200,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                 </div>
 
                 {/* Trust Marquee (Full Width) */}
-                <div className="w-full relative z-20 -mt-32 md:-mt-52">
+                <div className="w-full relative z-20 mt-[-20px] md:-mt-52">
                     <TrustMarquee />
                 </div>
 
