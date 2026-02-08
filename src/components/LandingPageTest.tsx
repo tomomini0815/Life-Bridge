@@ -55,7 +55,10 @@ function HexagonCard({ image, title, subtitle, description, icon: Icon, onClick,
                     backgroundColor: type === 'text' ? 'rgba(255, 255, 255, 0.9)' : '#f5f5f4',
                     backdropFilter: type === 'text' ? 'blur(20px)' : 'none',
                 }}
-                onClick={onClick}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onClick?.();
+                }}
             >
                 {type === 'photo' && image && (
                     <>
@@ -174,7 +177,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                         </p>
 
                         <div className="flex flex-row items-center justify-center gap-3 mb-0 w-full px-4 sm:px-0">
-                            <Button className="h-14 px-4 sm:px-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-200 text-base sm:text-lg font-bold flex-1 sm:flex-initial transition-transform hover:scale-105" onClick={() => navigate('/login')}>
+                            <Button className="h-14 px-4 sm:px-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-xl shadow-emerald-200 text-base sm:text-lg font-bold flex-1 sm:flex-initial transition-transform hover:scale-105 mx-auto sm:mx-0" onClick={() => navigate('/login')}>
                                 無料で試す
                                 <ArrowRight className="ml-2 w-5 h-5" />
                             </Button>
@@ -232,6 +235,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                                 subtitle="新生活のスタートに必要な手続きを、漏れなくスムーズに。"
                                 delay={0.1}
                                 className="md:translate-y-24" // Stagger down
+                                onClick={() => onSelectEvent({ id: 'marriage', title: '結婚', category: 'marriage' } as any)}
                             />
                             <HexagonCard
                                 type="photo"

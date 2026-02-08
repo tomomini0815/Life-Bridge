@@ -146,7 +146,7 @@ export function SignupPage() {
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full h-12 bg-indigo-600 hover:bg-indigo-700 text-white" disabled={isLoading}>
+                        <Button type="submit" className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white" disabled={isLoading}>
                             {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Mail className="mr-2 h-5 w-5" />}
                             アカウント作成
                         </Button>
@@ -154,7 +154,7 @@ export function SignupPage() {
 
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">既にアカウントをお持ちですか？ </span>
-                        <Link to="/login" className="text-indigo-600 font-medium hover:underline">
+                        <Link to="/login" className="text-emerald-600 font-medium hover:underline">
                             ログイン
                         </Link>
                     </div>
