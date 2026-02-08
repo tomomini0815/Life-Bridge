@@ -57,7 +57,7 @@ export function DashboardMockupReal() {
                         <img
                             src="/assets/images/dashboard_mobile_v2.png"
                             alt="LifeBridge Mobile"
-                            className="w-full h-full object-cover translate-y-6"
+                            className="w-full h-full object-cover translate-y-10"
                         />
                         {/* Subtle Gradient Shadow at Top */}
                         <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/5 to-transparent pointer-events-none" />
