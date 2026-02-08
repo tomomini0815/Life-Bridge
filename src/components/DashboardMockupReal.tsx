@@ -24,10 +24,13 @@ export function DashboardMockupReal() {
                     {/* Main Dashboard Content */}
                     <div className="relative w-full h-full rounded-t-xl overflow-hidden border border-white/5 bg-slate-900">
                         <img
-                            src="/assets/images/dashboard_desktop_v3.png"
+                            src="/assets/images/dashboard_desktop_v4.png"
                             alt="LifeBridge Desktop"
                             className="w-full h-full object-contain"
                         />
+                        {/* Privacy Mask for Account Sidebar (Bottom Left) */}
+                        <div className="absolute bottom-[2%] left-[2%] w-[20%] h-[12%] bg-slate-900/40 backdrop-blur-md rounded-lg border border-white/10 z-10" />
+
                         {/* Subtle Glass Reflection */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none" />
                     </div>
