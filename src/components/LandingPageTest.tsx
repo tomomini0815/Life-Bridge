@@ -152,8 +152,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
 
                         {/* Glossy Badge */}
                         <div className="inline-block mb-6 group cursor-default">
-                            <div className="px-6 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-xs md:text-sm font-bold tracking-[0.2em] shadow-lg flex items-center gap-2 ring-4 ring-emerald-50/60 backdrop-blur-sm">
-                                <Sparkles className="w-3.5 h-3.5 text-emerald-100" />
+                            <div className="px-6 py-2 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-xs md:text-sm font-bold tracking-[0.2em] shadow-lg ring-4 ring-emerald-50/60 backdrop-blur-sm">
                                 LIFE EVENT CONCIERGE
                             </div>
                         </div>
