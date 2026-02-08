@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -17,6 +18,7 @@ interface ChatWidgetProps {
 
 export function ChatWidget({ currentContext = 'general', onSelectEvent, externalIsOpen }: ChatWidgetProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -43,6 +45,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
   const [isTyping, setIsTyping] = useState(false);
   const [hasUnread, setHasUnread] = useState(false);
   const [isEmpathyMode, setIsEmpathyMode] = useState(false);
+  const [userMessageCount, setUserMessageCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -82,27 +85,31 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping, isOpen]);
 
+  // Context-specific actions mapping (moved outside useEffect for clarity and reuse)
+  const contextActions: Record<string, string[]> = {
+    marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告', 'その他'],
+    birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入', 'その他'],
+    job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について', 'その他'],
+    moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分', 'その他'],
+    startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入', 'その他'],
+    care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について', 'その他'],
+    subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し', 'その他'],
+    simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト', 'その他'],
+    memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け', 'その他'],
+    settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定', 'その他'],
+    general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問', 'その他']
+  };
+
   // Reset chat when context changes
   useEffect(() => {
     const greetingText = AiConciergeService.getGreetingMessage(currentContext);
 
-    // Determine default actions based on context
-    // Context-specific actions mapping
-    const contextActions: Record<string, string[]> = {
-      marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告', 'その他'],
-      birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入', 'その他'],
-      job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について', 'その他'],
-      moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分', 'その他'],
-      startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入', 'その他'],
-      care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について', 'その他'],
-      subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し', 'その他'],
-      simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト', 'その他'],
-      memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け', 'その他'],
-      settings: ['通知設定の変更', 'テーマの変更', 'アカウント設定', 'その他'],
-      general: ['LifeBridgeの使い方', 'ライフイベント選択', 'よくある質問', 'その他']
-    };
+    // Auto-open if a context is selected
+    if (currentContext !== 'general') {
+      setIsOpen(true);
+      setIsMinimized(false);
+    }
 
-    // Determine default actions based on context
     const actions = contextActions[currentContext] || contextActions.general;
 
     // If user is logged in, load history, otherwise show greeting
@@ -111,11 +118,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
       chatService.loadMessages().then(history => {
         if (history.length > 0) {
           // Add context-specific actions to the last message if it's from assistant
-          // But only if we are switching contexts (logic improvement could be needed here, 
-          // but for now, forcing fresh actions on the latest assistant message ensures relevance)
           const updatedHistory = [...history];
-          // Determine default actions based on context
-          // Fix for environment where findLastIndex might not be available
           let lastAssistantIndex = -1;
           for (let i = updatedHistory.length - 1; i >= 0; i--) {
             if (updatedHistory[i].role === 'assistant') {
@@ -125,8 +128,6 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
           }
 
           if (lastAssistantIndex !== -1) {
-            // Only update simple actions, preserve specialized ones if needed
-            // For now, overwrite to ensure context relevance
             updatedHistory[lastAssistantIndex] = {
               ...updatedHistory[lastAssistantIndex],
               actions: actions
@@ -170,6 +171,23 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsTyping(true);
+
+    // Enforce guest limit
+    const isGuest = !user;
+    if (isGuest && userMessageCount >= 1) {
+      setTimeout(() => {
+        const limitMsg: AiMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: AiConciergeService.getGuestLimitResponse(isEmpathyMode ? 'empathy' : 'normal'),
+          timestamp: new Date(),
+          actions: ['ログインする', '無料で使い始める']
+        };
+        setMessages(prev => [...prev, limitMsg]);
+        setIsTyping(false);
+      }, 1000);
+      return;
+    }
 
     try {
       let responseContent = '';
@@ -222,6 +240,10 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
         );
         setMessages(prev => [...prev, response]);
         if (user) chatService.saveMessage(response);
+      }
+
+      if (isGuest) {
+        setUserMessageCount(prev => prev + 1);
       }
     } catch (e: any) {
       console.error('Chat error:', e);
@@ -288,6 +310,16 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
   };
 
   const handleActionClick = (action: string) => {
+    // Handle navigation actions
+    if (action === 'ログインする' || action === 'ログインして相談する') {
+      navigate('/login');
+      return;
+    }
+    if (action === '無料で使い始める' || action === '無料で登録する') {
+      navigate('/signup');
+      return;
+    }
+
     // Handle "Other" action
     if (action === 'その他') {
       const secondaryContextActions: Record<string, string[]> = {
@@ -327,6 +359,23 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsTyping(true);
+
+    // Enforce guest limit for actions as well
+    const isGuest = !user;
+    if (isGuest && userMessageCount >= 1) {
+      setTimeout(() => {
+        const limitMsg: AiMessage = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: AiConciergeService.getGuestLimitResponse(isEmpathyMode ? 'empathy' : 'normal'),
+          timestamp: new Date(),
+          actions: ['ログインする', '無料で使い始める']
+        };
+        setMessages(prev => [...prev, limitMsg]);
+        setIsTyping(false);
+      }, 1000);
+      return;
+    }
 
     (async () => {
       try {
@@ -370,6 +419,10 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
           );
           setMessages(prev => [...prev, res]);
           if (user) chatService.saveMessage(res);
+        }
+
+        if (isGuest) {
+          setUserMessageCount(prev => prev + 1);
         }
       } catch (e: any) {
         console.error('Action error:', e);
