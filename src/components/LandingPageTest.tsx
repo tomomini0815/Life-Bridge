@@ -340,7 +340,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                                             <div className="w-3 h-3 rounded-full bg-emerald-400" />
                                         </div>
                                         <div className="mx-auto bg-white border border-slate-200 rounded-md py-1 px-4 text-[10px] text-slate-400 font-medium w-1/2 text-center">
-                                            life-bridge.app/dashboard
+                                            lifebridgeapp.jp/dashboard
                                         </div>
                                     </div>
                                     <DashboardMockup />

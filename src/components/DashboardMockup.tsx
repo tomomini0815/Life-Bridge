@@ -69,91 +69,67 @@ export function DashboardMockup() {
                     </div>
                 </div>
 
-                {/* Dash Content */}
-                <div className="flex-1 p-4 md:p-8 overflow-hidden">
+                <div className="flex-1 p-4 md:p-8 overflow-hidden bg-white">
                     <div className="flex flex-col gap-4 md:gap-8 h-full">
-                        {/* Top Cards */}
-                        <div className="grid grid-cols-3 gap-3 md:gap-6 shrink-0">
+                        {/* Welcome */}
+                        <div className="shrink-0">
+                            <div className="h-2 w-32 bg-slate-200 rounded-full mb-2" />
+                            <div className="h-3 w-64 bg-slate-100 rounded-full" />
+                        </div>
+
+                        {/* Stats Grid */}
+                        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 shrink-0">
                             {[
-                                { label: '進行中の手続き', value: '12', sub: '+2 今週', color: 'emerald' },
-                                { label: '獲得予定の給付金', value: '¥1,200k', sub: '最大試算額', color: 'teal' },
-                                { label: '次の期限', value: '3日後', sub: '児童手当', color: 'amber' },
+                                { label: '全体進捗', value: '75%', color: 'from-teal-400 to-emerald-500', shadow: 'shadow-emerald-500/20' },
+                                { label: '完了タスク', value: '24', color: 'from-blue-400 to-indigo-500', shadow: 'shadow-blue-500/20' },
+                                { label: '獲得済み給付金', value: '¥240k', color: 'from-amber-400 to-orange-500', shadow: 'shadow-amber-500/20' },
+                                { label: '要対応', value: '3', color: 'from-red-400 to-pink-500', shadow: 'shadow-red-500/20' },
                             ].map((card, i) => (
-                                <div key={i} className="bg-white rounded-xl md:rounded-2xl p-3 md:p-5 shadow-sm border border-slate-200 flex flex-col gap-1 md:gap-2">
-                                    <span className="text-[8px] md:text-xs text-slate-500 font-medium">{card.label}</span>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-sm md:text-2xl font-black text-slate-800">{card.value}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <div className={cn("w-1 h-1 rounded-full", `bg-${card.color}-500`)} />
-                                        <span className="text-[6px] md:text-[10px] text-slate-400 font-medium">{card.sub}</span>
-                                    </div>
+                                <div key={i} className={cn("rounded-2xl p-3 md:p-5 shadow-lg flex flex-col justify-between text-white bg-gradient-to-r", card.color, card.shadow)}>
+                                    <span className="text-[8px] md:text-xs font-medium opacity-90">{card.label}</span>
+                                    <span className="text-sm md:text-2xl font-black mt-1">{card.value}</span>
                                 </div>
                             ))}
                         </div>
 
-                        {/* Bottom Section */}
-                        <div className="flex-1 grid grid-cols-5 gap-3 md:gap-6 min-h-0">
-                            {/* Task List */}
-                            <div className="col-span-3 bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-200 p-4 md:p-6 flex flex-col gap-4 md:gap-6 overflow-hidden">
-                                <div className="flex items-center justify-between">
-                                    <h4 className="font-bold text-slate-800">手続きロードマップ</h4>
-                                    <div className="flex items-center gap-2 text-emerald-600 font-bold text-xs">
-                                        <span>詳細を見る</span>
-                                        <ArrowUpRight className="w-3 h-3" />
-                                    </div>
+                        {/* Recommendations Group */}
+                        <div className="flex-1 grid grid-cols-3 gap-3 md:gap-6 min-h-0">
+                            <div className="col-span-2 space-y-4">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Sparkles className="w-4 h-4 text-emerald-500" />
+                                    <span className="font-bold text-slate-800">あなたへのおすすめ</span>
                                 </div>
-
-                                <div className="flex flex-col gap-2 md:gap-4">
+                                <div className="grid grid-cols-2 gap-3">
                                     {[
-                                        { title: '出生届の提出', status: 'done', date: '2/10 完了' },
-                                        { title: '児童手当の認定申請', status: 'active', date: '2/25 期限' },
-                                        { title: '雇用保険受給資格の確認', status: 'pending', date: '3/05 以降' },
-                                        { title: '健康保険被扶養者届', status: 'pending', date: '3/10 期限' },
-                                    ].map((task, i) => (
-                                        <div key={i} className={cn(
-                                            "flex items-center gap-3 p-2 md:p-3 rounded-xl border transition-all",
-                                            task.status === 'active' ? "border-emerald-200 bg-emerald-50/50" : "border-slate-100"
-                                        )}>
-                                            {task.status === 'done' ? (
-                                                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                                            ) : task.status === 'active' ? (
-                                                <Clock className="w-4 h-4 text-emerald-500 animate-pulse shrink-0" />
-                                            ) : (
-                                                <div className="w-4 h-4 rounded-full border-2 border-slate-200 shrink-0" />
-                                            )}
-                                            <span className={cn(
-                                                "font-bold flex-1 truncate",
-                                                task.status === 'done' ? "text-slate-400" : "text-slate-700"
-                                            )}>{task.title}</span>
-                                            <span className="text-[8px] md:text-xxs text-slate-400 whitespace-nowrap">{task.date}</span>
+                                        { title: '出産育児一時金', type: '給付金' },
+                                        { title: '児童手当の申請', type: '手続き' }
+                                    ].map((rec, i) => (
+                                        <div key={i} className="bg-slate-50 rounded-xl p-3 border border-slate-200">
+                                            <span className="text-[6px] md:text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded mb-2 inline-block">{rec.type}</span>
+                                            <div className="font-bold text-slate-700 text-[10px] md:text-xs">{rec.title}</div>
+                                            <div className="h-1.5 w-full bg-slate-200 rounded-full mt-3" />
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            {/* Calendar / Side Card */}
-                            <div className="col-span-2 flex flex-col gap-3 md:gap-6">
-                                <div className="flex-1 bg-white rounded-xl md:rounded-2xl shadow-sm border border-slate-200 p-4 md:p-5 flex flex-col gap-3 overflow-hidden">
-                                    <h4 className="font-bold text-slate-800">カレンダー</h4>
-                                    <div className="grid grid-cols-7 gap-1">
-                                        {Array.from({ length: 28 }).map((_, i) => (
-                                            <div key={i} className={cn(
-                                                "aspect-square rounded flex items-center justify-center text-[6px] md:text-[10px] font-bold",
-                                                i === 15 ? "bg-emerald-500 text-white shadow-lg shadow-emerald-200" : "hover:bg-slate-50 text-slate-400"
-                                            )}>
-                                                {i + 1}
-                                            </div>
-                                        ))}
+                            {/* Progress Detail */}
+                            <div className="col-span-1 bg-slate-50 rounded-2xl p-4 flex flex-col gap-4 border border-slate-200">
+                                <div className="font-bold text-slate-800">ライフイベント進捗</div>
+                                {[
+                                    { label: '出産', progress: 80, color: 'bg-orange-500' },
+                                    { label: '引っ越し', progress: 40, color: 'bg-emerald-500' }
+                                ].map((ev, i) => (
+                                    <div key={i} className="space-y-1">
+                                        <div className="flex justify-between text-[8px] md:text-[10px] font-bold">
+                                            <span>{ev.label}</span>
+                                            <span>{ev.progress}%</span>
+                                        </div>
+                                        <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                                            <div className={cn("h-full transition-all duration-1000", ev.color)} style={{ width: `${ev.progress}%` }} />
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="h-20 md:h-32 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl md:rounded-2xl p-4 md:p-5 text-white flex flex-col justify-between">
-                                    <div className="flex justify-between items-start">
-                                        <span className="text-[8px] md:text-xxs font-bold opacity-80 uppercase tracking-wider">AI Insight</span>
-                                        <Sparkles className="w-4 h-4 text-indigo-200" />
-                                    </div>
-                                    <p className="text-[10px] md:text-xs font-bold leading-tight">給付金の申請期限が3日後に迫っています。今すぐ準備を始めましょう。</p>
-                                </div>
+                                ))}
                             </div>
                         </div>
                     </div>
