@@ -142,7 +142,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
             <main className="relative z-10 pt-32 pb-0 px-0 flex flex-col items-center w-full"> {/* px-0 for full width sections */}
 
                 {/* Intro Text & Hero Image (Centered Layout for Wide Roadmap) */}
-                <div className="flex flex-col items-center w-full max-w-7xl mx-auto mb-16 md:mb-24 relative z-10">
+                <div className="flex flex-col items-center w-full max-w-7xl mx-auto mb-4 md:mb-8 relative z-10">
 
                     {/* Top: Centered Text Content */}
                     <div className="text-center max-w-4xl mx-auto relative z-20 mb-[-60px] md:mb-[-140px]"> {/* More aggressive negative margin to pull image up */}
@@ -200,7 +200,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                 </div>
 
                 {/* Trust Marquee (Full Width) */}
-                <div className="w-full relative z-20 -mt-12 md:-mt-24">
+                <div className="w-full relative z-20 -mt-32 md:-mt-52">
                     <TrustMarquee />
                 </div>
 
