@@ -16,9 +16,9 @@ export function DashboardMockupReal() {
 
                 {/* Screen Part */}
                 <div className="relative rounded-t-[1.8rem] bg-[#0a0a0a] p-[8px] pb-0 border-x-[1px] border-t-[1px] border-slate-800 shadow-2xl overflow-hidden aspect-[16/10]">
-                    {/* Top Bezel + Camera */}
-                    <div className="absolute top-0 left-0 right-0 h-7 bg-black z-20 flex items-center justify-center">
-                        <div className="w-1.5 h-1.5 rounded-full bg-slate-800 ring-1 ring-white/5" />
+                    {/* Top Bezel + Camera (Slimmer to prevent header overlap) */}
+                    <div className="absolute top-0 left-0 right-0 h-4 bg-black z-20 flex items-center justify-center">
+                        <div className="w-1 h-1 rounded-full bg-slate-800 ring-1 ring-white/5" />
                     </div>
 
                     {/* Main Dashboard Content */}
