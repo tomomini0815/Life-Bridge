@@ -3,7 +3,7 @@ import { Bot, Sparkles } from 'lucide-react';
 
 export function DashboardMockupReal() {
     return (
-        <div className="relative w-full max-w-6xl mx-auto px-4 pt-0 pb-12 md:pb-24 lg:pb-32 overflow-visible">
+        <div className="relative w-full max-w-6xl mx-auto px-4 pt-12 pb-12 md:pb-24 lg:pb-32 overflow-visible">
 
             {/* Decorative Background Glows */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-gradient-to-tr from-emerald-500/5 via-transparent to-teal-500/5 rounded-full blur-3xl -z-10" />
@@ -57,7 +57,7 @@ export function DashboardMockupReal() {
                         <img
                             src="/assets/images/dashboard_mobile_v2.png"
                             alt="LifeBridge Mobile"
-                            className="w-full h-full object-cover translate-y-10"
+                            className="w-full h-full object-cover translate-y-6"
                         />
                         {/* Subtle Gradient Shadow at Top */}
                         <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/5 to-transparent pointer-events-none" />
