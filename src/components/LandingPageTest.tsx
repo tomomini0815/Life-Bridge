@@ -200,7 +200,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                 </div>
 
                 {/* Trust Marquee (Full Width) */}
-                <div className="w-full relative z-20 mt-[-20px] md:-mt-52">
+                <div className="w-full relative z-20 mt-[-140px] md:-mt-52">
                     <TrustMarquee />
                 </div>
 
