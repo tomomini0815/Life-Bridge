@@ -104,8 +104,8 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
   useEffect(() => {
     const greetingText = AiConciergeService.getGreetingMessage(currentContext);
 
-    // Auto-open if a context is selected
-    if (currentContext !== 'general') {
+    // Auto-open if a context is selected (only for guest users)
+    if (currentContext !== 'general' && !user) {
       setIsOpen(true);
       setIsMinimized(false);
     }

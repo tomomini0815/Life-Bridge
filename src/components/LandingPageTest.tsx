@@ -145,7 +145,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                 <div className="flex flex-col items-center w-full max-w-7xl mx-auto mb-16 md:mb-24 relative z-10">
 
                     {/* Top: Centered Text Content */}
-                    <div className="text-center max-w-4xl mx-auto relative z-20 mb-[-40px] md:mb-[-80px]"> {/* Negative margin to overlap image */}
+                    <div className="text-center max-w-4xl mx-auto relative z-20 mb-[-60px] md:mb-[-140px]"> {/* More aggressive negative margin to pull image up */}
 
                         {/* Glossy Badge */}
                         <div className="inline-block mb-6 group cursor-default">
@@ -187,7 +187,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                     {/* Bottom: Wide Hero Image (Roadmap) */}
                     <div className="w-full max-w-[1200px] relative animate-fade-in-up delay-200 pointer-events-none -z-10 mb-[-100px] md:mb-[-220px]">
                         {/* Image with crop effect via mix-blend-mode and negative margins */}
-                        <div className="relative transform scale-[1.2] md:scale-110 origin-center mt-[-20px] md:mt-[-280px]">
+                        <div className="relative transform scale-[1.2] md:scale-110 origin-center mt-[-40px] md:mt-[-340px]">
                             <img
                                 src="/hero-roadmap-wide.png"
                                 alt="LifeBridge Roadmap Journey"
