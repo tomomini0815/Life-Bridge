@@ -256,6 +256,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                                 title="新しい家族"
                                 subtitle="出生届から児童手当まで。大切な時間を手続きで邪魔させません。"
                                 delay={0.3}
+                                onClick={() => onSelectEvent({ id: 'birth', title: '出産', category: 'birth' } as any)}
                             />
                             <HexagonCard
                                 type="photo"
@@ -273,6 +274,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                                 title="キャリア"
                                 subtitle="就職・転職に伴う年金や税金の切り替えも、AIがガイドします。"
                                 delay={0.5}
+                                onClick={() => onSelectEvent({ id: 'job', title: '転職', category: 'job' } as any)}
                             />
                         </div>
 
@@ -801,7 +803,7 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                             </div>
 
                             <p className="text-sm text-muted-foreground">
-                                © 2025 LifeBridge. All rights reserved.
+                                © 2025-2026 LifeBridge. All rights reserved.
                             </p>
                         </div>
                     </div>

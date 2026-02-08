@@ -15,6 +15,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { LoginPage } from "@/components/auth/LoginPage";
 import { SignupPage } from "@/components/auth/SignupPage";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => {
         <Sonner />
         <AuthProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginPage />} />

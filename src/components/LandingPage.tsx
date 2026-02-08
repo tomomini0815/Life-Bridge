@@ -349,7 +349,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             </div>
 
             <p className="text-sm text-muted-foreground">
-              © 2025 LifeBridge. All rights reserved.
+              © 2025-2026 LifeBridge. All rights reserved.
             </p>
           </div>
         </div>
