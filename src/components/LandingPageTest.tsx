@@ -1,5 +1,6 @@
 import { LifeEvent } from '@/types/lifeEvent';
 import { Button } from '@/components/ui/button';
+import { DashboardMockup } from './DashboardMockup';
 import {
     Heart, Shield, Sparkles, ArrowRight,
     CheckCircle2, Clock, MapPin, Briefcase, Baby, Home, Users, Rocket, HandHeart,
@@ -325,6 +326,38 @@ export function LandingPageTest({ events, onSelectEvent }: LandingPageProps) {
                             <div className="text-center mb-12">
                                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800 font-['Zen_Old_Mincho']">LifeBridgeの提供価値</h2>
                                 <p className="text-slate-500 mt-3 font-['Kaisei_Decol']">すべての機能を、ひとつのプラットフォームで。</p>
+                            </div>
+
+                            {/* Dashboard Mockup Presentation */}
+                            <div className="relative mb-20 group">
+                                <div className="absolute -inset-4 bg-gradient-to-r from-emerald-500/10 to-teal-500/10 rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                                <div className="relative bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all duration-700 group-hover:scale-[1.02] group-hover:-rotate-1">
+                                    {/* Browser Header Style */}
+                                    <div className="bg-slate-50 border-b border-slate-200 px-4 py-3 flex items-center gap-2">
+                                        <div className="flex gap-1.5">
+                                            <div className="w-3 h-3 rounded-full bg-red-400" />
+                                            <div className="w-3 h-3 rounded-full bg-amber-400" />
+                                            <div className="w-3 h-3 rounded-full bg-emerald-400" />
+                                        </div>
+                                        <div className="mx-auto bg-white border border-slate-200 rounded-md py-1 px-4 text-[10px] text-slate-400 font-medium w-1/2 text-center">
+                                            life-bridge.app/dashboard
+                                        </div>
+                                    </div>
+                                    <DashboardMockup />
+                                </div>
+
+                                {/* Floating Badge */}
+                                <div className="absolute -bottom-6 -right-6 md:-bottom-10 md:-right-10 bg-white rounded-2xl shadow-xl p-4 md:p-6 border border-slate-100 animate-float-medium z-30">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-emerald-100 flex items-center justify-center">
+                                            <Bot className="w-6 h-6 md:w-8 md:h-8 text-emerald-600" />
+                                        </div>
+                                        <div>
+                                            <div className="text-xs md:text-sm font-bold text-slate-800">AIコンシェルジュが常駐</div>
+                                            <div className="text-[10px] md:text-xs text-slate-500">24時間いつでもサポート</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Infographic Container */}
