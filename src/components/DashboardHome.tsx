@@ -271,8 +271,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                 </div>
 
                 <div className="mb-4">
-                  <span className="text-3xl lg:text-4xl font-bold text-white">{Math.round(overallProgress)}%</span>
-                  <p className="text-sm text-white/80 mt-1 font-medium">完了</p>
+                  <span className="text-2xl lg:text-3xl font-bold text-white">{Math.round(overallProgress)}%</span>
+                  <p className="text-xs text-white/80 mt-1 font-medium">完了</p>
                 </div>
 
                 <div className="h-2 bg-black/10 rounded-full overflow-hidden">
@@ -297,8 +297,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                 </div>
 
                 <div>
-                  <span className="text-3xl lg:text-4xl font-bold text-white">{totalCompleted}</span>
-                  <p className="text-sm text-white/80 mt-1 font-medium">/ {totalTasks}件</p>
+                  <span className="text-2xl lg:text-3xl font-bold text-white">{totalCompleted}</span>
+                  <p className="text-xs text-white/80 mt-1 font-medium">/ {totalTasks}件</p>
                 </div>
               </div>
             </div>
@@ -316,9 +316,9 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                 </div>
 
                 <div>
-                  <span className="text-3xl lg:text-4xl font-bold text-white">¥{totalClaimedBenefits.toLocaleString()}</span>
-                  <div className="mt-2 inline-block px-3 py-1 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <p className="text-xs font-medium text-white">
+                  <span className="text-xl lg:text-2xl font-bold text-white truncate block">¥{totalClaimedBenefits.toLocaleString()}</span>
+                  <div className="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <p className="text-[10px] font-medium text-white whitespace-nowrap">
                       残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
                     </p>
                   </div>
@@ -339,9 +339,9 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                 </div>
 
                 <div>
-                  <span className="text-3xl lg:text-4xl font-bold text-white">{allUrgentTasks.length}</span>
-                  <div className="mt-2 inline-block px-3 py-1 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <p className="text-xs font-medium text-white">
+                  <span className="text-2xl lg:text-3xl font-bold text-white">{allUrgentTasks.length}</span>
+                  <div className="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <p className="text-[10px] font-medium text-white">
                       期限が迫っています
                     </p>
                   </div>

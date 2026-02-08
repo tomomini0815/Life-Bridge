@@ -7,15 +7,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserContext } from '@/services/AiConciergeService';
 
 const Index = () => {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [chatContext, setChatContext] = useState<UserContext>('general');
 
   useEffect(() => {
-    if (user) {
+    if (!loading && user) {
       navigate('/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, loading, navigate]);
+
+  if (loading || user) {
+    return null; // Prevent flash of LP while redirecting or loading auth
+  }
 
   const handleSelectEvent = (event: any) => {
     // Instead of navigating, we set the chat context to trigger the AI concierge

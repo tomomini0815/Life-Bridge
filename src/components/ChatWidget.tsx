@@ -577,13 +577,13 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
             <div
               key={message.id}
               className={cn(
-                "flex flex-col gap-1 max-w-[85%]",
-                message.role === 'assistant' ? "self-start" : "self-end items-end"
+                "flex flex-col gap-1 max-w-[92%]",
+                message.role === 'assistant' ? "self-start items-start" : "self-end items-end"
               )}
             >
               {/* Avatar for Bot */}
               {message.role === 'assistant' && (
-                <span className="text-[10px] text-muted-foreground ml-1">AI Assistant</span>
+                <span className="text-[10px] text-muted-foreground">AI Assistant</span>
               )}
 
               <div
@@ -601,7 +601,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
               >
                 <div className="whitespace-pre-line text-xs leading-relaxed">
                   {message.role === 'assistant' ? (
-                    <div>
+                    <div className="flex flex-col items-start w-full">
                       {message.content.split('\n').map((line, i) => {
                         // Check for list items (supports -, *, 1., and [ ])
                         const isList = /^[ \t]*([-*]|\d+\.|\[[ x]?\])[ \t]+/.test(line);
@@ -631,7 +631,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
                             </div>
                           );
                         }
-                        return <div key={i}>{line || <br />}</div>;
+                        return <div key={i} className="w-full text-left">{line || <br />}</div>;
                       })}
                     </div>
                   ) : (
@@ -698,7 +698,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
 
               {/* Suggested Actions (Bot only) */}
               {message.role === 'assistant' && message.actions && message.actions.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-1 ml-1">
+                <div className="flex flex-wrap gap-2 mt-1 justify-start">
                   {message.actions.map((action, idx) => (
                     <button
                       key={idx}

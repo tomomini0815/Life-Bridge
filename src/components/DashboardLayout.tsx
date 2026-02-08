@@ -33,10 +33,10 @@ export function DashboardLayout() {
   const [activePage, setActivePage] = useState<string | null>(null);
   const [completedTasks, setCompletedTasks] = useState<Record<string, string[]>>({
     marriage: [],
-    birth: ['birth-2'], // Example: Some tasks already completed
+    birth: [],
     job: [],
     startup: [],
-    moving: ['moving-3'],
+    moving: [],
     care: [],
   });
   const [showGlobalScanner, setShowGlobalScanner] = useState(false);
@@ -46,10 +46,41 @@ export function DashboardLayout() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // Sync user ID with ProfileService
+  // Sync user ID with ProfileService and load completed tasks
   useEffect(() => {
     profileService.setUserId(user?.id || null);
+
+    // Load completed tasks from localStorage
+    if (user?.id) {
+      const key = `lifebridge_completed_tasks_${user.id}`;
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          setCompletedTasks(JSON.parse(stored));
+        } catch (e) {
+          console.error('Failed to parse completed tasks:', e);
+        }
+      } else {
+        // Reset if no stored data for this user
+        setCompletedTasks({
+          marriage: [],
+          birth: [],
+          job: [],
+          startup: [],
+          moving: [],
+          care: [],
+        });
+      }
+    }
   }, [user]);
+
+  // Persist completed tasks when they change
+  useEffect(() => {
+    if (user?.id) {
+      const key = `lifebridge_completed_tasks_${user.id}`;
+      localStorage.setItem(key, JSON.stringify(completedTasks));
+    }
+  }, [completedTasks, user]);
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
@@ -159,7 +190,7 @@ export function DashboardLayout() {
 
                 {/* Desktop: Sidebar Trigger + Search */}
                 <div className="hidden md:flex items-center gap-2 flex-1">
-                  <SidebarTrigger className="-ml-4 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7" />
+                  <SidebarTrigger className="-ml-4 bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7 [&_svg]:text-slate-600 dark:[&_svg]:text-slate-300" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   <div className="relative w-96 group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
