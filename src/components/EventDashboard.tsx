@@ -218,7 +218,7 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
       </div>
 
       {/* Task List / Timeline */}
-      <div className={cn("space-y-4 relative", view === 'timeline' && "pl-8 ml-4 border-l-2 border-dashed border-border/50 pb-4")}>
+      <div className={cn("space-y-4 relative transition-all duration-300", view === 'timeline' && "pl-16 md:pl-24 ml-2 border-l-2 border-dashed border-border/50 pb-4")}>
         {filteredTasks.map((task, index) => (
           <div
             key={task.id}
@@ -229,7 +229,7 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
             style={{ animationDelay: `${index * 0.05}s`, animationFillMode: 'forwards' }}
           >
             {view === 'timeline' && task.deadline && (
-              <div className="absolute -left-32 top-1/2 -translate-y-1/2 text-[10px] font-bold text-muted-foreground bg-background px-2 py-0.5 rounded-full border border-border shadow-sm hidden md:block">
+              <div className="absolute -left-14 md:-left-24 top-1/2 -translate-y-1/2 text-[9px] md:text-[10px] font-bold text-muted-foreground bg-background/80 backdrop-blur-sm px-1.5 md:px-2 py-0.5 rounded-full border border-border shadow-sm z-10 whitespace-nowrap">
                 {task.deadline}
               </div>
             )}
