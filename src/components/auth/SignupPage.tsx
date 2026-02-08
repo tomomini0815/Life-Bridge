@@ -146,7 +146,7 @@ export function SignupPage() {
                                 required
                             />
                         </div>
-                        <Button type="submit" className="w-full h-12 bg-emerald-600 hover:bg-emerald-700 text-white" disabled={isLoading}>
+                        <Button type="submit" className="w-full h-12 text-white shadow-xl shadow-emerald-500/20 hover:opacity-90 transition-opacity" style={{ background: 'var(--sidebar-gradient)' }} disabled={isLoading}>
                             {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Mail className="mr-2 h-5 w-5" />}
                             アカウント作成
                         </Button>
