@@ -24,7 +24,7 @@ export function DashboardMockupReal() {
                     {/* Main Dashboard Content */}
                     <div className="relative w-full h-full rounded-t-xl overflow-hidden border border-white/5 bg-slate-900">
                         <img
-                            src="/assets/images/dashboard_desktop_v2.png"
+                            src="/assets/images/dashboard_desktop_v3.png"
                             alt="LifeBridge Desktop"
                             className="w-full h-full object-contain"
                         />
