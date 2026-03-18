@@ -37,7 +37,6 @@ import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { LifeBridgeLogo } from './ui/LifeBridgeLogo';
-import { profileService } from '@/services/ProfileService';
 
 interface AppSidebarProps {
   activeEvent: LifeEventType | null;
@@ -79,15 +78,12 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   // On mobile, always show expanded state
   const isCollapsed = !isMobile && state === 'collapsed';
 
-  // Initialize state from profile or localStorage
+  // Initialize state from localStorage to avoid flash of incorrect content
   const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
-    // Try to get from profile first (if already loaded)
-    const profile = profileService.getProfile();
-    if (profile.settings && Object.keys(profile.settings).length > 0) {
-      return profile.settings;
-    }
-
     if (typeof window !== 'undefined') {
+      // Note: user might be null here on first render, so we might default to guest or wait for useEffect.
+      // But we can try to get from user if hook provides check.
+      // For now, simple check.
       const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
       const stored = localStorage.getItem(key);
       if (stored) {
@@ -98,37 +94,51 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         }
       }
     }
-    return {};
+    return {}; // Default fallbacks (all visible imply true if not explicitly false)
   });
 
-  // Listen for settings changes and user changes via ProfileService
+  // Listen for settings changes and user changes
   useEffect(() => {
-    // Subscribe to profile changes
-    const unsubscribe = profileService.subscribe((profile) => {
-      if (profile.settings) {
-        setMenuVisibility(profile.settings);
-
-        // Update localStorage as cache
+    const loadSettings = () => {
+      if (typeof window !== 'undefined') {
         const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
-        localStorage.setItem(key, JSON.stringify(profile.settings));
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          try {
+            setMenuVisibility(JSON.parse(stored));
+          } catch (e) {
+            console.error('Failed to parse menu visibility settings:', e);
+          }
+        } else {
+          setMenuVisibility({});
+        }
       }
-    });
+    };
+    loadSettings();
 
-    // Also try to load immediately if profile is already there but not caught by initial state
-    const currentProfile = profileService.getProfile();
-    if (currentProfile.settings) {
-      setMenuVisibility(currentProfile.settings);
-    }
-
-    // Listen for the custom event from Settings page as well (for immediate local feedback)
     const handleSettingsChange = (event: CustomEvent) => {
       setMenuVisibility(event.detail);
     };
+
     window.addEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
 
+    // Also handle storage events for cross-tab synchronization
+    const handleStorageChange = (event: StorageEvent) => {
+      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+      if (event.key === key && event.newValue) {
+        try {
+          setMenuVisibility(JSON.parse(event.newValue));
+        } catch (e) {
+          console.error('Storage sync error:', e);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
     return () => {
-      unsubscribe();
       window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+      window.removeEventListener('storage', handleStorageChange);
     };
   }, [user]);
 
