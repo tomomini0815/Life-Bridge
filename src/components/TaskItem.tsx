@@ -25,7 +25,7 @@ const categoryIcons = {
 const categoryLabels = {
   government: '行政手続き',
   benefit: '給付金申請',
-  private: '民間手続き',
+  private: '自己管理',
 };
 
 const categoryStyles = {
@@ -129,7 +129,7 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
                   <Clock className="w-3.5 h-3.5" />
                   所要時間: {task.estimatedTime}
                 </span>
-                {task.isOnline && (
+                {task.isOnline && (task.category === 'government' || task.category === 'benefit') && (
                   <span className="flex items-center gap-1.5 text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-md">
                     <Wifi className="w-3.5 h-3.5" />
                     オンライン申請可
@@ -149,15 +149,19 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
               <div className="flex-1 space-y-3">
                 <h5 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <FileText className="w-4 h-4" />
-                  必要書類
+                  {task.category === 'private' ? '準備するもの' : '必要書類'}
                 </h5>
                 <ul className="space-y-2">
-                  {task.requiredDocs.map((doc, i) => (
-                    <li key={i} className="text-sm flex items-start gap-3 p-2 rounded-lg hover:bg-background/50 transition-colors">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-foreground/90">{doc}</span>
-                    </li>
-                  ))}
+                  {task.requiredDocs.length > 0 ? (
+                    task.requiredDocs.map((doc, i) => (
+                      <li key={i} className="text-sm flex items-start gap-3 p-2 rounded-lg hover:bg-background/50 transition-colors">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                        <span className="text-foreground/90">{doc}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-sm text-muted-foreground italic px-2">特になし</li>
+                  )}
                 </ul>
 
                 {/* External Link Button */}
@@ -168,7 +172,9 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
                       className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-md transition-all group/link"
                     >
                       <ExternalLink className="w-4 h-4 mr-2 group-hover/link:translate-x-1 transition-transform" />
-                      {task.isOnline ? "オンライン申請サイトへ" : "公式サイトで確認"}
+                      {(task.category === 'government' || task.category === 'benefit') && task.isOnline 
+                        ? "オンライン申請サイトへ" 
+                        : "公式サイトで詳しく見る"}
                     </Button>
                   </div>
                 )}
@@ -177,10 +183,10 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
               <div className="flex-1 space-y-3">
                 <h5 className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
-                  提出先・方法
+                  {task.category === 'private' ? '実施方法・窓口' : '提出先・方法'}
                 </h5>
                 <div className="p-3 rounded-xl bg-background/50 border border-border/50">
-                  <p className="text-sm font-medium">{task.submitTo}</p>
+                  <p className="text-sm font-medium">{task.submitTo || (task.category === 'private' ? '自己実施' : '未定')}</p>
                 </div>
               </div>
             </div>

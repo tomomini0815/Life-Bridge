@@ -1,4 +1,4 @@
-export type LifeEventType = 'marriage' | 'birth' | 'job' | 'startup' | 'moving' | 'care';
+export type LifeEventType = 'marriage' | 'birth' | 'job' | 'startup' | 'moving' | 'care' | 'divorce' | 'exam' | 'finance' | 'inheritance';
 
 export interface LifeEvent {
   id: LifeEventType;
@@ -7,6 +7,7 @@ export interface LifeEvent {
   icon: string;
   color: string;
   tasks: Task[];
+  group?: 'family' | 'career' | 'life' | 'money'; // For sidebar grouping
 }
 
 export interface Task {
@@ -23,7 +24,9 @@ export interface Task {
   benefitId?: string;
   completed: boolean;
   priority: 'high' | 'medium' | 'low';
-  officialUrl?: string; // Link to actual government site or PDF
+  officialUrl?: string;
+  urgencyScore?: number; // 1-5: AI diagnosis urgency level
+  riskFlags?: string[]; // Overlooked warnings (法的・財務・手続き上のリスク)
 }
 
 export interface UserProgress {

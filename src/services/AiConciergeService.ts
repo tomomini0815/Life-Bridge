@@ -6,10 +6,10 @@ export interface AiMessage {
     actions?: string[];
 }
 
-export type UserContext = 'general' | 'marriage' | 'birth' | 'job' | 'moving' | 'care' | 'startup' | 'baby' | 'retirement' | 'memo' | 'subscription' | 'simulator' | 'settings';
+export type UserContext = 'general' | 'marriage' | 'birth' | 'job' | 'moving' | 'care' | 'startup' | 'baby' | 'retirement' | 'memo' | 'subscription' | 'simulator' | 'settings' | 'divorce' | 'exam' | 'finance' | 'inheritance';
 
 export type ChatMode = 'normal' | 'empathy';
-export type Intent = 'greeting' | 'baby_tired' | 'distress' | 'gratitude' | 'moving_deadline' | 'moving_general' | 'baby_money' | 'baby_general' | 'marriage_general' | 'startup_general' | 'care' | 'general_help' | 'guest_limit';
+export type Intent = 'greeting' | 'baby_tired' | 'distress' | 'gratitude' | 'moving_deadline' | 'moving_general' | 'baby_money' | 'baby_general' | 'marriage_general' | 'startup_general' | 'care' | 'general_help' | 'guest_limit' | 'divorce_general' | 'exam_general' | 'finance_general' | 'inheritance_general';
 
 // --- Response Templates ---
 const RESPONSE_TEMPLATES: Record<ChatMode, Record<Intent, string[]>> = {
@@ -67,8 +67,24 @@ const RESPONSE_TEMPLATES: Record<ChatMode, Record<Intent, string[]>> = {
             'ケアマネージャーさんは、介護サービスの計画を立ててくれる大切なパートナーです。相性もありますから、まずはケアマネ事業所の一覧を取り寄せることから始めませんか？',
             '介護の負担を一人で抱え込まないでくださいね。**介護保険外サービス**や**リフレッシュ利用**など、使える制度はたくさんあります。一緒に整理しましょう。'
         ],
+        divorce_general: [
+            '離婚に伴う手続きは複雑ですが、一つずつ整理すれば大丈夫です。\n最も重要な3点は：\n1. **離婚届の提出**\n2. **財産分与・年金分割**（離婚から2年以内）\n3. **健康保険・年金の切り替え**（14日以内）\n⚠️ 養育費は公正証書にしておくことを強くお勧めします。',
+            'お子様がいらっしゃる場合、**親権**・**養育費**・**面会交流**の取り決めが特に重要です。\n公正証書にしておくと、将来の不払いに対して強制執行が可能になります。まずは状況を整理しませんか？'
+        ],
+        exam_general: [
+            '受験の準備、計画的に進めていきましょう！\nまずは大切な3つのステップ：\n1. **志望校リスト**の作成（偏差値・校風・通学時間で比較）\n2. **逆算スケジュール**で学習計画を立てる\n3. **費用試算**で全体コストを把握\n塾・模試・受験料を合わせると年間70〜150万円が目安です。',
+            '出願期間の管理が合否を左右することも。\n**出願締め切りの一覧表**を作成して、併願校の入学金納付期限も含めてスケジュール管理することをお勧めします。'
+        ],
+        finance_general: [
+            '家計の整理、一緒に始めましょう。\nまずは以下の3ステップがおすすめです：\n1. **月々の収支を洗い出す**（固定費・変動費の分類）\n2. **負債の全体像を把握する**（ローン残高・金利）\n3. **保険・資産運用の見直し**（NISA・iDeCoの活用）\n⚠️ 投資は元本割れリスクがあります。FPへの相談もご検討ください。',
+            '確定申告の準備はお済みですか？\n**医療費控除**（年間10万円超で対象）や**ふるさと納税**の申告忘れがないか確認しましょう。期限は毎年3月15日です。'
+        ],
+        inheritance_general: [
+            '相続手続きには期限のあるものが多いので、優先順位をつけて進めましょう。\n⚠️ 特に重要な期限：\n・**相続放棄**：3ヶ月以内\n・**準確定申告**：4ヶ月以内\n・**相続税申告**：10ヶ月以内\nまずは相続人の確認と遺言書の有無を調べることが第一歩です。',
+            '相続では**プラスの財産だけでなくマイナスの財産（借金）も引き継ぎます**。\n全体像を把握してから分割協議に入ることが大切です。2024年4月からは相続登記も義務化されていますのでご注意ください。'
+        ],
         general_help: [
-            'ご質問ありがとうございます。LifeBridgeでは、引越し、結婚、出産、介護、起業など様々な手続きをサポートしています。具体的に気になっていることはありますか？',
+            'ご質問ありがとうございます。LifeBridgeでは、引越し、結婚、出産、離婚、転職、起業、受験、介護、相続、家計管理など様々なライフイベントをサポートしています。具体的に気になっていることはありますか？',
             '手続きのことでお困りですね。私がお手伝いしますよ。まずは今一番不安に感じていることを教えていただけますか？',
             'どのようなことでもお気軽にご相談ください。制度や必要書類、期限などについて詳しくお答えできます。',
             'あなたのライフイベントに合わせて、最適なアドバイスをさせていただきます。何から始めましょうか？'
@@ -142,6 +158,22 @@ const RESPONSE_TEMPLATES: Record<ChatMode, Record<Intent, string[]>> = {
             '「どうすればいいんだろう」って途方に暮れてしまうこともありますよね。ケアマネージャーさんはその不安を分かち合ってくれる存在です。まずは一歩、相談してみませんか？',
             '大切に思っているからこそ、悩んでしまうんですよね。あなたの優しさはきっと伝わっています。制度のことは私に任せて、少し心を休めてください🌿'
         ],
+        divorce_general: [
+            '辛い決断だったと思います...。あなたが自分を大切にしようとしている、その勇気を尊重します。\n手続きのストレスは私に任せて、ご自身の心のケアを最優先にしてくださいね🌸',
+            'お子様のこと、お金のこと、住まいのこと...一度にたくさんのことが押し寄せて、頭がいっぱいになりますよね。一つずつ、一緒に整理しましょう。あなたは一人じゃありません。'
+        ],
+        exam_general: [
+            '受験は親子ともに大きなチャレンジですよね。結果だけがすべてではありません。今こうやって一生懸命調べているあなたは、とても素敵な親御さんです✨',
+            '「うちの子、大丈夫かな...」って不安になること、ありますよね。でも大丈夫。しっかり準備すれば、きっと道は開けます。一緒にベストな計画を立てましょう💪'
+        ],
+        finance_general: [
+            'お金のことって、なかなか人に相談しにくいですよね...。でも、現状を把握するだけで心が軽くなることもあります。一緒に整理しましょう🌿',
+            '将来への不安、よく分かります。でも「知る」ことが第一歩。漠然とした不安を、具体的な数字に変えていきましょう。あなたのペースで大丈夫ですよ。'
+        ],
+        inheritance_general: [
+            '大切な方を亡くされたばかりかもしれません...。まずはご自身を労わってくださいね。手続きのことは、少し落ち着いてからで大丈夫です。\nでも、期限のあるもの（相続放棄3ヶ月）だけは気をつけておきましょう🕊️',
+            '相続の手続きは感情的にも負担が大きいですよね。家族間の話し合いも含めて、無理のないペースで進めていきましょう。法的なことは専門家を頼ることも大切です。'
+        ],
         general_help: [
             '何かお困りですか？上手く言葉にできなくても大丈夫。私があなたの気持ちに寄り添いますから、ゆっくり教えてください。',
             '心がざわざわするときは、無理に解決しようとしなくていいんです。ただ誰かと話すだけでも、少し楽になるかもしれません。',
@@ -170,6 +202,10 @@ const ACTION_SUGGESTIONS: Record<ChatMode, Record<Intent, string[]>> = {
         marriage_general: ['婚姻届の書き方', '氏名変更リスト', '会社への報告', '保険の切り替え'],
         startup_general: ['開業届のポイント', '青色申告を詳しく', '法人口座の比較', '経理の始め方'],
         care: ['要介護認定を詳しく', 'ケアマネの探し方', 'サービスの種類', '費用を抑えるコツ'],
+        divorce_general: ['離婚届の準備', '財産分与について', '年金分割の方法', '養育費の相場'],
+        exam_general: ['志望校の選び方', '学習計画を立てる', '費用を試算', '出願スケジュール'],
+        finance_general: ['家計の整理方法', '保険の見直し', 'NISA・iDeCo', '確定申告'],
+        inheritance_general: ['相続の流れ', '必要書類一覧', '相続税の計算', '遺産分割について'],
         general_help: ['手続き一覧', 'よくある質問', '使い方ガイド'],
         guest_limit: ['ログインする', '無料で使い始める', '機能をもっと見る']
     },
@@ -185,6 +221,10 @@ const ACTION_SUGGESTIONS: Record<ChatMode, Record<Intent, string[]>> = {
         marriage_general: ['実感がわかない', '少し不安', 'これからのこと'],
         startup_general: ['一人で不安', '何からすれば？', '応援してほしい'],
         care: ['話を聞いてほしい', '一人で抱え込みそう', 'どうすればいい？'],
+        divorce_general: ['辛い', '子どものことが心配', '先が見えない'],
+        exam_general: ['子供が心配', 'プレッシャーを感じる', '費用が不安'],
+        finance_general: ['将来が不安', '何から手をつければ...', '相談したい'],
+        inheritance_general: ['気持ちの整理がつかない', '家族で揉めそう', '手続きが複雑すぎる'],
         general_help: ['漠然と不安', '話したい', '落ち着きたい'],
         guest_limit: ['ログインして相談する', '無料で登録する', '寄り添い機能を詳しく']
     }
@@ -229,6 +269,26 @@ export const AiConciergeService = {
         // Care related
         if (context === 'care' || msg.includes('介護') || msg.includes('ケアマネ') || msg.includes('老人ホーム') || msg.includes('ヘルパー')) {
             return 'care';
+        }
+
+        // Divorce related
+        if (context === 'divorce' || msg.includes('離婚') || msg.includes('財産分与') || msg.includes('養育費') || msg.includes('親権')) {
+            return 'divorce_general';
+        }
+
+        // Exam related
+        if (context === 'exam' || msg.includes('受験') || msg.includes('志望校') || msg.includes('塾') || msg.includes('偏差値') || msg.includes('入試')) {
+            return 'exam_general';
+        }
+
+        // Finance related
+        if (context === 'finance' || msg.includes('家計') || msg.includes('資産') || msg.includes('ローン') || msg.includes('保険見直') || msg.includes('NISA') || msg.includes('iDeCo')) {
+            return 'finance_general';
+        }
+
+        // Inheritance related
+        if (context === 'inheritance' || msg.includes('相続') || msg.includes('遺産') || msg.includes('遺言') || msg.includes('相続税')) {
+            return 'inheritance_general';
         }
 
         // Money related (General)
@@ -290,6 +350,10 @@ export const AiConciergeService = {
             case 'baby': return '赤ちゃんとの生活はいかがですか？👶\n**出生届（14日以内）**や**児童手当**、**健康保険**の加入など、大事な手続きが集中する時期です。\nしっかりサポートさせていただきます。';
             case 'moving': return '引越しの準備は順調ですか？📦\n**転出・転入届**は前後14日以内という期限があります。役所やライフラインの手続きを一緒に確認しましょう。';
             case 'startup': return '起業への挑戦、応援します！🚀\n**開業届**は開始から1ヶ月以内、**青色申告**は2ヶ月以内など、期限のある書類が多いです。優先順位をつけて案内します。';
+            case 'divorce': return '離婚に伴う手続き、お力になります💙\n**離婚届**の提出、**財産分与**、**年金分割**、お子様の**養育費**など、複雑な手続きを一つずつ整理しましょう。';
+            case 'exam': return '受験のサポートをいたします📚\n**志望校選び**、**学習計画**（逆算スケジュール）、**費用試算**、**出願管理**まで、戦略的にお手伝いします。';
+            case 'finance': return '家計・資産のご相談ですね💰\n**収支の整理**、**保険の見直し**、**確定申告**、**NISA・iDeCo**の活用まで、お金に関する不安を解消しましょう。';
+            case 'inheritance': return '相続手続きのサポートをいたします⚖️\n**相続人の確認**、**遺言書の確認**、**遺産分割協議**、**相続税申告**（10ヶ月以内）など、期限のある手続きを優先順位付きで案内します。';
             case 'memo': return 'メモ帳へようこそ📝\n会話の内容をメモに残したり、アイデアを整理するお手伝いをします。';
             case 'subscription': return 'サブスクリプション管理ですね💳\n固定費の見直しや、支払いリマインダーの設定ができますよ。';
             case 'simulator': return '給付金シミュレーターです💰\nあなたの状況に合わせて、受け取れる可能性のある給付金を試算します。';

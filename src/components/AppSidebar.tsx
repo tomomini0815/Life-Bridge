@@ -32,6 +32,12 @@ import {
   StickyNote,
   Calculator,
   Bell,
+  HeartCrack,
+  GraduationCap,
+  PiggyBank,
+  Building2,
+  Calendar,
+  Scale,
 } from 'lucide-react';
 import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
@@ -146,13 +152,19 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
     { title: 'ホーム', icon: Home, id: null, type: 'event' as const },
     { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
     { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
+    { title: '離婚', icon: HeartCrack, id: 'divorce', color: 'text-rose-100', type: 'event' as const },
+    { title: '受験', icon: GraduationCap, id: 'exam', color: 'text-indigo-100', type: 'event' as const },
     { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
     { title: '起業', icon: Rocket, id: 'startup', color: 'text-purple-100', type: 'event' as const },
     { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
+    { title: '財務', icon: PiggyBank, id: 'finance', color: 'text-amber-100', type: 'event' as const },
     { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
+    { title: '相続', icon: Building2, id: 'inheritance', color: 'text-stone-100', type: 'event' as const },
   ].filter(item => item.id === null || menuVisibility[item.id] !== false); // Explicitly check for false to default to true
 
   const toolItems = [
+    { title: '目標の逆算プラン', icon: Calendar, id: 'scheduler', color: 'text-teal-100', type: 'page' as const },
+    { title: '迷った時のA/B比較分析', icon: Scale, id: 'decision', color: 'text-amber-100', type: 'page' as const },
     { title: 'メモ帳', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
     { title: 'サブスク管理', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
     { title: '給付金試算', icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
@@ -201,7 +213,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         </button>
       </SidebarHeader>
 
-      <SidebarContent className="px-4 py-4 scrollbar-none">
+      <SidebarContent className="px-4 py-4 scrollbar-none group-data-[collapsible=icon]:!overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}>
         <SidebarGroup>
 
           <SidebarGroupContent>
@@ -487,7 +499,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent >
+      </SidebarContent>
 
       <SidebarFooter className={cn("transition-all duration-300", isCollapsed ? "p-2" : "p-6")}>
         {!isCollapsed ? (
@@ -541,6 +553,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </div>
         )}
       </SidebarFooter>
-    </Sidebar >
+    </Sidebar>
   );
 }
+

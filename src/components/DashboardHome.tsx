@@ -25,7 +25,11 @@ import {
   Home,
   HandHeart,
   ClipboardList,
-  Lightbulb
+  Lightbulb,
+  HeartCrack,
+  GraduationCap,
+  Wallet,
+  Scale
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -48,12 +52,26 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     glass: 'bg-pink-50/40 dark:bg-pink-900/10',
     border: 'border-pink-200/50 hover:border-pink-300/80 dark:border-pink-800/20 dark:hover:border-pink-700/40'
   },
+  divorce: {
+    bg: 'bg-slate-50',
+    text: 'text-slate-600',
+    gradient: 'from-slate-400 to-gray-500',
+    glass: 'bg-slate-50/40 dark:bg-slate-900/10',
+    border: 'border-slate-200/50 hover:border-slate-300/80 dark:border-slate-800/20 dark:hover:border-slate-700/40'
+  },
   birth: {
     bg: 'bg-orange-50',
     text: 'text-orange-600',
     gradient: 'from-orange-300 to-amber-500',
     glass: 'bg-orange-50/40 dark:bg-orange-900/10',
     border: 'border-orange-200/50 hover:border-orange-300/80 dark:border-orange-800/20 dark:hover:border-orange-700/40'
+  },
+  exam: {
+    bg: 'bg-cyan-50',
+    text: 'text-cyan-600',
+    gradient: 'from-cyan-400 to-teal-500',
+    glass: 'bg-cyan-50/40 dark:bg-cyan-900/10',
+    border: 'border-cyan-200/50 hover:border-cyan-300/80 dark:border-cyan-800/20 dark:hover:border-cyan-700/40'
   },
   job: {
     bg: 'bg-sky-50',
@@ -83,15 +101,33 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     glass: 'bg-violet-50/40 dark:bg-violet-900/10',
     border: 'border-violet-200/50 hover:border-violet-300/80 dark:border-violet-800/20 dark:hover:border-violet-700/40'
   },
+  finance: {
+    bg: 'bg-amber-50',
+    text: 'text-amber-600',
+    gradient: 'from-amber-400 to-yellow-500',
+    glass: 'bg-amber-50/40 dark:bg-amber-900/10',
+    border: 'border-amber-200/50 hover:border-amber-300/80 dark:border-amber-800/20 dark:hover:border-amber-700/40'
+  },
+  inheritance: {
+    bg: 'bg-indigo-50',
+    text: 'text-indigo-600',
+    gradient: 'from-indigo-400 to-blue-600',
+    glass: 'bg-indigo-50/40 dark:bg-indigo-900/10',
+    border: 'border-indigo-200/50 hover:border-indigo-300/80 dark:border-indigo-800/20 dark:hover:border-indigo-700/40'
+  },
 };
 
 const iconMap: Record<string, React.ElementType> = {
   marriage: Church,
+  divorce: HeartCrack,
   birth: Baby,
+  exam: GraduationCap,
   job: Briefcase,
   startup: Rocket,
   moving: Home,
   care: HandHeart,
+  finance: Wallet,
+  inheritance: Scale,
 };
 
 import { useAuth } from '@/contexts/AuthContext';

@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User, Session } from '@supabase/supabase-js';
+import { toast } from 'sonner';
 
 interface AuthContextType {
     user: User | null;
@@ -12,6 +13,7 @@ interface AuthContextType {
     signUp: (email: string, password: string) => Promise<void>;
     resendVerificationEmail: (email: string) => Promise<void>;
     signOut: () => Promise<void>;
+    signInAsGuest: () => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
     signUp: async () => { },
     resendVerificationEmail: async () => { },
     signOut: async () => { },
+    signInAsGuest: () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -115,8 +118,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const signInAsGuest = () => {
+        const guestUser = {
+            id: 'guest-user',
+            email: 'guest@example.com',
+            user_metadata: { full_name: 'ゲストユーザー' },
+            app_metadata: {},
+            aud: 'authenticated',
+            created_at: new Date().toISOString()
+        } as User;
+
+        setSession({
+            user: guestUser,
+            access_token: 'dummy',
+            refresh_token: 'dummy',
+            expires_in: 3600,
+            token_type: 'bearer'
+        } as Session);
+        setUser(guestUser);
+        setLoading(false);
+        profileService.setUserId(guestUser.id);
+        toast.info("デモモードでログインしました。一部の機能が制限される場合があります。");
+    };
+
     return (
-        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUp, resendVerificationEmail, signOut }}>
+        <AuthContext.Provider value={{ user, session, loading, signInWithGoogle, signInWithEmail, signUp, resendVerificationEmail, signOut, signInAsGuest }}>
             {children}
         </AuthContext.Provider>
     );

@@ -13,15 +13,18 @@ import {
   ListTodo,
   Clock,
   ArrowLeft,
-  Church,
+  Heart,
   Baby,
   Briefcase,
   Rocket,
-  Home,
+  Truck,
   HandHeart,
-  Heart,
   Landmark,
-  Building
+  Building,
+  Building2,
+  PiggyBank,
+  HeartCrack,
+  GraduationCap
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -35,12 +38,16 @@ type FilterType = 'all' | 'government' | 'benefit' | 'private';
 type ViewType = 'list' | 'timeline';
 
 const iconMap: Record<string, React.ElementType> = {
-  marriage: Church,
+  marriage: Heart,
   birth: Baby,
+  divorce: HeartCrack,
+  exam: GraduationCap,
   job: Briefcase,
   startup: Rocket,
-  moving: Home,
+  moving: Truck,
+  finance: PiggyBank,
   care: HandHeart,
+  inheritance: Building2,
 };
 
 export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventDashboardProps) {
@@ -117,7 +124,10 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
         </div>
 
         {/* Benefits Card */}
-        <div className="group glass-medium rounded-3xl p-6 shadow-soft border-2 border-transparent hover:border-green-500/10 transition-all duration-300 hover-lift">
+        <div className={cn(
+          "group glass-medium rounded-3xl p-6 shadow-soft border-2 border-transparent transition-all duration-300 hover-lift",
+          totalBenefits === 0 ? "opacity-60 grayscale cursor-not-allowed" : "hover:border-green-500/10"
+        )}>
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
               <Coins className="w-5 h-5 text-green-600" />
@@ -134,19 +144,29 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
         </div>
 
         {/* Remaining Benefits Card */}
-        <div className="group rounded-3xl p-6 shadow-soft border-2 border-amber-200/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 hover:border-amber-300/50 transition-all duration-300 hover-lift relative overflow-hidden">
+        <div className={cn(
+          "group rounded-3xl p-6 shadow-soft border-2 transition-all duration-300 hover-lift relative overflow-hidden",
+          remainingBenefits === 0 
+            ? "opacity-60 grayscale cursor-not-allowed border-muted bg-muted/10" 
+            : "border-amber-200/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 hover:border-amber-300/50"
+        )}>
           <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl -mr-16 -mt-16 animate-pulse-soft" />
           <div className="flex items-center gap-3 mb-4 relative z-10">
             <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center shadow-inner-glow group-hover:scale-110 transition-transform duration-300">
               <Sparkles className="w-5 h-5 text-amber-600" />
             </div>
-            <p className="text-sm font-medium text-amber-700 dark:text-amber-500">まだもらえます！</p>
+            <p className="text-sm font-medium text-amber-700 dark:text-amber-500">
+              {remainingBenefits === 0 ? "対象なし" : "まだもらえます！"}
+            </p>
           </div>
           <p className="text-2xl font-bold text-amber-700 dark:text-amber-500 mb-2 relative z-10 truncate">
             ¥{remainingBenefits.toLocaleString()}
           </p>
           <p className="text-[10px] font-medium text-amber-600 dark:text-amber-400 relative z-10">
-            あと{tasksWithStatus.filter(t => !t.completed && t.benefitAmount).length}件の申請で獲得可能です
+            {remainingBenefits === 0 
+              ? "現在対象となる未申請の給付金はありません" 
+              : `あと${tasksWithStatus.filter(t => !t.completed && t.benefitAmount).length}件の申請で獲得可能です`
+            }
           </p>
         </div>
       </div>

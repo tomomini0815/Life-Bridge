@@ -21,7 +21,7 @@ const getErrorMessage = (error: any) => {
 };
 
 export function LoginPage() {
-    const { signInWithGoogle, signInWithEmail, resendVerificationEmail, user } = useAuth();
+    const { signInWithGoogle, signInWithEmail, resendVerificationEmail, signInAsGuest, user } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -132,6 +132,15 @@ export function LoginPage() {
                             </svg>
                         )}
                         Googleでログイン
+                    </Button>
+
+                    <Button
+                        variant="ghost"
+                        className="w-full h-12 text-teal-600 hover:text-teal-700 hover:bg-teal-50 border border-dashed border-teal-200"
+                        onClick={signInAsGuest}
+                        id="demo-login-btn"
+                    >
+                        動作確認用デモログイン
                     </Button>
 
                     <div className="relative">

@@ -94,7 +94,10 @@ export function Dashboard({ event, onBack }: DashboardProps) {
           </div>
 
           {/* Benefits Card */}
-          <div className="bg-card rounded-2xl p-6 shadow-soft border border-border/50">
+          <div className={cn(
+            "bg-card rounded-2xl p-6 shadow-soft border border-border/50 transition-all duration-300",
+            totalBenefits === 0 && "opacity-60 grayscale cursor-not-allowed"
+          )}>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-10 h-10 rounded-xl gradient-warm flex items-center justify-center">
                 <Coins className="w-5 h-5 text-primary-foreground" />
@@ -111,18 +114,28 @@ export function Dashboard({ event, onBack }: DashboardProps) {
           </div>
 
           {/* Remaining Benefits Card */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 shadow-soft border border-amber-200/50">
+          <div className={cn(
+            "rounded-2xl p-6 shadow-soft border transition-all duration-300",
+            remainingBenefits === 0 
+              ? "opacity-60 grayscale cursor-not-allowed border-border/50 bg-secondary/20" 
+              : "bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200/50"
+          )}>
             <div className="flex items-center gap-2 mb-3">
               <div className="w-10 h-10 rounded-xl bg-amber-400 flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <p className="text-sm text-amber-700">まだもらえます！</p>
+              <p className="text-sm text-amber-700">
+                {remainingBenefits === 0 ? "対象なし" : "まだもらえます！"}
+              </p>
             </div>
             <p className="text-3xl font-bold text-amber-700">
               ¥{remainingBenefits.toLocaleString()}
             </p>
             <p className="text-sm text-amber-600 mt-1">
-              あと{tasks.filter(t => !t.completed && t.benefitAmount).length}件の申請で獲得
+              {remainingBenefits === 0 
+                ? "現在対象となる未申請の給付金はありません" 
+                : `あと${tasks.filter(t => !t.completed && t.benefitAmount).length}件の申請で獲得`
+              }
             </p>
           </div>
         </div>

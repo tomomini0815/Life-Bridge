@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home, RotateCcw } from 'lucide-react';
+import { MessageCircle, X, Send, Bot, Sparkles, ChevronRight, Minus, Heart, Baby, Briefcase, Rocket, Truck, HandHeart, Home, RotateCcw, HeartCrack, GraduationCap, Wallet, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { cn } from '@/lib/utils';
@@ -88,11 +88,15 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
   // Context-specific actions mapping (moved outside useEffect for clarity and reuse)
   const contextActions: Record<string, string[]> = {
     marriage: ['婚姻届の書き方', '必要な公的書類', '氏名変更の手続き', '会社への報告', 'その他'],
+    divorce: ['離婚届の準備', '財産分与について', '年金分割の方法', '養育費の相場', 'その他'],
     birth: ['出生届の提出', '児童手当の申請', '出産育児一時金', '健康保険の加入', 'その他'],
+    exam: ['志望校の選び方', '学習計画を立てる', '費用を試算', '出願スケジュール', 'その他'],
     job: ['失業保険の手続き', '健康保険の切り替え', '年金の切り替え', '確定申告について', 'その他'],
     moving: ['転出・転入届', 'ライフライン手続き', '郵便物の転送', '粗大ゴミの処分', 'その他'],
     startup: ['開業届の提出', '青色申告承認申請', '法人口座開設', '社会保険の加入', 'その他'],
     care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について', 'その他'],
+    finance: ['家計の整理方法', '保険の見直し', 'NISA・iDeCo', '確定申告', 'その他'],
+    inheritance: ['相続の流れ', '必要書類一覧', '相続税の計算', '遺産分割について', 'その他'],
     subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し', 'その他'],
     simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト', 'その他'],
     memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け', 'その他'],
@@ -759,11 +763,15 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
             <div className="flex gap-2 pb-1 flex-nowrap">
               {[
                 { id: 'marriage', label: '結婚', icon: Heart, color: 'text-pink-500 bg-pink-50 border-pink-100' },
+                { id: 'divorce', label: '離婚', icon: HeartCrack, color: 'text-slate-500 bg-slate-50 border-slate-100' },
                 { id: 'birth', label: '出産', icon: Baby, color: 'text-orange-500 bg-orange-50 border-orange-100' },
+                { id: 'exam', label: '受験', icon: GraduationCap, color: 'text-cyan-500 bg-cyan-50 border-cyan-100' },
                 { id: 'job', label: '転職', icon: Briefcase, color: 'text-sky-500 bg-sky-50 border-sky-100' },
                 { id: 'startup', label: '起業', icon: Rocket, color: 'text-purple-500 bg-purple-50 border-purple-100' },
                 { id: 'moving', label: '引越し', icon: Truck, color: 'text-emerald-500 bg-emerald-50 border-emerald-100' },
                 { id: 'care', label: '介護', icon: HandHeart, color: 'text-violet-500 bg-violet-50 border-violet-100' },
+                { id: 'finance', label: '家計', icon: Wallet, color: 'text-amber-500 bg-amber-50 border-amber-100' },
+                { id: 'inheritance', label: '相続', icon: Scale, color: 'text-indigo-500 bg-indigo-50 border-indigo-100' },
               ].map((event) => (
                 <button
                   key={event.id}

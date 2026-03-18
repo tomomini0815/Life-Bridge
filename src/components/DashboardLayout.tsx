@@ -10,6 +10,8 @@ import { BenefitSimulator } from '@/components/BenefitSimulator';
 import { ReminderSettings } from '@/components/ReminderSettings';
 import { Settings } from '@/components/Settings';
 import { HelpPage } from '@/components/HelpPage';
+import { ReverseScheduler } from '@/components/ReverseScheduler';
+import { DecisionBoard } from '@/components/DecisionBoard';
 import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
 import { Search, Bell, User, ScanLine, Sparkles, UserCog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -131,6 +133,12 @@ export function DashboardLayout() {
     }
     if (activePage === 'help') {
       return <HelpPage />;
+    }
+    if (activePage === 'scheduler') {
+      return <ReverseScheduler />;
+    }
+    if (activePage === 'decision') {
+      return <DecisionBoard />;
     }
     if (selectedEvent) {
       // Use BusinessStartup component for startup event
