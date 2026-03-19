@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Eye, EyeOff, Save, Church, Baby, Briefcase, Rocket, Home, HandHeart, StickyNote, Calculator, Bell, Calendar } from 'lucide-react';
+import { Settings as SettingsIcon, Eye, EyeOff, Save, Heart, Baby, Briefcase, Rocket, Home, HandHeart, StickyNote, Calculator, Bell, Calendar, HeartCrack, GraduationCap, Truck, PiggyBank, Building2, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -17,40 +17,58 @@ import { UserProfile } from '@/types/benefit';
 interface MenuVisibilitySettings {
     marriage: boolean;
     birth: boolean;
+    divorce: boolean;
+    exam: boolean;
     job: boolean;
     startup: boolean;
     moving: boolean;
+    finance: boolean;
     care: boolean;
+    inheritance: boolean;
+    scheduler: boolean;
+    decision: boolean;
     memos: boolean;
     benefits: boolean;
     reminders: boolean;
-    timeline: boolean;
+    homePurchase: boolean;
 }
 
 const MENU_ITEMS = [
-    { id: 'marriage', label: '結婚', icon: <Church className="w-4 h-4" />, category: 'events' },
+    { id: 'marriage', label: '結婚', icon: <Heart className="w-4 h-4" />, category: 'events' },
     { id: 'birth', label: '出産', icon: <Baby className="w-4 h-4" />, category: 'events' },
+    { id: 'divorce', label: '離婚', icon: <HeartCrack className="w-4 h-4" />, category: 'events' },
+    { id: 'exam', label: '受験', icon: <GraduationCap className="w-4 h-4" />, category: 'events' },
     { id: 'job', label: '転職', icon: <Briefcase className="w-4 h-4" />, category: 'events' },
     { id: 'startup', label: '起業', icon: <Rocket className="w-4 h-4" />, category: 'events' },
-    { id: 'moving', label: '引越し', icon: <Home className="w-4 h-4" />, category: 'events' },
+    { id: 'moving', label: '引越し', icon: <Truck className="w-4 h-4" />, category: 'events' },
+    { id: 'homePurchase', label: 'マイホーム売買', icon: <Home className="w-4 h-4" />, category: 'events' },
+    { id: 'finance', label: '財務', icon: <PiggyBank className="w-4 h-4" />, category: 'events' },
     { id: 'care', label: '介護', icon: <HandHeart className="w-4 h-4" />, category: 'events' },
+    { id: 'inheritance', label: '相続', icon: <Building2 className="w-4 h-4" />, category: 'events' },
+    { id: 'scheduler', label: '目標の逆算プラン', icon: <Calendar className="w-4 h-4" />, category: 'tools' },
+    { id: 'decision', label: '迷った時のA/B比較分析', icon: <Scale className="w-4 h-4" />, category: 'tools' },
     { id: 'memos', label: 'メモ帳', icon: <StickyNote className="w-4 h-4" />, category: 'tools' },
-    { id: 'benefits', label: '給付金シミュレーター', icon: <Calculator className="w-4 h-4" />, category: 'tools' },
-    { id: 'reminders', label: 'リマインダー', icon: <Bell className="w-4 h-4" />, category: 'tools' },
-    { id: 'timeline', label: 'ライフタイムライン', icon: <Calendar className="w-4 h-4" />, category: 'tools' },
+    { id: 'benefits', label: '給付金試算', icon: <Calculator className="w-4 h-4" />, category: 'tools' },
+    { id: 'reminders', label: 'サブスク管理', icon: <Bell className="w-4 h-4" />, category: 'tools' },
 ] as const;
 
 const DEFAULT_SETTINGS: MenuVisibilitySettings = {
     marriage: true,
     birth: true,
+    divorce: true,
+    exam: true,
     job: true,
     startup: true,
     moving: true,
+    finance: true,
     care: true,
+    inheritance: true,
+    scheduler: true,
+    decision: true,
     memos: true,
     benefits: true,
     reminders: true,
-    timeline: true,
+    homePurchase: true,
 };
 
 const STORAGE_KEY = 'lifebridge_menu_visibility';

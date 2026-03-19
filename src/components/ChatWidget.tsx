@@ -97,6 +97,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
     care: ['介護保険の申請', 'ケアマネージャー', '介護サービスの種類', '費用について', 'その他'],
     finance: ['家計の整理方法', '保険の見直し', 'NISA・iDeCo', '確定申告', 'その他'],
     inheritance: ['相続の流れ', '必要書類一覧', '相続税の計算', '遺産分割について', 'その他'],
+    homePurchase: ['購入の手続き', '売却の手続き', '住宅ローン相談', '税制優遇について', 'その他'],
     subscription: ['今月の支払い確認', '不要な契約の解約', '固定費の見直し', 'その他'],
     simulator: ['給付金を計算する', '受給条件の確認', '申請期限リスト', 'その他'],
     memo: ['新しいメモを作成', 'メモの整理', 'カテゴリ分け', 'その他'],
@@ -333,6 +334,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
         moving: ['近隣への挨拶', '運転免許証の住所変更', '火災保険', 'ダンボール手配', '荷造りリスト'],
         startup: ['資金調達', '事業計画書', '税理士探し', 'オフィス選び', '名刺作成'],
         care: ['施設探し', '成年後見制度', '実家の片付け', '遺言書作成'],
+        homePurchase: ['火災保険の検討', '引越し業者選び', 'リフォーム相談', 'すまい給付金', '住宅ローン控除'],
         subscription: ['無料体験の解約忘れ', '家族プランの検討', '年間契約のほうがお得？'],
         simulator: ['扶養控除', '医療費控除', 'iDeCo', 'NISA'],
         memo: ['共有設定', 'バックアップ', '検索'],
@@ -540,19 +542,26 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
             </div>
             <div className="text-white">
               <h3 className="font-bold text-base leading-tight">AIコンシェルジュ</h3>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-[10px] opacity-90 font-medium tracking-wide">
-                  {isEmpathyMode ? '寄り添いモード ON' : '通常モード'}
-                </span>
-                <div
-                  onClick={() => setIsEmpathyMode(!isEmpathyMode)}
-                  className="w-8 h-4 bg-black/20 rounded-full relative cursor-pointer hover:bg-black/30 transition-colors"
-                >
+              <div 
+                onClick={() => setIsEmpathyMode(!isEmpathyMode)}
+                className="flex items-center gap-2 mt-1 px-1.5 py-0.5 rounded-full bg-white/10 hover:bg-white/20 transition-all cursor-pointer group border border-white/10 hover:border-white/20 shadow-inner w-fit"
+              >
+                <div className={cn(
+                  "relative w-7 h-4 rounded-full transition-all duration-500 flex items-center p-0.5",
+                  isEmpathyMode ? "bg-rose-400/80 shadow-[0_0_8px_rgba(244,63,94,0.3)]" : "bg-emerald-400/80 shadow-[0_0_8px_rgba(16,185,129,0.3)]"
+                )}>
                   <div className={cn(
-                    "absolute top-0.5 w-3 h-3 bg-white rounded-full transition-all duration-300 shadow-sm",
-                    isEmpathyMode ? "left-4.5" : "left-0.5"
+                    "w-3 h-3 bg-white rounded-full shadow-md transition-all duration-500 cubic-bezier(0.34, 1.56, 0.64, 1)",
+                    isEmpathyMode ? "translate-x-3" : "translate-x-0"
                   )} />
                 </div>
+                <span className="text-[10px] font-bold text-white/90 tracking-tight transition-colors">
+                  {isEmpathyMode ? '寄り添いモード' : '通常モード'}
+                </span>
+                <ChevronRight className={cn(
+                  "w-2.5 h-2.5 text-white/40 group-hover:text-white/70 transition-transform",
+                  isEmpathyMode ? "rotate-180" : ""
+                )} />
               </div>
             </div>
           </div>
@@ -768,6 +777,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
                 { id: 'exam', label: '受験', icon: GraduationCap, color: 'text-cyan-500 bg-cyan-50 border-cyan-100' },
                 { id: 'job', label: '転職', icon: Briefcase, color: 'text-sky-500 bg-sky-50 border-sky-100' },
                 { id: 'startup', label: '起業', icon: Rocket, color: 'text-purple-500 bg-purple-50 border-purple-100' },
+                { id: 'homePurchase', label: '家', icon: Home, color: 'text-rose-500 bg-rose-50 border-rose-100' },
                 { id: 'moving', label: '引越し', icon: Truck, color: 'text-emerald-500 bg-emerald-50 border-emerald-100' },
                 { id: 'care', label: '介護', icon: HandHeart, color: 'text-violet-500 bg-violet-50 border-violet-100' },
                 { id: 'finance', label: '家計', icon: Wallet, color: 'text-amber-500 bg-amber-50 border-amber-100' },

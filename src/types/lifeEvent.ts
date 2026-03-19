@@ -1,4 +1,4 @@
-export type LifeEventType = 'marriage' | 'birth' | 'job' | 'startup' | 'moving' | 'care' | 'divorce' | 'exam' | 'finance' | 'inheritance';
+export type LifeEventType = 'marriage' | 'birth' | 'job' | 'startup' | 'moving' | 'care' | 'divorce' | 'exam' | 'finance' | 'inheritance' | 'homePurchase';
 
 export interface LifeEvent {
   id: LifeEventType;
@@ -8,6 +8,7 @@ export interface LifeEvent {
   color: string;
   tasks: Task[];
   group?: 'family' | 'career' | 'life' | 'money'; // For sidebar grouping
+  taskGroups?: { id: string; title: string }[]; // For tabbed views (e.g. Purchase vs Sale)
 }
 
 export interface Task {
@@ -27,6 +28,7 @@ export interface Task {
   officialUrl?: string;
   urgencyScore?: number; // 1-5: AI diagnosis urgency level
   riskFlags?: string[]; // Overlooked warnings (法的・財務・手続き上のリスク)
+  groupId?: string; // To which task group this task belongs
 }
 
 export interface UserProgress {

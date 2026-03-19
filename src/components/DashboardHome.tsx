@@ -29,7 +29,8 @@ import {
   HeartCrack,
   GraduationCap,
   Wallet,
-  Scale
+  Scale,
+  Truck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
@@ -115,6 +116,13 @@ const colorMap: Record<string, { bg: string; text: string; gradient: string; gla
     glass: 'bg-indigo-50/40 dark:bg-indigo-900/10',
     border: 'border-indigo-200/50 hover:border-indigo-300/80 dark:border-indigo-800/20 dark:hover:border-indigo-700/40'
   },
+  homePurchase: {
+    bg: 'bg-blue-50',
+    text: 'text-blue-600',
+    gradient: 'from-blue-400 to-indigo-500',
+    glass: 'bg-blue-50/40 dark:bg-blue-900/10',
+    border: 'border-blue-200/50 hover:border-blue-300/80 dark:border-blue-800/20 dark:hover:border-blue-700/40'
+  },
 };
 
 const iconMap: Record<string, React.ElementType> = {
@@ -124,7 +132,8 @@ const iconMap: Record<string, React.ElementType> = {
   exam: GraduationCap,
   job: Briefcase,
   startup: Rocket,
-  moving: Home,
+  moving: Truck,
+  homePurchase: Home,
   care: HandHeart,
   finance: Wallet,
   inheritance: Scale,
@@ -300,7 +309,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-white/90">全体進捗</span>
+                  <span className="text-sm font-bold text-white/90">全体進捗</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <Target className="w-5 h-5" />
                   </div>
@@ -326,7 +335,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-white/90">完了タスク</span>
+                  <span className="text-sm font-bold text-white/90">完了タスク</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <CheckCircle2 className="w-5 h-5" />
                   </div>
@@ -345,7 +354,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-white/90">獲得済み給付金</span>
+                  <span className="text-sm font-bold text-white/90">獲得済み給付金</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <Coins className="w-5 h-5" />
                   </div>
@@ -368,7 +377,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-white/90">要対応</span>
+                  <span className="text-sm font-bold text-white/90">要対応</span>
                   <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
                     <AlertTriangle className="w-5 h-5" />
                   </div>

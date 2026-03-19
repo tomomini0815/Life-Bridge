@@ -10,7 +10,7 @@ interface AuthContextType {
     loading: boolean;
     signInWithGoogle: () => Promise<void>;
     signInWithEmail: (email: string, password: string) => Promise<void>;
-    signUp: (email: string, password: string) => Promise<void>;
+    signUp: (email: string, password: string) => Promise<{ user: User | null; session: Session | null } | any>;
     resendVerificationEmail: (email: string) => Promise<void>;
     signOut: () => Promise<void>;
     signInAsGuest: () => void;
@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType>({
     loading: true,
     signInWithGoogle: async () => { },
     signInWithEmail: async () => { },
-    signUp: async () => { },
+    signUp: async () => ({ user: null, session: null }),
     resendVerificationEmail: async () => { },
     signOut: async () => { },
     signInAsGuest: () => { },
@@ -94,6 +94,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setSession(data.session);
             setUser(data.session.user);
         }
+        return data;
     };
 
     const resendVerificationEmail = async (email: string) => {

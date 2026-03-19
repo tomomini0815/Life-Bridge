@@ -110,22 +110,6 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
 
             {/* Business Type Tabs */}
             <Tabs value={businessType} onValueChange={(v) => setBusinessType(v as BusinessType)} className="w-full">
-                <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 h-14 bg-secondary/50 p-1">
-                    <TabsTrigger
-                        value="individual"
-                        className="h-full data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
-                    >
-                        <User className="w-4 h-4 mr-2 shrink-0" />
-                        <span className="whitespace-normal leading-tight">個人事業主</span>
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="corporate"
-                        className="h-full data-[state=active]:gradient-warm data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all duration-300"
-                    >
-                        <Building2 className="w-4 h-4 mr-2 shrink-0" />
-                        <span className="whitespace-normal leading-tight">法人</span>
-                    </TabsTrigger>
-                </TabsList>
 
                 <TabsContent value="individual" className="mt-8 space-y-8">
                     {/* Stats Cards */}
@@ -204,6 +188,32 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
                             </div>
                         </div>
                     )}
+
+                    {/* Business Type Switcher */}
+                    <div className="flex p-1 bg-secondary/30 rounded-2xl border border-border/50 max-w-sm">
+                        <button
+                            onClick={() => setBusinessType('individual')}
+                            className={cn(
+                                "flex-1 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+                                businessType === 'individual'
+                                    ? "bg-primary text-white shadow-md scale-[1.02]"
+                                    : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                            )}
+                        >
+                            個人事業主
+                        </button>
+                        <button
+                            onClick={() => setBusinessType('corporate')}
+                            className={cn(
+                                "flex-1 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+                                businessType === 'corporate'
+                                    ? "bg-primary text-white shadow-md scale-[1.02]"
+                                    : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                            )}
+                        >
+                            法人
+                        </button>
+                    </div>
 
                     {/* View & Filter Controls */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-light p-4 rounded-2xl border border-border/50">
@@ -356,6 +366,32 @@ export function BusinessStartup({ event, completedTaskIds, onToggleTask }: Busin
                             </div>
                         </div>
                     )}
+
+                    {/* Business Type Switcher */}
+                    <div className="flex p-1 bg-secondary/30 rounded-2xl border border-border/50 max-w-sm">
+                        <button
+                            onClick={() => setBusinessType('individual')}
+                            className={cn(
+                                "flex-1 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+                                businessType === 'individual'
+                                    ? "bg-primary text-white shadow-md scale-[1.02]"
+                                    : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                            )}
+                        >
+                            個人事業主
+                        </button>
+                        <button
+                            onClick={() => setBusinessType('corporate')}
+                            className={cn(
+                                "flex-1 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+                                businessType === 'corporate'
+                                    ? "bg-primary text-white shadow-md scale-[1.02]"
+                                    : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+                            )}
+                        >
+                            法人
+                        </button>
+                    </div>
 
                     {/* View & Filter Controls */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-light p-4 rounded-2xl border border-border/50">

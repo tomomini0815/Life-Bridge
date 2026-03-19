@@ -38,6 +38,8 @@ import {
   Building2,
   Calendar,
   Scale,
+  Key,
+  LayoutDashboard,
 } from 'lucide-react';
 import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
@@ -149,7 +151,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   }, [user]);
 
   const menuItems = [
-    { title: 'ホーム', icon: Home, id: null, type: 'event' as const },
+    { title: 'ホーム', icon: LayoutDashboard, id: null, type: 'event' as const },
     { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
     { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
     { title: '離婚', icon: HeartCrack, id: 'divorce', color: 'text-rose-100', type: 'event' as const },
@@ -157,6 +159,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
     { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
     { title: '起業', icon: Rocket, id: 'startup', color: 'text-purple-100', type: 'event' as const },
     { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
+    { title: 'マイホーム売買', icon: Home, id: 'homePurchase', color: 'text-cyan-100', type: 'event' as const },
     { title: '財務', icon: PiggyBank, id: 'finance', color: 'text-amber-100', type: 'event' as const },
     { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
     { title: '相続', icon: Building2, id: 'inheritance', color: 'text-stone-100', type: 'event' as const },

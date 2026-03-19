@@ -24,7 +24,8 @@ import {
   Building2,
   PiggyBank,
   HeartCrack,
-  GraduationCap
+  GraduationCap,
+  Home
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -48,11 +49,13 @@ const iconMap: Record<string, React.ElementType> = {
   finance: PiggyBank,
   care: HandHeart,
   inheritance: Building2,
+  homePurchase: Home,
 };
 
 export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventDashboardProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [view, setView] = useState<ViewType>('list');
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(event.taskGroups?.[0]?.id || null);
 
   const tasksWithStatus = useMemo(() => {
     return event.tasks.map(task => ({
@@ -61,10 +64,15 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
     }));
   }, [event.tasks, completedTaskIds]);
 
+  const filteredTasksByGroup = useMemo(() => {
+    if (!activeGroupId) return tasksWithStatus;
+    return tasksWithStatus.filter(task => task.groupId === activeGroupId);
+  }, [tasksWithStatus, activeGroupId]);
+
   const filteredTasks = useMemo(() => {
-    if (filter === 'all') return tasksWithStatus;
-    return tasksWithStatus.filter(task => task.category === filter);
-  }, [tasksWithStatus, filter]);
+    if (filter === 'all') return filteredTasksByGroup;
+    return filteredTasksByGroup.filter(task => task.category === filter);
+  }, [filteredTasksByGroup, filter]);
 
   const completedCount = tasksWithStatus.filter(t => t.completed).length;
   const progress = (completedCount / tasksWithStatus.length) * 100;
@@ -188,6 +196,26 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
                 : `あなたは上位${Math.round(100 - progress)}% の効率で手続きを進めています`}
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Group Tabs (e.g. Purchase vs Sale) */}
+      {event.taskGroups && (
+        <div className="flex p-1 bg-secondary/30 rounded-2xl border border-border/50 max-w-sm">
+          {event.taskGroups.map((group) => (
+            <button
+              key={group.id}
+              onClick={() => setActiveGroupId(group.id)}
+              className={cn(
+                "flex-1 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-300",
+                activeGroupId === group.id
+                  ? "bg-primary text-white shadow-md scale-[1.02]"
+                  : "text-muted-foreground hover:bg-background/50 hover:text-foreground"
+              )}
+            >
+              {group.title}
+            </button>
+          ))}
         </div>
       )}
 

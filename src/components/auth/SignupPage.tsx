@@ -28,6 +28,7 @@ export function SignupPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isVerificationSent, setIsVerificationSent] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,11 +53,19 @@ export function SignupPage() {
         if (!email || !password) return;
         setIsLoading(true);
         try {
-            await signUp(email, password);
-            toast.success("登録完了！ログインしました。", {
-                description: "ダッシュボードへ移動します"
-            });
-            navigate('/dashboard');
+            const data = await signUp(email, password);
+            if (data.session) {
+                toast.success("登録完了！ログインしました。", {
+                    description: "ダッシュボードへ移動します"
+                });
+                navigate('/dashboard');
+            } else {
+                setIsVerificationSent(true);
+                toast.success("確認メールを送信しました", {
+                    description: "メールボックスを確認し、承認リンクをクリックしてください。",
+                    duration: 10000,
+                });
+            }
         } catch (error: any) {
             console.error(error);
             toast.error('登録に失敗しました', {
@@ -122,35 +131,58 @@ export function SignupPage() {
                         </div>
                     </div>
 
-                    <form onSubmit={handleSignup} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="email">メールアドレス</Label>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="example@lifebridge.com"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
+                    {isVerificationSent ? (
+                        <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 p-6 rounded-2xl space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="flex justify-center">
+                                <div className="p-3 bg-emerald-100 dark:bg-emerald-800 rounded-full">
+                                    <Mail className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+                                </div>
+                            </div>
+                            <div className="text-center space-y-2">
+                                <h3 className="text-xl font-bold text-emerald-800 dark:text-emerald-400">メールを確認してください</h3>
+                                <p className="text-emerald-700 dark:text-emerald-300 text-sm leading-relaxed">
+                                    {email} 宛に確認メールを送信しました。<br />
+                                    メール内のリンクをクリックするとアカウントが有効化されます。
+                                </p>
+                            </div>
+                            <Button
+                                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white"
+                                onClick={() => navigate('/login')}
+                            >
+                                ログイン画面へ戻る
+                            </Button>
                         </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="password">パスワード</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="8文字以上"
-                                minLength={8}
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <Button type="submit" className="w-full h-12 text-white shadow-xl shadow-emerald-500/20 hover:opacity-90 transition-opacity" style={{ background: 'var(--sidebar-gradient)' }} disabled={isLoading}>
-                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Mail className="mr-2 h-5 w-5" />}
-                            アカウント作成
-                        </Button>
-                    </form>
+                    ) : (
+                        <form onSubmit={handleSignup} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="email">メールアドレス</Label>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="example@lifebridge.com"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="password">パスワード</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    placeholder="8文字以上"
+                                    minLength={8}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <Button type="submit" className="w-full h-12 text-white shadow-xl shadow-emerald-500/20 hover:opacity-90 transition-opacity" style={{ background: 'var(--sidebar-gradient)' }} disabled={isLoading}>
+                                {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Mail className="mr-2 h-5 w-5" />}
+                                アカウント作成
+                            </Button>
+                        </form>
+                    )}
 
                     <div className="text-center text-sm">
                         <span className="text-muted-foreground">既にアカウントをお持ちですか？ </span>
