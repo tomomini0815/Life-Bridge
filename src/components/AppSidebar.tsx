@@ -45,6 +45,7 @@ import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import { LifeBridgeLogo } from './ui/LifeBridgeLogo';
+import { profileService } from '@/services/ProfileService';
 
 interface AppSidebarProps {
   activeEvent: LifeEventType | null;
@@ -86,68 +87,29 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   // On mobile, always show expanded state
   const isCollapsed = !isMobile && state === 'collapsed';
 
-  // Initialize state from localStorage to avoid flash of incorrect content
+  // Initialize state from ProfileService to avoid flash of incorrect content
   const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
-    if (typeof window !== 'undefined') {
-      // Note: user might be null here on first render, so we might default to guest or wait for useEffect.
-      // But we can try to get from user if hook provides check.
-      // For now, simple check.
-      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
-      const stored = localStorage.getItem(key);
-      if (stored) {
-        try {
-          return JSON.parse(stored);
-        } catch (e) {
-          console.error('Failed to parse menu visibility settings:', e);
-        }
-      }
-    }
-    return {}; // Default fallbacks (all visible imply true if not explicitly false)
+    const profile = profileService.getProfile();
+    return profile.settings || {};
   });
 
-  // Listen for settings changes and user changes
+  // Listen for profile updates (which include settings and theme)
   useEffect(() => {
     const loadSettings = () => {
-      if (typeof window !== 'undefined') {
-        const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          try {
-            setMenuVisibility(JSON.parse(stored));
-          } catch (e) {
-            console.error('Failed to parse menu visibility settings:', e);
-          }
-        } else {
-          setMenuVisibility({});
-        }
-      }
+      const profile = profileService.getProfile();
+      setMenuVisibility(profile.settings || {});
     };
+
     loadSettings();
 
-    const handleSettingsChange = (event: CustomEvent) => {
-      setMenuVisibility(event.detail);
-    };
-
-    window.addEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
-
-    // Also handle storage events for cross-tab synchronization
-    const handleStorageChange = (event: StorageEvent) => {
-      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
-      if (event.key === key && event.newValue) {
-        try {
-          setMenuVisibility(JSON.parse(event.newValue));
-        } catch (e) {
-          console.error('Storage sync error:', e);
-        }
+    // Subscribe to ProfileService instead of custom events or storage events
+    const unsubscribe = profileService.subscribe((profile) => {
+      if (profile.settings) {
+        setMenuVisibility(profile.settings);
       }
-    };
+    });
 
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
-      window.removeEventListener('storage', handleStorageChange);
-    };
+    return unsubscribe;
   }, [user]);
 
   const menuItems = [

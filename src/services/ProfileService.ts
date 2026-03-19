@@ -43,7 +43,7 @@ class ProfileService {
     }
 
     private getStorageKey(): string {
-        return 'lifebridge_guest_profile';
+        return this.currentUserId ? `${BASE_PROFILE_KEY}${this.currentUserId}` : 'lifebridge_guest_profile';
     }
 
     private async fetchProfileFromSupabase(userId: string) {
@@ -72,28 +72,21 @@ class ProfileService {
     getProfile(): UserProfile {
         if (this.profileCache) return this.profileCache;
 
-        // If logged in but cache empty (e.g. first load before fetch completes), return default
-        // The fetch logic in setUserId will eventually populate it.
-        // If guest, use local storage.
-        if (this.currentUserId) {
-            return DEFAULT_PROFILE;
-        }
-
+        // Try to load from localStorage as a fallback/immediate source
         const key = this.getStorageKey();
         const stored = localStorage.getItem(key);
 
         if (stored) {
             try {
                 this.profileCache = { ...DEFAULT_PROFILE, ...JSON.parse(stored) };
+                return this.profileCache!;
             } catch (e) {
                 console.error('Failed to parse profile:', e);
-                this.profileCache = { ...DEFAULT_PROFILE };
             }
-        } else {
-            this.profileCache = { ...DEFAULT_PROFILE };
         }
 
-        return this.profileCache!;
+        // If no cache or storage, return default (fetchProfileFromSupabase will update later)
+        return { ...DEFAULT_PROFILE };
     }
 
     async updateProfile(data: Partial<UserProfile>) {
@@ -102,12 +95,13 @@ class ProfileService {
         this.profileCache = updated;
         this.notifySubscribers(updated);
 
+        // Always save to localStorage as a primary backup/cache
+        const key = this.getStorageKey();
+        localStorage.setItem(key, JSON.stringify(updated));
+
         if (this.currentUserId) {
             try {
                 // Upsert to Supabase
-                // We assume a 'profiles' table exists. 
-                // Since we don't know the exact schema, we'll try to save to a JSONB column 'profile_data'
-                // We'll also try to save key fields if possible, but for now just the JSON blob for flexibility.
                 const { error } = await supabase
                     .from('profiles')
                     .upsert({
@@ -117,18 +111,11 @@ class ProfileService {
                     });
 
                 if (error) {
-                    // Fallback: If 'profile_data' column doesn't exist, this will fail.
-                    // As a backup strategy for this specific app's potential schema:
-                    // The user might not have migrated DB yet.
                     console.error('Failed to save profile to Supabase:', error);
                 }
             } catch (error) {
                 console.error('Error saving profile:', error);
             }
-        } else {
-            // Guest mode
-            const key = this.getStorageKey();
-            localStorage.setItem(key, JSON.stringify(updated));
         }
 
         return updated;

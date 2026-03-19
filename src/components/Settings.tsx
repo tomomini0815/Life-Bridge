@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings as SettingsIcon, Eye, EyeOff, Save, Heart, Baby, Briefcase, Rocket, Home, HandHeart, StickyNote, Calculator, Bell, Calendar, HeartCrack, GraduationCap, Truck, PiggyBank, Building2, Scale } from 'lucide-react';
+import { Settings as SettingsIcon, EyeOff, Save, Heart, Baby, Briefcase, Rocket, Home, HandHeart, StickyNote, Calculator, Bell, Calendar, HeartCrack, GraduationCap, Truck, PiggyBank, Building2, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -71,7 +71,6 @@ const DEFAULT_SETTINGS: MenuVisibilitySettings = {
     homePurchase: true,
 };
 
-const STORAGE_KEY = 'lifebridge_menu_visibility';
 const THEME_KEY = 'lifebridge_theme';
 
 
@@ -148,9 +147,6 @@ export function Settings() {
         toast.success('設定を保存しました', {
             description: 'サイドメニューの表示設定を更新しました',
         });
-
-        // Trigger a custom event to notify AppSidebar
-        window.dispatchEvent(new CustomEvent('menuVisibilityChanged', { detail: settings }));
     };
 
     const handleReset = () => {
