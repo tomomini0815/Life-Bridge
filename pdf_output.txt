@@ -1,0 +1,45 @@
+﻿node.exe : Unknow CLI o
+ptions: compass_require
+ments.pdf
+発生場所 行:1 文字:1
++ & "C:\Program Files\n
+odejs/node.exe" "C:\Pro
+gram Files\nodejs/node_
+mo ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpeci    
+fied: (Unknow CLI     o
+pti...equiremen    ts.p
+df:String) []    , Remo
+teException
+    + FullyQualifiedE  
+  rrorId : NativeCo    
+mmandError
+ 
+
+pdf2json@3.1.5 [https://github.com/modesty/pdf2json]
+
+Usage: pdf2json -f|--file [-o|output_dir]
+
+Options:
+-v,--version	 Display version.
+-h,--help	 Display brief help information.
+-f,--file	 (required) Full path of input PDF file or a directory to scan for all PDF files.
+		 When specifying a PDF file name, it must end with .PDF, otherwise it would be treated as a input directory.
+-o,--output	 (optional) Full path of output directory, must already exist.
+		 Current JSON file in the output folder will be replaced when file name is same.
+-s,--silent	 (optional) when specified, will only log errors, otherwise verbose.
+-t,--fieldTypes	 (optional) when specified, will generate .fields.json that includes fields ids and types.
+-c,--content	 (optional) when specified, will generate .content.txt that includes text content from PDF.
+-m,--merge	 (optional) when specified, will generate .merged.json that includes auto-merged broken text blocks from PDF.
+-r,--stream	 (optional) when specified, will process and parse with buffer/object transform stream rather than file system.
+
+-f is required to speci
+fy input directory or f
+ile.
+Invalid input parameter
+s.

@@ -7,6 +7,8 @@ import { Button } from './ui/button';
 interface TaskItemProps {
   task: Task;
   onToggle: (taskId: string) => void;
+  onToggleUrgent: (taskId: string) => void;
+  isUserUrgent: boolean;
   eventColor: string;
 }
 
@@ -34,7 +36,7 @@ const categoryStyles = {
   private: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
 };
 
-export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
+export function TaskItem({ task, onToggle, onToggleUrgent, isUserUrgent, eventColor }: TaskItemProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const CategoryIcon = categoryIcons[task.category];
 
@@ -104,12 +106,29 @@ export function TaskItem({ task, onToggle, eventColor }: TaskItemProps) {
               </div>
 
               <div className="flex items-center justify-between gap-4">
-                <h4 className={cn(
-                  "font-bold text-lg text-foreground transition-all duration-300",
-                  task.completed && "line-through text-muted-foreground"
-                )}>
-                  {task.title}
-                </h4>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleUrgent(task.id);
+                    }}
+                    className={cn(
+                      "p-1 rounded hover:bg-secondary transition-colors focus:ring-2 focus:outline-none focus:ring-amber-500/50",
+                      isUserUrgent || task.priority === 'high' ? "text-amber-500 hover:text-amber-600" : "text-muted-foreground/30 hover:text-amber-500/80"
+                    )}
+                    title={isUserUrgent || task.priority === 'high' ? "要対応タスク" : "要対応に追加"}
+                  >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill={isUserUrgent || task.priority === 'high' ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                    </svg>
+                  </button>
+                  <h4 className={cn(
+                    "font-bold text-lg text-foreground transition-all duration-300",
+                    task.completed && "line-through text-muted-foreground"
+                  )}>
+                    {task.title}
+                  </h4>
+                </div>
                 <div className="flex items-center gap-2">
                   <ChevronDown
                     className={cn(

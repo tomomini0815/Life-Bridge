@@ -41,6 +41,15 @@ export function DashboardLayout() {
     moving: [],
     care: [],
   });
+  const [userUrgentTasks, setUserUrgentTasks] = useState<Record<string, string[]>>({
+    marriage: [],
+    birth: [],
+    job: [],
+    startup: [],
+    moving: [],
+    care: [],
+  });
+  const [priorityEvents, setPriorityEvents] = useState<string[]>([]);
   const [showGlobalScanner, setShowGlobalScanner] = useState(false);
   const [isScannerMinimized, setIsScannerMinimized] = useState(false);
 
@@ -52,37 +61,49 @@ export function DashboardLayout() {
   useEffect(() => {
     profileService.setUserId(user?.id || null);
 
-    // Load completed tasks from localStorage
+    // Load completed tasks and urgent tasks from localStorage
     if (user?.id) {
-      const key = `lifebridge_completed_tasks_${user.id}`;
-      const stored = localStorage.getItem(key);
-      if (stored) {
-        try {
-          setCompletedTasks(JSON.parse(stored));
-        } catch (e) {
-          console.error('Failed to parse completed tasks:', e);
-        }
+      const completedKey = `lifebridge_completed_tasks_${user.id}`;
+      const urgentKey = `lifebridge_urgent_tasks_${user.id}`;
+      const priorityEvtsKey = `lifebridge_priority_events_${user.id}`;
+      
+      const storedCompleted = localStorage.getItem(completedKey);
+      const storedUrgent = localStorage.getItem(urgentKey);
+      const storedPriorityEvts = localStorage.getItem(priorityEvtsKey);
+
+      if (storedCompleted) {
+        try { setCompletedTasks(JSON.parse(storedCompleted)); } catch (e) { console.error(e); }
       } else {
-        // Reset if no stored data for this user
-        setCompletedTasks({
-          marriage: [],
-          birth: [],
-          job: [],
-          startup: [],
-          moving: [],
-          care: [],
-        });
+        setCompletedTasks({ marriage: [], birth: [], job: [], startup: [], moving: [], care: [] });
+      }
+
+      if (storedUrgent) {
+        try { setUserUrgentTasks(JSON.parse(storedUrgent)); } catch (e) { console.error(e); }
+      } else {
+        setUserUrgentTasks({ marriage: [], birth: [], job: [], startup: [], moving: [], care: [] });
+      }
+
+      if (storedPriorityEvts) {
+        try { setPriorityEvents(JSON.parse(storedPriorityEvts)); } catch (e) { console.error(e); }
+      } else {
+        setPriorityEvents([]);
       }
     }
   }, [user]);
 
-  // Persist completed tasks when they change
+  // Persist completed tasks and urgent tasks when they change
   useEffect(() => {
     if (user?.id) {
-      const key = `lifebridge_completed_tasks_${user.id}`;
-      localStorage.setItem(key, JSON.stringify(completedTasks));
+      localStorage.setItem(`lifebridge_completed_tasks_${user.id}`, JSON.stringify(completedTasks));
+      localStorage.setItem(`lifebridge_urgent_tasks_${user.id}`, JSON.stringify(userUrgentTasks));
+      localStorage.setItem(`lifebridge_priority_events_${user.id}`, JSON.stringify(priorityEvents));
     }
-  }, [completedTasks, user]);
+  }, [completedTasks, userUrgentTasks, priorityEvents, user]);
+
+  // Scroll to top when navigating between events or pages
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [activeEvent, activePage]);
 
   const handleSelectEvent = useCallback((eventId: LifeEventType | null) => {
     setActiveEvent(eventId);
@@ -106,6 +127,26 @@ export function DashboardLayout() {
           : [...eventTasks, taskId]
       };
     });
+  }, []);
+
+  const handleToggleUrgentTask = useCallback((eventId: LifeEventType, taskId: string) => {
+    setUserUrgentTasks(prev => {
+      const eventTasks = prev[eventId] || [];
+      const isUrgent = eventTasks.includes(taskId);
+
+      return {
+        ...prev,
+        [eventId]: isUrgent
+          ? eventTasks.filter(id => id !== taskId)
+          : [...eventTasks, taskId]
+      };
+    });
+  }, []);
+
+  const handleTogglePriorityEvent = useCallback((eventId: string) => {
+    setPriorityEvents(prev => 
+      prev.includes(eventId) ? prev.filter(id => id !== eventId) : [...prev, eventId]
+    );
   }, []);
 
   const handleGlobalScanComplete = (data: any) => {
@@ -147,7 +188,11 @@ export function DashboardLayout() {
           <BusinessStartup
             event={selectedEvent}
             completedTaskIds={completedTasks[selectedEvent.id] || []}
+            userUrgentTaskIds={userUrgentTasks[selectedEvent.id] || []}
+            isPriorityEvent={priorityEvents.includes(selectedEvent.id)}
             onToggleTask={(taskId) => handleToggleTask(selectedEvent.id, taskId)}
+            onToggleUrgentTask={(taskId) => handleToggleUrgentTask(selectedEvent.id, taskId)}
+            onTogglePriorityEvent={() => handleTogglePriorityEvent(selectedEvent.id)}
           />
         );
       }
@@ -156,7 +201,11 @@ export function DashboardLayout() {
         <EventDashboard
           event={selectedEvent}
           completedTaskIds={completedTasks[selectedEvent.id] || []}
+          userUrgentTaskIds={userUrgentTasks[selectedEvent.id] || []}
+          isPriorityEvent={priorityEvents.includes(selectedEvent.id)}
           onToggleTask={(taskId) => handleToggleTask(selectedEvent.id, taskId)}
+          onToggleUrgentTask={(taskId) => handleToggleUrgentTask(selectedEvent.id, taskId)}
+          onTogglePriorityEvent={() => handleTogglePriorityEvent(selectedEvent.id)}
         />
       );
     }
@@ -165,6 +214,8 @@ export function DashboardLayout() {
         onSelectEvent={handleSelectEvent}
         onNavigate={handleSelectPage}
         completedTasks={completedTasks}
+        userUrgentTasks={userUrgentTasks}
+        priorityEvents={priorityEvents}
       />
     );
   };

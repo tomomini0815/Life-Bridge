@@ -1,0 +1,10 @@
+﻿4a880c3 fix: 繝｡繝九Η繝ｼ陦ｨ遉ｺ險ｭ螳壹・蜷梧悄菫ｮ豁｣ (AppSidebar.tsx)
+2db2507 Update App, Sidebar, ChatWidget, and LandingPage
+3d815de Fix logout issues, update Google logo, and force account selection
+ec0ea2f Isolate settings per account to prevent data leakage
+a936356 feat: Add AI Concierge with memo management and Supabase integration
+225c492 feat(sidebar): integrate user profile data and logout
+5600dfe style(sidebar): reduce separator margin for slimmer look
+ae38e7f fix(sidebar): add separators and fix markup structure
+32b3355 style(sidebar): remove labels and compact layout
+25e630c feat: enable navigation to dashboard home from logo

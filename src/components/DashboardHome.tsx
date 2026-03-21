@@ -43,6 +43,8 @@ interface DashboardHomeProps {
   onSelectEvent: (eventId: LifeEventType) => void;
   onNavigate: (page: string) => void;
   completedTasks: Record<string, string[]>;
+  userUrgentTasks: Record<string, string[]>;
+  priorityEvents: string[];
 }
 
 const colorMap: Record<string, { bg: string; text: string; gradient: string; glass: string; border: string }> = {
@@ -141,7 +143,7 @@ const iconMap: Record<string, React.ElementType> = {
 
 import { useAuth } from '@/contexts/AuthContext';
 
-export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: DashboardHomeProps) {
+export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userUrgentTasks, priorityEvents }: DashboardHomeProps) {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
   const [userName, setUserName] = useState('ゲスト');
@@ -207,7 +209,12 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
     const claimedBenefits = event.tasks
       .filter(t => completed.includes(t.id) && t.benefitAmount)
       .reduce((sum, t) => sum + (t.benefitAmount || 0), 0);
-    const urgentTasks = event.tasks.filter(t => !completed.includes(t.id) && t.priority === 'high');
+    let urgentTasks = event.tasks.filter(t => !completed.includes(t.id) && (t.priority === 'high' || (userUrgentTasks[event.id] || []).includes(t.id)));
+    
+    // Only show urgent tasks for events that are explicitly marked as priority
+    if (!priorityEvents.includes(event.id)) {
+      urgentTasks = [];
+    }
 
     return {
       ...event,
@@ -353,7 +360,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                 </div>
 
                 <div>
-                  <span className="text-2xl lg:text-3xl font-bold text-white">{allUrgentTasks.length}</span>
+                  <span className="text-2xl lg:text-3xl font-bold text-white block">{allUrgentTasks.length}</span>
                   <div className="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded-lg backdrop-blur-sm">
                     <p className="text-[10px] font-medium text-white">
                       期限が迫っています
@@ -564,8 +571,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                       "p-6 rounded-3xl text-left transition-all duration-500",
                       "backdrop-blur-xl border-2",
                       "shadow-soft hover:shadow-xl group relative overflow-hidden",
-                      colors.glass,
-                      colors.border
+                      "bg-emerald-50/60 dark:bg-emerald-900/10",
+                      "border-emerald-200/60 hover:border-emerald-300 dark:border-emerald-800/30 dark:hover:border-emerald-700"
                     )}
                   >
                     {/* Shimmer Effect */}
@@ -575,32 +582,31 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks }: Das
                       <div
                         className={cn(
                           "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl",
-                          "bg-gradient-to-br shadow-lg",
-                          "group-hover:scale-110 group-hover:rotate-3 transition-all duration-300",
-                          colors.gradient
+                          "bg-gradient-to-br from-teal-400 to-emerald-500 shadow-lg shadow-teal-500/20",
+                          "group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
                         )}
                       >
                         <IconComponent className="w-8 h-8 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors truncate">
+                        <h3 className="text-lg font-bold text-teal-950 dark:text-teal-50 group-hover:text-teal-700 dark:group-hover:text-teal-300 transition-colors truncate">
                           {event.title}
                         </h3>
                         <div className="flex items-center gap-2 mt-2">
-                          <span className="text-xs font-medium text-muted-foreground bg-background/50 px-2 py-1 rounded-lg backdrop-blur-sm">
+                          <span className="text-xs font-medium text-teal-700 dark:text-teal-300 bg-teal-100/50 dark:bg-teal-900/30 px-2 py-1 rounded-lg backdrop-blur-sm">
                             {stats.completed}/{stats.total}完了
                           </span>
                         </div>
                         {stats.totalBenefits > 0 && (
-                          <p className={cn("text-xs font-bold mt-2 flex items-center gap-1", colors.text)}>
+                          <p className="text-xs font-bold mt-2 flex items-center gap-1 text-teal-700 dark:text-teal-400">
                             <span>💰</span> ¥{stats.totalBenefits.toLocaleString()}
                           </p>
                         )}
                       </div>
                       <div className="text-right">
                         <div className="relative group-hover:scale-110 transition-transform duration-300">
-                          <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                          <ProgressRing progress={stats.progress} size={56} strokeWidth={5} />
+                          <div className="absolute inset-0 bg-teal-500/10 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                          <ProgressRing progress={stats.progress} size={68} strokeWidth={6} />
                         </div>
                       </div>
                     </div>

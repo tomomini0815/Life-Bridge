@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
@@ -32,14 +32,6 @@ import {
   StickyNote,
   Calculator,
   Bell,
-  HeartCrack,
-  GraduationCap,
-  PiggyBank,
-  Building2,
-  Calendar,
-  Scale,
-  Key,
-  LayoutDashboard,
 } from 'lucide-react';
 import { LifeEventType } from '@/types/lifeEvent';
 import { cn } from '@/lib/utils';
@@ -62,11 +54,11 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success('ログアウトしました');
+      toast.success('繝ｭ繧ｰ繧｢繧ｦ繝医＠縺ｾ縺励◆');
       navigate('/login');
     } catch (error) {
       console.error('Logout error:', error);
-      toast.error('ログアウトに失敗しました');
+      toast.error('繝ｭ繧ｰ繧｢繧ｦ繝医↓螟ｱ謨励＠縺ｾ縺励◆');
     }
   };
 
@@ -87,52 +79,73 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   // On mobile, always show expanded state
   const isCollapsed = !isMobile && state === 'collapsed';
 
-  // Initialize state from ProfileService to avoid flash of incorrect content
+  // Initialize state from profile or localStorage
   const [menuVisibility, setMenuVisibility] = useState<Record<string, boolean>>(() => {
+    // Try to get from profile first (if already loaded)
     const profile = profileService.getProfile();
-    return profile.settings || {};
+    if (profile.settings && Object.keys(profile.settings).length > 0) {
+      return profile.settings;
+    }
+
+    if (typeof window !== 'undefined') {
+      const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+      const stored = localStorage.getItem(key);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          console.error('Failed to parse menu visibility settings:', e);
+        }
+      }
+    }
+    return {};
   });
 
-  // Listen for profile updates (which include settings and theme)
+  // Listen for settings changes and user changes via ProfileService
   useEffect(() => {
-    const loadSettings = () => {
-      const profile = profileService.getProfile();
-      setMenuVisibility(profile.settings || {});
-    };
-
-    loadSettings();
-
-    // Subscribe to ProfileService instead of custom events or storage events
+    // Subscribe to profile changes
     const unsubscribe = profileService.subscribe((profile) => {
       if (profile.settings) {
         setMenuVisibility(profile.settings);
+
+        // Update localStorage as cache
+        const key = user ? `lifebridge_menu_visibility_${user.id}` : 'lifebridge_guest_menu_visibility';
+        localStorage.setItem(key, JSON.stringify(profile.settings));
       }
     });
 
-    return unsubscribe;
+    // Also try to load immediately if profile is already there but not caught by initial state
+    const currentProfile = profileService.getProfile();
+    if (currentProfile.settings) {
+      setMenuVisibility(currentProfile.settings);
+    }
+
+    // Listen for the custom event from Settings page as well (for immediate local feedback)
+    const handleSettingsChange = (event: CustomEvent) => {
+      setMenuVisibility(event.detail);
+    };
+    window.addEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+
+    return () => {
+      unsubscribe();
+      window.removeEventListener('menuVisibilityChanged', handleSettingsChange as EventListener);
+    };
   }, [user]);
 
   const menuItems = [
-    { title: 'ホーム', icon: LayoutDashboard, id: null, type: 'event' as const },
-    { title: '結婚', icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
-    { title: '出産', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
-    { title: '離婚', icon: HeartCrack, id: 'divorce', color: 'text-rose-100', type: 'event' as const },
-    { title: '受験', icon: GraduationCap, id: 'exam', color: 'text-indigo-100', type: 'event' as const },
-    { title: '転職', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
-    { title: '起業', icon: Rocket, id: 'startup', color: 'text-purple-100', type: 'event' as const },
-    { title: '引越し', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
-    { title: 'マイホーム売買', icon: Home, id: 'homePurchase', color: 'text-cyan-100', type: 'event' as const },
-    { title: '財務', icon: PiggyBank, id: 'finance', color: 'text-amber-100', type: 'event' as const },
-    { title: '介護', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
-    { title: '相続', icon: Building2, id: 'inheritance', color: 'text-stone-100', type: 'event' as const },
+    { title: '繝帙・繝', icon: Home, id: null, type: 'event' as const },
+    { title: '邨仙ｩ・, icon: Heart, id: 'marriage', color: 'text-pink-100', type: 'event' as const },
+    { title: '蜃ｺ逕｣', icon: Baby, id: 'birth', color: 'text-orange-100', type: 'event' as const },
+    { title: '霆｢閨ｷ', icon: Briefcase, id: 'job', color: 'text-sky-100', type: 'event' as const },
+    { title: '襍ｷ讌ｭ', icon: Rocket, id: 'startup', color: 'text-purple-100', type: 'event' as const },
+    { title: '蠑戊ｶ翫＠', icon: Truck, id: 'moving', color: 'text-emerald-100', type: 'event' as const },
+    { title: '莉玖ｭｷ', icon: HandHeart, id: 'care', color: 'text-violet-100', type: 'event' as const },
   ].filter(item => item.id === null || menuVisibility[item.id] !== false); // Explicitly check for false to default to true
 
   const toolItems = [
-    { title: '目標の逆算プラン', icon: Calendar, id: 'scheduler', color: 'text-teal-100', type: 'page' as const },
-    { title: '迷った時のA/B比較分析', icon: Scale, id: 'decision', color: 'text-amber-100', type: 'page' as const },
-    { title: 'メモ帳', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
-    { title: 'サブスク管理', icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
-    { title: '給付金試算', icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
+    { title: '繝｡繝｢蟶ｳ', icon: StickyNote, id: 'memo', color: 'text-amber-100', type: 'page' as const },
+    { title: '繧ｵ繝悶せ繧ｯ邂｡逅・, icon: Bell, id: 'reminders', color: 'text-blue-100', type: 'page' as const },
+    { title: '邨ｦ莉倬≡隧ｦ邂・, icon: Calculator, id: 'simulator', color: 'text-green-100', type: 'page' as const },
   ].filter(item => {
     // Map tool IDs to settings keys if they differ (currently 'memo' maps to 'memos' in settings)
     const settingsKey = item.id === 'memo' ? 'memos' : (item.id === 'simulator' ? 'benefits' : item.id);
@@ -143,8 +156,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
   const activeToolIndex = toolItems.findIndex((item) => item.id === activePage);
 
   const settingsItems = [
-    { title: '設定', icon: Settings },
-    { title: 'お問い合わせ', icon: HelpCircle },
+    { title: '險ｭ螳・, icon: Settings },
+    { title: '縺雁撫縺・粋繧上○', icon: HelpCircle },
   ];
 
   const { setOpenMobile } = useSidebar();
@@ -178,7 +191,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
         </button>
       </SidebarHeader>
 
-      <SidebarContent className="px-4 py-4 scrollbar-none group-data-[collapsible=icon]:!overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}>
+      <SidebarContent className="px-4 py-4 scrollbar-none">
         <SidebarGroup>
 
           <SidebarGroupContent>
@@ -245,7 +258,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       <item.icon
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
-                          isCollapsed ? "!w-7 !h-7" : "!w-5 !h-5",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
                           isCollapsed ? "mr-0" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
@@ -340,7 +353,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       <item.icon
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
-                          isCollapsed ? "!w-7 !h-7" : "!w-5 !h-5",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
                           isCollapsed ? "mr-0" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110",
                           item.color && !isActive && "opacity-90"
@@ -369,8 +382,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               {/* Sliding Active Indicator for Settings */}
               {(() => {
                 const settingsActiveIndex = settingsItems.findIndex((item) => {
-                  const isSettingsPage = item.title === '設定';
-                  const isHelpPage = item.title === 'お問い合わせ';
+                  const isSettingsPage = item.title === '險ｭ螳・;
+                  const isHelpPage = item.title === '縺雁撫縺・粋繧上○';
                   return (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
                 });
 
@@ -414,8 +427,8 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
               })()}
 
               {settingsItems.map((item) => {
-                const isSettingsPage = item.title === '設定';
-                const isHelpPage = item.title === 'お問い合わせ';
+                const isSettingsPage = item.title === '險ｭ螳・;
+                const isHelpPage = item.title === '縺雁撫縺・粋繧上○';
                 const isActive = (activePage === 'settings' && isSettingsPage) || (activePage === 'help' && isHelpPage);
 
                 return (
@@ -445,7 +458,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       <item.icon
                         className={cn(
                           "transition-transform duration-300 flex-shrink-0",
-                          isCollapsed ? "!w-7 !h-7" : "!w-5 !h-5",
+                          isCollapsed ? "w-6 h-6" : "w-5 h-5",
                           isCollapsed ? "mr-0" : "mr-2",
                           isActive ? "scale-110" : "group-hover:scale-110"
                         )}
@@ -464,7 +477,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarContent>
+      </SidebarContent >
 
       <SidebarFooter className={cn("transition-all duration-300", isCollapsed ? "p-2" : "p-6")}>
         {!isCollapsed ? (
@@ -496,7 +509,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                 onClick={handleLogout}
               >
                 <LogOut className="w-3.5 h-3.5 mr-2" />
-                <span className="text-xs">ログアウト</span>
+                <span className="text-xs">繝ｭ繧ｰ繧｢繧ｦ繝・/span>
               </Button>
             </div>
           </div>
@@ -518,7 +531,6 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
           </div>
         )}
       </SidebarFooter>
-    </Sidebar>
+    </Sidebar >
   );
 }
-

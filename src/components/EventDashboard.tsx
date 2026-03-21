@@ -25,14 +25,19 @@ import {
   PiggyBank,
   HeartCrack,
   GraduationCap,
-  Home
+  Home,
+  Star
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface EventDashboardProps {
   event: LifeEvent;
   completedTaskIds: string[];
+  userUrgentTaskIds: string[];
+  isPriorityEvent?: boolean;
   onToggleTask: (taskId: string) => void;
+  onToggleUrgentTask: (taskId: string) => void;
+  onTogglePriorityEvent?: () => void;
 }
 
 type FilterType = 'all' | 'government' | 'benefit' | 'private';
@@ -52,7 +57,7 @@ const iconMap: Record<string, React.ElementType> = {
   homePurchase: Home,
 };
 
-export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventDashboardProps) {
+export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isPriorityEvent, onToggleTask, onToggleUrgentTask, onTogglePriorityEvent }: EventDashboardProps) {
   const [filter, setFilter] = useState<FilterType>('all');
   const [view, setView] = useState<ViewType>('list');
   const [activeGroupId, setActiveGroupId] = useState<string | null>(event.taskGroups?.[0]?.id || null);
@@ -99,17 +104,38 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
       {/* Header */}
       <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        <div className="relative z-10 flex items-start gap-6">
-          <div className="w-20 h-20 rounded-3xl gradient-warm flex items-center justify-center text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-            {(() => {
-              const Icon = iconMap[event.id] || Heart;
-              return <Icon className="w-10 h-10 text-white" />;
-            })()}
+        <div className="relative z-10 flex items-start sm:items-center justify-between gap-6">
+          <div className="flex items-start gap-4 sm:gap-6 flex-1">
+            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-3xl gradient-warm flex items-center justify-center text-3xl sm:text-4xl shadow-colored-primary transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shrink-0">
+              {(() => {
+                const Icon = iconMap[event.id] || Heart;
+                return <Icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />;
+              })()}
+            </div>
+            <div className="flex-1">
+              <h1 className="text-3xl font-bold text-foreground mb-2 font-display">{event.title}</h1>
+              <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">{event.description}</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h1 className="text-3xl font-bold text-foreground mb-2 font-display">{event.title}</h1>
-            <p className="text-muted-foreground text-lg leading-relaxed max-w-3xl">{event.description}</p>
-          </div>
+          
+          {onTogglePriorityEvent && (
+            <div className="hidden sm:block">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={onTogglePriorityEvent}
+                className={cn(
+                  "rounded-full transition-all flex items-center gap-2 px-4 shadow-sm border-2 h-10",
+                  isPriorityEvent 
+                    ? "border-amber-400 bg-amber-50 text-amber-600 hover:bg-amber-100 dark:bg-amber-900/20" 
+                    : "border-border hover:bg-muted text-muted-foreground"
+                )}
+              >
+                <Star className={cn("w-4 h-4", isPriorityEvent ? "fill-current" : "")} />
+                <span className="font-bold">{isPriorityEvent ? '優先順位: オン' : '優先順位: オフ'}</span>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -284,6 +310,8 @@ export function EventDashboard({ event, completedTaskIds, onToggleTask }: EventD
             <TaskItem
               task={task}
               onToggle={onToggleTask}
+              onToggleUrgent={onToggleUrgentTask}
+              isUserUrgent={userUrgentTaskIds.includes(task.id)}
               eventColor={event.color}
             />
           </div>
