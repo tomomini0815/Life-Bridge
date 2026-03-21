@@ -95,6 +95,11 @@ export function HelpPage({ isStandalone = false }: HelpPageProps) {
             answer: "はい、可能です。例えば「転職」と「引越し」を同時に選択すると、両方のタスクが統合されて表示されます。AIが期限や依存関係を考慮して、最適な実行順序を提案します。サイドバーから複数のイベントを選択してください。"
         },
         {
+            category: '基本的な使い方',
+            question: "「目標の逆算プラン」とは何ですか？",
+            answer: "結婚、出産、起業など、11種類の主要なライフイベントに対して、目標日から逆算して「いつまでに何をすべきか」を5つのフェーズで具体的に計画する機能です。各フェーズには具体的なタスクリストが含まれており、着実に目標に近づくことができます。"
+        },
+        {
             category: 'アカウント・設定',
             question: "ダークモードに切り替えたい",
             answer: "サイドバー下部の「設定」アイコンをクリック → 「外観設定」タブを選択 → 「ダークモード」のトグルスイッチをONにしてください。設定は即座に反映され、次回ログイン時も保持されます。"
@@ -108,6 +113,11 @@ export function HelpPage({ isStandalone = false }: HelpPageProps) {
             category: 'アカウント・設定',
             question: "データは自動で保存されますか？",
             answer: "はい、すべての変更は自動的にクラウドに保存されます。タスクの完了チェック、メモの追加、設定変更など、すべての操作が即座に保存されるため、手動保存の必要はありません。別のデバイスからログインしても、同じデータにアクセスできます。"
+        },
+        {
+            category: 'AI機能',
+            question: "「AIで未来を描く」では何ができますか？",
+            answer: "現在の年齢や家族構成、目標に基づき、今年（2026年）から将来にわたる具体的なライフプランをAIが生成します。単なる予定の列挙ではなく、必要な資金額や具体的なアクション、チェックリストまで含めた精度の高いシミュレーションが可能です。"
         },
         {
             category: 'AI機能',
@@ -478,8 +488,8 @@ export function HelpPage({ isStandalone = false }: HelpPageProps) {
                                     <Calendar className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div className="space-y-1 flex-1 min-w-0">
-                                    <h3 className="font-semibold text-foreground">2. ライフイベントを選択</h3>
-                                    <p className="text-sm text-muted-foreground leading-relaxed">画面左のサイドバーから、現在直面しているライフイベント（結婚、出産、転職、起業、引越し、介護）を選択。複数選択も可能で、AIが統合して最適な手続き順序を提案します。</p>
+                                    <h3 className="font-semibold text-foreground">2. ライフイベント・目標の設定</h3>
+                                    <p className="text-sm text-muted-foreground leading-relaxed">サイドバーからイベントを選択。さらに「AIで未来を描く」で長期的なタイムラインを、「目標の逆算プラン」で具体的なアクションプランをAIが自動生成し、あなたの人生を可視化します。</p>
                                 </div>
                             </div>
                             <Separator />
@@ -535,15 +545,15 @@ export function HelpPage({ isStandalone = false }: HelpPageProps) {
                                     <div className="flex items-start gap-2.5 p-3 rounded-lg bg-gradient-to-br from-cyan-50/50 to-blue-50/50 dark:from-cyan-950/20 dark:to-blue-950/20 border border-cyan-100 dark:border-cyan-900/30">
                                         <Zap className="w-4 h-4 text-cyan-600 mt-0.5 flex-shrink-0" />
                                         <div className="space-y-0.5 flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-foreground">給付金シミュレーター機能を追加</p>
-                                            <p className="text-xs text-muted-foreground">あなたの状況に応じて受給可能な給付金を自動計算。サイドバーから簡単にアクセスできます。</p>
+                                            <p className="text-sm font-medium text-foreground">AIライフプランニング（タイムライン）進化</p>
+                                            <p className="text-xs text-muted-foreground">現在（2026年）から始まる詳細な未来予想図をAIが描きます。具体的なタスクや資金額も併せて提案。</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-2.5 p-3 rounded-lg bg-gradient-to-br from-emerald-50/50 to-teal-50/50 dark:from-emerald-950/20 dark:to-teal-950/20 border border-emerald-100 dark:border-emerald-900/30">
                                         <TrendingUp className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                                         <div className="space-y-0.5 flex-1 min-w-0">
-                                            <p className="text-sm font-medium text-foreground">タスク優先順位表示を最適化</p>
-                                            <p className="text-xs text-muted-foreground">AIが期限、依存関係、重要度を分析し、より正確な優先順位を提案するようになりました。</p>
+                                            <p className="text-sm font-medium text-foreground">目標逆算プランを11カテゴリに拡充</p>
+                                            <p className="text-xs text-muted-foreground">結婚から相続まで、主要なライフイベント全ての詳細な逆算プランが利用可能になりました。</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-2.5 p-3 rounded-lg bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-950/20 dark:to-purple-950/20 border border-violet-100 dark:border-violet-900/30">

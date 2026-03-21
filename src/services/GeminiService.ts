@@ -21,7 +21,7 @@ export const GeminiService = {
         if (!apiKey) throw new Error("API Key missing");
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         // 1. Construct System Prompt based on Mode and Context
         const contextInfo = {
@@ -187,17 +187,24 @@ IMPORTANT RULES:
         }
     },
 
-    generateText: async (prompt: string, systemInstruction?: string): Promise<string> => {
+    generateText: async (prompt: string, systemInstruction?: string, requireJson: boolean = false): Promise<string> => {
         const apiKey = getApiKey();
         if (!apiKey) throw new Error("API Key missing");
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         try {
-            const result = await model.generateContent([
-                systemInstruction ? `SYSTEM: ${systemInstruction}\nUSER: ${prompt}` : prompt
-            ]);
+            const config: any = {};
+            if (requireJson) {
+                config.responseMimeType = "application/json";
+            }
+            
+            const req: any = {
+                contents: [{ role: 'user', parts: [{ text: systemInstruction ? `SYSTEM: ${systemInstruction}\n\nUSER: ${prompt}` : prompt }] }],
+                generationConfig: config
+            };
+            const result = await model.generateContent(req);
             return result.response.text();
         } catch (error) {
             console.error("Gemini Generation Error:", error);

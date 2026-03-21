@@ -330,8 +330,11 @@ export class TimelineService {
         if (!GeminiService.isEnabled()) throw new Error("AI Service Unavailable");
         if (!this.currentUserId) throw new Error("User must be logged in to save AI events");
 
+        const currentYear = new Date().getFullYear();
         const prompt = `
-        Create two life timelines for a user based on the following input:
+        Current Year: ${currentYear}
+        
+        Create two extremely detailed and highly specific life timelines for a user based on the following input:
         Age: ${input.age}
         Job: ${input.job}
         Current Status: ${input.currentStatus}
@@ -340,23 +343,47 @@ export class TimelineService {
         Timeline 1 (Current Path): Realistic future based on current status.
         Timeline 2 (Ideal Path): Future where all goals are achieved successfully.
 
+        The events MUST be highly specific, personalized, and practical. Do not use generic phrases. Include concrete details, potential financial numerals (e.g., savings amounts, salary goals), job titles, or specific life milestone details that directly relate to their unqiue goals and current job.
+
         Return ONLY a JSON array of objects with these fields:
         - year: string (YYYY format)
-        - title: string (Short event title in Japanese)
-        - description: string (1-2 sentences in Japanese)
+        - title: string (Short, specific event title in Japanese)
+        - description: string (3-5 sentences in Japanese. Deeply personalized, realistic, and highly specific details about this life chapter.)
         - iconName: string (one of: graduation, job, marriage, home, baby, star, trophy, users, travel, car, building)
         - status: 'future'
         - scenario: 'current' or 'ideal'
+        - tasks: an array of 2-3 specific action items or procedures required for this event. Each task must be an object with:
+            - id: string (unique string, e.g., 'task-1')
+            - title: string (Specific action in Japanese)
+            - description: string (Detailed explanation of what needs to be done)
+            - completed: false
+            - estimatedTime: string (e.g., "約2ヶ月", "1週間")
+            - requiredDocs: array of strings (list of actual documents or items needed, if any)
+            - submitTo: string (relevant institution or place, e.g., "市役所", "ハローワーク", "エージェント", if applicable)
 
         Generate about 5-8 future events for EACH scenario (total 10-16 events).
-        Start from next year and cover the timeline until the user is around 80 years old.
+        Start from the current year (${currentYear}) or next year (${currentYear + 1}), and cover the timeline until the user is around 80 years old.
+        CRITICAL: DO NOT generate any events for ${currentYear - 1} or earlier. The timeline MUST strictly begin in ${currentYear} or later.
         Ensure events are distributed across different life stages.
         `;
 
         try {
-            const jsonStr = await GeminiService.generateText(prompt, "You are a JSON generator. Output valid JSON only, no markdown code blocks.");
-            const cleanJson = jsonStr.replace(/```json/g, '').replace(/```/g, '').trim();
+            const jsonStr = await GeminiService.generateText(prompt, "You are a JSON generator. Output valid JSON only, no markdown code blocks.", true);
+            
+            let cleanJson = jsonStr;
+            const match = jsonStr.match(/\[[\s\S]*\]/);
+            if (match) {
+                cleanJson = match[0];
+            } else {
+                cleanJson = jsonStr.replace(/```json/g, '').replace(/```/g, '').trim();
+            }
             const newEvents = JSON.parse(cleanJson);
+
+            // Clear old future events to prevent piling up of old AI generations
+            const futureEvents = this.events.filter(e => e.status === 'future');
+            for (const oldEvent of futureEvents) {
+                await this.deleteEvent(oldEvent.id);
+            }
 
             // Add events sequentially
             for (const e of newEvents) {

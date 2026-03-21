@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { timelineService, UserInputForAI } from '@/services/TimelineService';
 import { Loader2, Sparkles } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface TimelineGeneratorProps {
     onGenerate: () => void;
@@ -35,10 +36,13 @@ export function TimelineGenerator({ onGenerate }: TimelineGeneratorProps) {
             await timelineService.generateAiEvents(formData);
             setIsOpen(false);
             onGenerate(); // Refresh parent
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to generate timeline", error);
-            // Ideally show toast
-            alert("AI生成に失敗しました。時間をおいて再試行してください。");
+            const errorMessage = error?.message || "不明なエラーが発生しました。";
+            toast.error(`AI生成に失敗しました: ${errorMessage}`, {
+                description: "設定（APIキー等）を確認するか、時間をおいて再試行してください。",
+                duration: 5000,
+            });
         } finally {
             setIsLoading(false);
         }

@@ -192,7 +192,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   )}
                   style={{
                     top: `${activeIndex * (isCollapsed ? 3 : 3)}rem`,
-                    width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
+                    width: isCollapsed ? 'calc(100% + 2rem + 2px)' : 'calc(100% + 1.5rem + 2px)',
                     borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
@@ -200,7 +200,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   }}
                 >
                   {/* Top Curve */}
-                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                  <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
                     <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                       {isCollapsed ? (
                         <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
@@ -210,7 +210,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     </svg>
                   </div>
                   {/* Bottom Curve */}
-                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                  <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
                     <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                       {isCollapsed ? (
                         <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />
@@ -281,7 +281,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   )}
                   style={{
                     top: `${activeToolIndex * (isCollapsed ? 3 : 3)}rem`,
-                    width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
+                    width: isCollapsed ? 'calc(100% + 2rem + 2px)' : 'calc(100% + 1.5rem + 2px)',
                     borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
                     marginRight: '-1.5rem',
                     paddingRight: '1.5rem',
@@ -289,7 +289,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                   }}
                 >
                   {/* Top Curve */}
-                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                  <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
                     <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                       {isCollapsed ? (
                         <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
@@ -299,7 +299,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     </svg>
                   </div>
                   {/* Bottom Curve */}
-                  <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                  <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
                     <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                       {isCollapsed ? (
                         <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />
@@ -382,7 +382,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     )}
                     style={{
                       top: `${settingsActiveIndex * (isCollapsed ? 3 : 3)}rem`,
-                      width: isCollapsed ? 'calc(100% + 2rem)' : 'calc(100% + 1.5rem)',
+                      width: isCollapsed ? 'calc(100% + 2rem + 2px)' : 'calc(100% + 1.5rem + 2px)',
                       borderRadius: isCollapsed ? "24px 0 0 24px" : "40px 0 0 40px",
                       marginRight: '-1.5rem',
                       paddingRight: '1.5rem',
@@ -390,7 +390,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                     }}
                   >
                     {/* Top Curve */}
-                    <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
+                    <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-top-[15px] w-4 h-4" : "-top-[23px] w-6 h-6")}>
                       <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                         {isCollapsed ? (
                           <path d="M16 16H0C9.3 16 16 9.3 16 0V16Z" className="fill-white dark:fill-background" />
@@ -400,7 +400,7 @@ export function AppSidebar({ activeEvent, onSelectEvent, onSelectPage, activePag
                       </svg>
                     </div>
                     {/* Bottom Curve */}
-                    <div className={cn("absolute right-0 bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
+                    <div className={cn("absolute right-[2px] bg-transparent", isCollapsed ? "-bottom-[15px] w-4 h-4" : "-bottom-[23px] w-6 h-6")}>
                       <svg width="100%" height="100%" viewBox={isCollapsed ? "0 0 16 16" : "0 0 24 24"} fill="none" xmlns="http://www.w3.org/2000/svg">
                         {isCollapsed ? (
                           <path d="M16 0H0C9.3 0 16 6.7 16 16V0Z" className="fill-white dark:fill-background" />

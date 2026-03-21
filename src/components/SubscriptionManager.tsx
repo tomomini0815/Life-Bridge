@@ -8,6 +8,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { subscriptionService } from '@/services/SubscriptionService';
 import { notificationService } from '@/services/NotificationService';
 import { useAuth } from '@/contexts/AuthContext';
@@ -118,27 +129,7 @@ export function SubscriptionManager() {
         };
     }, []);
 
-    const handleTestNotification = async () => {
-        const granted = await notificationService.requestPermission();
-        if (granted) {
-            try {
-                notificationService.sendTestNotification();
-                toast.success('テスト通知を送信しました', {
-                    description: '通知音も鳴るかご確認ください（OSの音声設定による）'
-                });
-            } catch (e) {
-                console.warn('Native notification failed (likely mobile restriction):', e);
-                // Fallback for mobile browsers where new Notification() might fail
-                toast.info('通知を送信しました', {
-                    description: '※端末により通知が表示されない場合があります。音や設定をご確認ください。'
-                });
-            }
-        } else {
-            toast.error('通知が許可されていません', {
-                description: 'ブラウザの設定で通知を許可してください'
-            });
-        }
-    };
+
 
     // Stats Calculation
     const stats = useMemo(() => {
@@ -166,10 +157,8 @@ export function SubscriptionManager() {
     }, [subscriptions]);
 
     const handleDelete = async (id: string) => {
-        if (confirm('本当に削除しますか？')) {
-            await subscriptionService.deleteSubscription(id);
-            toast.success('サブスクリプションを削除しました');
-        }
+        await subscriptionService.deleteSubscription(id);
+        toast.success('サブスクリプションを削除しました');
     };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -273,14 +262,7 @@ export function SubscriptionManager() {
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">登録済みサブスクリプション</h2>
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleTestNotification}
-                        className="bg-background hover:bg-muted border-primary/20 hover:border-primary/50 text-foreground"
-                    >
-                        <Bell className="w-4 h-4 mr-2 text-primary" /> 通知テスト
-                    </Button>
+
                     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                         <DialogTrigger asChild>
                             <Button
@@ -348,7 +330,7 @@ export function SubscriptionManager() {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="nextPaymentDate">次回更新日</Label>
+                                        <Label>次回更新日</Label>
                                         <Input
                                             id="nextPaymentDate"
                                             name="nextPaymentDate"
@@ -451,14 +433,35 @@ export function SubscriptionManager() {
                                 >
                                     <Edit2 className="w-4 h-4" />
                                 </Button>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
-                                    onClick={() => handleDelete(sub.id)}
-                                >
-                                    <Trash2 className="w-4 h-4" />
-                                </Button>
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent className="glass-medium">
+                                        <AlertDialogHeader>
+                                            <AlertDialogTitle>サブスクリプションの削除</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                                「{sub.name}」を削除してもよろしいですか？<br />
+                                                この操作は取り消せません。
+                                            </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                            <AlertDialogCancel>キャンセル</AlertDialogCancel>
+                                            <AlertDialogAction
+                                                onClick={() => handleDelete(sub.id)}
+                                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            >
+                                                削除する
+                                            </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
                             </div>
                         </div>
 
