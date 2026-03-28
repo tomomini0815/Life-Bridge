@@ -293,7 +293,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
             <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/10 to-transparent" />
 
             {/* Content */}
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col items-center">
               <h2 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6 font-display">
                 大切な手続きを、もう忘れない
               </h2>
@@ -301,9 +301,9 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
                 120万円以上の給付金を見逃している人も。
                 LifeBridgeで、あなたが受け取れるすべてを確認しましょう。
               </p>
-              <Button variant="glass" size="xl" className="text-foreground font-semibold hover:scale-105 shadow-xl" onClick={() => navigate('/dashboard')}>
+              <Button variant="glass" size="xl" className="text-foreground font-semibold hover:scale-105 shadow-xl mx-auto flex items-center justify-center w-[90%] sm:w-auto" onClick={() => navigate('/dashboard')}>
                 今すぐ無料で始める
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
           </div>
@@ -334,12 +334,7 @@ export function LandingPage({ events, onSelectEvent }: LandingPageProps) {
               >
                 プライバシーポリシー
               </button>
-              <button
-                onClick={() => navigate('/commercial-transaction')}
-                className="hover:text-foreground transition-colors"
-              >
-                特定商取引法
-              </button>
+
               <button
                 onClick={() => navigate('/help')}
                 className="hover:text-foreground transition-colors"
