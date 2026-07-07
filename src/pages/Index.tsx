@@ -10,6 +10,7 @@ const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [chatContext, setChatContext] = useState<UserContext>('general');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && user) {
@@ -25,13 +26,26 @@ const Index = () => {
     // Instead of navigating, we set the chat context to trigger the AI concierge
     if (event?.id) {
       setChatContext(event.id as UserContext);
+      setIsChatOpen(true);
     }
+  };
+
+  const handleOpenChat = () => {
+    setChatContext('general');
+    setIsChatOpen(true);
   };
 
   return (
     <>
-      <LandingPageTest events={lifeEvents} onSelectEvent={handleSelectEvent} />
-      <ChatWidget currentContext={chatContext} />
+      <LandingPageTest 
+        events={lifeEvents} 
+        onSelectEvent={handleSelectEvent} 
+        onOpenChat={handleOpenChat}
+      />
+      <ChatWidget 
+        currentContext={chatContext} 
+        externalIsOpen={isChatOpen}
+      />
     </>
   );
 };

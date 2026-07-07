@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         sans: ["Noto Sans JP", "Outfit", "sans-serif"],
         display: ["Outfit", "Noto Sans JP", "sans-serif"],
+        kaisei: ["Kaisei Decol", "serif"],
       },
       fontSize: {
         '7xl': ['4.5rem', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
@@ -109,6 +110,10 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        scroll: {
+          "0%": { transform: "translateY(0)" },
+          "100%": { transform: "translateY(var(--scroll-end, -50%))" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -122,6 +127,7 @@ export default {
         "float-fast": "float 4s ease-in-out infinite",
         "bounce-slow": "bounce 3s infinite",
         "ping-slow": "ping 3s cubic-bezier(0, 0, 0.2, 1) infinite",
+        scroll: "scroll 30s linear infinite",
       },
     },
   },

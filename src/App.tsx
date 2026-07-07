@@ -11,6 +11,8 @@ import { TermsOfService } from "./components/TermsOfService";
 import { PrivacyPolicy } from "./components/PrivacyPolicy";
 import { CommercialTransactionAct } from "./components/CommercialTransactionAct";
 import { HelpPage } from "./components/HelpPage";
+import LifePlanRoadmap from "./pages/LifePlanRoadmap";
+import IdealLifePlan from "./pages/IdealLifePlan";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { LoginPage } from "@/components/auth/LoginPage";
 import { SignupPage } from "@/components/auth/SignupPage";
@@ -84,6 +86,8 @@ const App = () => {
               <Route path="/commercial-transaction" element={<CommercialTransactionAct />} />
               <Route path="/help" element={<HelpPage isStandalone={true} />} />
               <Route path="/test" element={<TestLanding />} />
+              <Route path="/roadmap" element={<LifePlanRoadmap />} />
+              <Route path="/ideal-plan" element={<IdealLifePlan />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

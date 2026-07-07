@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bot, Sparkles } from 'lucide-react';
+import { MessageCircle, Minus } from 'lucide-react';
 
 export function DashboardMockupReal() {
     return (
@@ -22,11 +22,11 @@ export function DashboardMockupReal() {
                     </div>
 
                     {/* Main Dashboard Content */}
-                    <div className="relative w-full h-full rounded-t-xl overflow-hidden border border-white/5 bg-slate-900">
+                    <div className="relative w-full h-full rounded-t-[1.3rem] overflow-hidden border border-white/5 bg-slate-900">
                         <img
                             src="/assets/images/dashboard_desktop_v4.png"
                             alt="LifeBridge Desktop"
-                            className="w-full h-full object-contain"
+                            className="w-full h-full object-cover object-top"
                         />
                         {/* Privacy Mask for Account Sidebar (Bottom Left) */}
                         <div className="absolute bottom-[2%] left-[2%] w-[20%] h-[12%] bg-slate-900/40 backdrop-blur-md rounded-lg border border-white/10 z-10" />
@@ -47,35 +47,32 @@ export function DashboardMockupReal() {
             <div className="absolute -bottom-6 right-[2%] md:bottom-[5%] md:right-[5%] lg:right-[10%] w-[160px] md:w-[260px] z-30 transition-all duration-700 hover:scale-[1.05]">
 
                 {/* Phone Frame */}
-                <div className="relative aspect-[9/19.5] rounded-[2.8rem] bg-[#1a1a1a] p-[8px] border-[1px] border-slate-700 shadow-3xl overflow-hidden ring-1 ring-white/10">
+                <div className="relative aspect-[9/19.5] rounded-[2.4rem] md:rounded-[2.8rem] bg-[#1a1a1a] p-[4px] md:p-[6px] border-[1px] border-slate-700 shadow-3xl overflow-hidden ring-1 ring-white/10 z-20">
 
                     {/* Dynamic Island */}
-                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-16 h-5 bg-black rounded-full z-20 flex items-center justify-end px-2" />
+                    <div className="absolute top-2.5 md:top-3 left-1/2 -translate-x-1/2 w-16 h-[18px] md:h-5 bg-black rounded-full z-20 flex items-center justify-end px-2" />
 
                     {/* Screen Content */}
-                    <div className="relative w-full h-full rounded-[2.4rem] overflow-hidden bg-white">
+                    <div className="relative w-full h-full rounded-[2.2rem] md:rounded-[2.5rem] overflow-hidden bg-white">
                         <img
                             src="/assets/images/dashboard_mobile_v2.png"
                             alt="LifeBridge Mobile"
                             className="w-full h-full object-cover translate-y-6"
                         />
                         {/* Subtle Gradient Shadow at Top */}
-                        <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/5 to-transparent pointer-events-none" />
+                        <div className="absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-black/5 to-transparent pointer-events-none z-10" />
+                        
+                        {/* Mobile AI Concierge Chat Bubble (Overlay) */}
+                        <div className="absolute bottom-6 right-3 md:bottom-8 md:right-4 w-10 h-10 md:w-12 md:h-12 bg-emerald-500 rounded-full shadow-[0_4px_12px_rgba(5,150,105,0.4)] flex items-center justify-center z-20">
+                            <MessageCircle className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                            <div className="absolute -top-1 -left-1 w-4 h-4 md:w-5 md:h-5 bg-slate-500 rounded-full border-2 border-white flex items-center justify-center">
+                                <Minus className="w-[8px] h-[8px] md:w-[10px] md:h-[10px] text-white" strokeWidth={3} />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                {/* Floating AI Helper Badge */}
-                <div className="absolute -bottom-4 -left-12 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl p-3 md:p-5 border border-emerald-100 dark:border-emerald-900/30 animate-float-slow">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
-                            <Sparkles className="w-6 h-6 md:w-8 md:h-8 text-emerald-600" />
-                        </div>
-                        <div>
-                            <div className="text-[10px] md:text-xs font-black text-slate-800 dark:text-white uppercase tracking-wider">AI CONCIERGE</div>
-                            <div className="text-[9px] md:text-[11px] text-emerald-600 font-bold">瞬時に解決</div>
-                        </div>
-                    </div>
-                </div>
+                {/* Floating AI Helper Badge (Removed per user request) */}
             </div>
 
         </div>

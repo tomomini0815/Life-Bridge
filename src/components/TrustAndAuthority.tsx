@@ -23,7 +23,7 @@ export function TrustMarquee() {
                             <span className="px-3 py-1 bg-emerald-800 rounded text-emerald-300 font-bold text-sm tracking-wider border border-emerald-700/50">
                                 {event.label}
                             </span>
-                            <span className="font-['Zen_Old_Mincho'] tracking-wide opacity-90">
+                            <span className="tracking-wide opacity-90">
                                 {event.detail}
                             </span>
                             <span className="text-emerald-700 mx-4">/</span>
