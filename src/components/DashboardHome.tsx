@@ -277,7 +277,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-white/95">全体進捗</span>
+                  <span className="text-xs md:text-sm font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">全体進捗</span>
                   <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
                     <Target className="w-4 h-4" />
                   </div>
@@ -300,7 +300,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-white/95">完了タスク</span>
+                  <span className="text-xs md:text-sm font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">完了タスク</span>
                   <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
@@ -317,7 +317,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-white/95">獲得済み給付金</span>
+                  <span className="text-xs md:text-sm font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">獲得済み給付金</span>
                   <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
                     <Coins className="w-4 h-4" />
                   </div>
@@ -336,7 +336,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs font-bold text-white/95">要対応</span>
+                  <span className="text-xs md:text-sm font-extrabold text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">要対応</span>
                   <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
                     <AlertTriangle className="w-4 h-4" />
                   </div>
