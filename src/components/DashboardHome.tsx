@@ -271,94 +271,79 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
       {activeTab === 'overview' ? (
         <>
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-teal-400 to-emerald-500 shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-1">
-              <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
-              <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
-
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            {/* 進捗率カード */}
+            <div className="relative overflow-hidden group rounded-2xl p-2.5 md:p-3 hover-lift transition-all duration-300 bg-gradient-to-r from-teal-400 to-emerald-500 shadow-sm hover:shadow-md hover:-translate-y-0.5">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-white/90">全体進捗</span>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <Target className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-white/95">全体進捗</span>
+                  <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
+                    <Target className="w-4 h-4" />
                   </div>
                 </div>
-
-                <div className="mb-4">
-                  <span className="text-2xl lg:text-3xl font-bold text-white">{Math.round(overallProgress)}%</span>
-                  <p className="text-xs text-white/80 mt-1 font-medium">完了</p>
+                <div className="flex items-baseline gap-1 mb-1.5">
+                  <span className="text-lg md:text-xl font-bold text-white leading-none">{Math.round(overallProgress)}%</span>
+                  <span className="text-[10px] text-white/85 font-medium leading-none">完了</span>
                 </div>
-
-                <div className="h-2 bg-black/10 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-black/10 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-white/90 rounded-full transition-all duration-1000 ease-out"
+                    className="h-full bg-white/95 rounded-full transition-all duration-1000 ease-out"
                     style={{ width: `${overallProgress}% ` }}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-1">
-              <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
-              <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
-
+            {/* 完了タスク */}
+            <div className="relative overflow-hidden group rounded-2xl p-2.5 md:p-3 hover-lift transition-all duration-300 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-sm hover:shadow-md hover:-translate-y-0.5">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-white/90">完了タスク</span>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <CheckCircle2 className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-white/95">完了タスク</span>
+                  <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
+                    <CheckCircle2 className="w-4 h-4" />
                   </div>
                 </div>
-
-                <div>
-                  <span className="text-2xl lg:text-3xl font-bold text-white">{totalCompleted}</span>
-                  <p className="text-xs text-white/80 mt-1 font-medium">/ {totalTasks}件</p>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-lg md:text-xl font-bold text-white leading-none">{totalCompleted}</span>
+                  <span className="text-[10px] text-white/85 font-medium leading-none">/ {totalTasks}件</span>
                 </div>
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-1">
-              <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
-              <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
-
+            {/* 獲得済み給付金 */}
+            <div className="relative overflow-hidden group rounded-2xl p-2.5 md:p-3 hover-lift transition-all duration-300 bg-gradient-to-r from-amber-400 to-orange-500 shadow-sm hover:shadow-md hover:-translate-y-0.5">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-white/90">獲得済み給付金</span>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <Coins className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-white/95">獲得済み給付金</span>
+                  <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
+                    <Coins className="w-4 h-4" />
                   </div>
                 </div>
-
-                <div>
-                  <span className="text-xl lg:text-2xl font-bold text-white truncate block">¥{totalClaimedBenefits.toLocaleString()}</span>
-                  <div className="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <p className="text-[10px] font-medium text-white whitespace-nowrap">
-                      残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
-                    </p>
-                  </div>
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-base md:text-lg font-bold text-white leading-none truncate">¥{totalClaimedBenefits.toLocaleString()}</span>
+                  <span className="text-[9px] text-white/85 font-medium leading-none whitespace-nowrap">
+                    残り ¥{(totalPotentialBenefits - totalClaimedBenefits).toLocaleString()}
+                  </span>
                 </div>
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-red-400 to-pink-500 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-1">
-              <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
-              <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
-
+            {/* 要対応タスク */}
+            <div className="relative overflow-hidden group rounded-2xl p-2.5 md:p-3 hover-lift transition-all duration-300 bg-gradient-to-r from-red-400 to-pink-500 shadow-sm hover:shadow-md hover:-translate-y-0.5">
+              <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full" />
               <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-bold text-white/90">要対応</span>
-                  <div className="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
-                    <AlertTriangle className="w-5 h-5" />
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-xs font-bold text-white/95">要対応</span>
+                  <div className="w-7 h-7 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-sm shrink-0">
+                    <AlertTriangle className="w-4 h-4" />
                   </div>
                 </div>
-
-                <div>
-                  <span className="text-2xl lg:text-3xl font-bold text-white block">{allUrgentTasks.length}</span>
-                  <div className="mt-2 inline-block px-2 py-0.5 bg-white/20 rounded-lg backdrop-blur-sm">
-                    <p className="text-[10px] font-medium text-white">
-                      期限が迫っています
-                    </p>
-                  </div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span className="text-lg md:text-xl font-bold text-white leading-none">{allUrgentTasks.length}</span>
+                  <span className="text-[10px] text-white/85 font-medium leading-none">期限切迫</span>
                 </div>
               </div>
             </div>
@@ -366,7 +351,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
           {/* Recommendations Section */}
           {visibleRecommendations.length > 0 && profile?.name && profile.name !== 'ゲスト' && (
-            <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-3 md:mb-4">
+            <div className="glass-medium rounded-2xl p-3 md:p-4 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-3 md:mb-4">
               <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
                 {/* Left Header Column */}
                 <div className="flex flex-row md:flex-col items-center md:items-start gap-3 md:w-52 shrink-0 md:border-r border-indigo-100/50 dark:border-indigo-900/30 md:pr-4">
@@ -414,7 +399,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
           {/* Urgent Tasks */}
           {allUrgentTasks.length > 0 && (
-            <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
+            <div className="glass-medium rounded-2xl p-3 md:p-4 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
               <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -526,7 +511,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
           </div>
 
           {/* Tips Section */}
-          <div className="glass-medium rounded-3xl p-4 md:p-5 border border-border/50 shadow-soft">
+          <div className="glass-medium rounded-2xl p-3 md:p-4 border border-border/50 shadow-soft">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 rounded-2xl gradient-warm flex items-center justify-center shadow-colored-primary">
                 <Trophy className="w-6 h-6 text-primary-foreground" />
