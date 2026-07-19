@@ -102,7 +102,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
   return (
     <div className="space-y-4 animate-fade-in max-w-none mx-auto pb-4">
       {/* Header */}
-      <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft relative overflow-hidden group">
+      <div className="glass-medium rounded-2xl p-4 md:p-5 border border-border/50 shadow-soft relative overflow-hidden group">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         <div className="relative z-10 flex items-start sm:items-center justify-between gap-6">
           <div className="flex items-start gap-4 sm:gap-6 flex-1">
@@ -142,7 +142,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Progress Card */}
-        <div className="group glass-medium rounded-3xl p-6 shadow-soft border-2 border-transparent hover:border-primary/10 transition-all duration-300 flex items-center gap-6 hover-lift">
+        <div className="group glass-medium rounded-2xl p-4 shadow-soft border-2 border-transparent hover:border-primary/10 transition-all duration-300 flex items-center gap-6 hover-lift">
           <div className="relative group-hover:scale-110 transition-transform duration-300">
             <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             <ProgressRing progress={progress} size={100} strokeWidth={8} />
@@ -159,7 +159,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
 
         {/* Benefits Card */}
         <div className={cn(
-          "group glass-medium rounded-3xl p-6 shadow-soft border-2 border-transparent transition-all duration-300 hover-lift",
+          "group glass-medium rounded-2xl p-4 shadow-soft border-2 border-transparent transition-all duration-300 hover-lift",
           totalBenefits === 0 ? "opacity-60 grayscale cursor-not-allowed" : "hover:border-green-500/10"
         )}>
           <div className="flex items-center gap-3 mb-4">
@@ -179,7 +179,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
 
         {/* Remaining Benefits Card */}
         <div className={cn(
-          "group rounded-3xl p-6 shadow-soft border-2 transition-all duration-300 hover-lift relative overflow-hidden",
+          "group rounded-2xl p-4 shadow-soft border-2 transition-all duration-300 hover-lift relative overflow-hidden",
           remainingBenefits === 0 
             ? "opacity-60 grayscale cursor-not-allowed border-muted bg-muted/10" 
             : "border-amber-200/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/10 dark:to-orange-900/10 hover:border-amber-300/50"
@@ -207,7 +207,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
 
       {/* Achievement Banner */}
       {progress >= 50 && (
-        <div className="relative overflow-hidden rounded-3xl p-6 flex items-center gap-5 shadow-lg animate-scale-in group border-2 border-primary/20">
+        <div className="relative overflow-hidden rounded-2xl p-4 flex items-center gap-5 shadow-lg animate-scale-in group border-2 border-primary/20">
           <div className="absolute inset-0 gradient-warm opacity-10 group-hover:opacity-15 transition-opacity" />
           <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-md" />
 
@@ -246,7 +246,7 @@ export function EventDashboard({ event, completedTaskIds, userUrgentTaskIds, isP
       )}
 
       {/* View & Filter Controls */}
-      <div className="flex flex-row items-center justify-between gap-2 glass-light p-2 md:p-4 rounded-2xl border border-border/50 overflow-hidden">
+      <div className="flex flex-row items-center justify-between gap-2 glass-light p-2 md:p-3 rounded-2xl border border-border/50 overflow-hidden">
         <div className="flex items-center gap-1.5 overflow-x-auto flex-1 scrollbar-hide min-w-0 pr-2">
           <div className="flex items-center justify-center w-8 h-8 rounded-full bg-secondary text-muted-foreground flex-shrink-0">
             <Filter className="w-4 h-4" />

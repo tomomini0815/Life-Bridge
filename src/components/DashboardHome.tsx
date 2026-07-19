@@ -237,18 +237,8 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
   return (
     <div className="space-y-3 md:space-y-4 animate-fade-in max-w-none mx-auto pb-2">
-      {/* Welcome Section */}
-      <div className="relative overflow-hidden rounded-xl py-2 px-8">
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="text-xl font-bold mb-1 tracking-tight text-foreground">こんにちは、{userName}さん</h1>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            人生の転機は、新しい物語の始まりです。複雑な手続きのナビゲートのお手伝いいたします。
-          </p>
-        </div>
-      </div>
-
       {/* Tab Switcher */}
-      <div className="flex justify-center border-b border-border/40">
+      <div className="flex justify-start border-b border-border/40 px-2">
         <div className="flex gap-4 sm:gap-8">
           <button
             onClick={() => setActiveTab('overview')}
@@ -279,7 +269,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
         <>
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-            <div className="relative overflow-hidden group rounded-3xl p-4 md:p-6 hover-lift transition-all duration-300 bg-gradient-to-r from-teal-400 to-emerald-500 shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-1">
+            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-teal-400 to-emerald-500 shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/40 hover:-translate-y-1">
               <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
               <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
 
@@ -305,7 +295,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-4 md:p-6 hover-lift transition-all duration-300 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-1">
+            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-blue-400 to-indigo-500 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/40 hover:-translate-y-1">
               <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
               <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
 
@@ -324,7 +314,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-4 md:p-6 hover-lift transition-all duration-300 bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-1">
+            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-amber-400 to-orange-500 shadow-lg shadow-amber-500/20 hover:shadow-xl hover:shadow-amber-500/40 hover:-translate-y-1">
               <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
               <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
 
@@ -347,7 +337,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               </div>
             </div>
 
-            <div className="relative overflow-hidden group rounded-3xl p-4 md:p-6 hover-lift transition-all duration-300 bg-gradient-to-r from-red-400 to-pink-500 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-1">
+            <div className="relative overflow-hidden group rounded-3xl p-3 md:p-4 hover-lift transition-all duration-300 bg-gradient-to-r from-red-400 to-pink-500 shadow-lg shadow-red-500/20 hover:shadow-xl hover:shadow-red-500/40 hover:-translate-y-1">
               <div className="absolute -right-6 -bottom-6 w-32 h-32 bg-white/10 rounded-full" />
               <div className="absolute right-8 bottom-8 w-24 h-24 bg-white/10 rounded-full" />
 
@@ -373,7 +363,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
           {/* Recommendations Section */}
           {visibleRecommendations.length > 0 && (
-            <div className="glass-medium rounded-3xl p-4 md:p-8 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-4 md:mb-8">
+            <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-3 md:mb-4">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
                   <Sparkles className="w-5 h-5" />
@@ -386,7 +376,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {visibleRecommendations.map((rec) => (
-                  <div key={rec.id} className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-5 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 transition-all duration-300">
+                  <div key={rec.id} className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 transition-all duration-300">
                     <div className="flex items-start justify-between mb-3">
                       <span className={cn(
                         "px-2 py-1 rounded-md text-xs font-bold",
@@ -505,7 +495,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
 
           {/* Urgent Tasks */}
           {allUrgentTasks.length > 0 && (
-            <div className="glass-medium rounded-3xl p-8 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
+            <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-red-200/30 bg-gradient-to-br from-red-50/50 to-orange-50/50 dark:from-red-900/10 dark:to-orange-900/10 shadow-soft">
               <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <span className="relative flex h-3 w-3">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -517,7 +507,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
                 {allUrgentTasks.slice(0, 3).map((task) => (
                   <div
                     key={task.id}
-                    className="group bg-card/60 backdrop-blur-sm rounded-2xl p-5 border border-red-100 dark:border-red-900/30 hover:border-red-300 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
+                    className="group bg-card/60 backdrop-blur-sm rounded-2xl p-4 border border-red-100 dark:border-red-900/30 hover:border-red-300 hover:shadow-lg transition-all duration-300 cursor-pointer relative overflow-hidden"
                     onClick={() => onSelectEvent(task.eventId as LifeEventType)}
                   >
                     <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-red-500/10 transition-colors" />
@@ -568,7 +558,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
                     key={event.id}
                     onClick={() => onSelectEvent(event.id)}
                     className={cn(
-                      "p-6 rounded-3xl text-left transition-all duration-500",
+                      "p-4 rounded-2xl text-left transition-all duration-500",
                       "backdrop-blur-xl border-2",
                       "shadow-soft hover:shadow-xl group relative overflow-hidden",
                       "bg-emerald-50/60 dark:bg-emerald-900/10",
@@ -617,7 +607,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
           </div>
 
           {/* Tips Section */}
-          <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
+          <div className="glass-medium rounded-3xl p-4 md:p-5 border border-border/50 shadow-soft">
             <div className="flex items-center gap-4 mb-6">
               <div className="w-12 h-12 rounded-2xl gradient-warm flex items-center justify-center shadow-colored-primary">
                 <Trophy className="w-6 h-6 text-primary-foreground" />
@@ -628,7 +618,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
+              <div className="p-4 rounded-xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
                 <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
                   <span className="bg-white p-2 rounded-lg shadow-sm">
                     <ClipboardList className="w-5 h-5 text-indigo-500" />
@@ -639,7 +629,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
                   </span>
                 </p>
               </div>
-              <div className="p-6 rounded-2xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
+              <div className="p-4 rounded-xl bg-secondary/30 border border-border/50 hover:bg-secondary/50 transition-colors hover-lift">
                 <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-3">
                   <span className="bg-white p-2 rounded-lg shadow-sm">
                     <Lightbulb className="w-5 h-5 text-amber-500" />

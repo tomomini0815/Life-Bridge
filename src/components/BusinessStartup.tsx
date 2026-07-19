@@ -101,7 +101,7 @@ export function BusinessStartup({ event, completedTaskIds, userUrgentTaskIds, is
     return (
         <div className="space-y-4 animate-fade-in max-w-none mx-auto pb-4">
             {/* Header */}
-            <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft relative overflow-hidden group">
+            <div className="glass-medium rounded-2xl p-4 md:p-5 border border-border/50 shadow-soft relative overflow-hidden group">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative z-10 flex items-start sm:items-center justify-between gap-6">
                     <div className="flex items-start gap-4 sm:gap-6 flex-1">
