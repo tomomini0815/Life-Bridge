@@ -5,25 +5,35 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { UserContext } from '@/services/AiConciergeService';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [chatContext, setChatContext] = useState<UserContext>('general');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate('/dashboard');
+    if (!loading) {
+      if (user) {
+        navigate('/dashboard');
+      } else {
+        // WebGLシェーダーや画像などのアセット読み込みラグをカバーするため、
+        // わずかに遅らせてからフェードインでLPを表示します
+        const timer = setTimeout(() => {
+          setShowContent(true);
+        }, 400);
+        return () => clearTimeout(timer);
+      }
     }
   }, [user, loading, navigate]);
 
-  if (loading || user) {
-    return null; // Prevent flash of LP while redirecting or loading auth
+  if (loading || user || !showContent) {
+    return <LoadingScreen />;
   }
 
   const handleSelectEvent = (event: any) => {
-    // Instead of navigating, we set the chat context to trigger the AI concierge
     if (event?.id) {
       setChatContext(event.id as UserContext);
       setIsChatOpen(true);
@@ -36,7 +46,7 @@ const Index = () => {
   };
 
   return (
-    <>
+    <div className="animate-fade-in">
       <LandingPageTest 
         events={lifeEvents} 
         onSelectEvent={handleSelectEvent} 
@@ -46,7 +56,7 @@ const Index = () => {
         currentContext={chatContext} 
         externalIsOpen={isChatOpen}
       />
-    </>
+    </div>
   );
 };
 
