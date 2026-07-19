@@ -236,7 +236,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
   const allUrgentTasks = allEvents.flatMap(e => e.urgentTasks.map(t => ({ ...t, eventId: e.id, eventIcon: e.icon })));
 
   return (
-    <div className="space-y-4 md:space-y-8 animate-fade-in max-w-7xl mx-auto pb-4 md:pb-10">
+    <div className="space-y-3 md:space-y-4 animate-fade-in max-w-none mx-auto pb-2">
       {/* Welcome Section */}
       <div className="relative overflow-hidden rounded-xl py-2 px-8">
         <div className="relative z-10 max-w-2xl">

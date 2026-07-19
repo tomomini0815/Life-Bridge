@@ -376,7 +376,7 @@ export function DashboardLayout() {
           </header>
 
           {/* Main Content */}
-          <main className="p-6 pt-20 md:pt-6 max-w-7xl mx-auto w-full">
+          <main className="p-4 pt-16 md:p-3 md:pt-3 max-w-[1440px] mx-auto w-full">
             {renderContent()}
           </main>
 

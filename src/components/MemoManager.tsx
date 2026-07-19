@@ -145,7 +145,7 @@ export function MemoManager() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-10">
+        <div className="space-y-4 animate-fade-in max-w-none mx-auto pb-4">
             <div className="glass-medium rounded-3xl p-8 border border-border/50 shadow-soft">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div className="flex items-center gap-4">
