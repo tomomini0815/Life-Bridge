@@ -238,7 +238,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
   return (
     <div className="space-y-3 md:space-y-4 animate-fade-in max-w-none mx-auto pb-2">
       {/* Tab Switcher */}
-      <div className="flex justify-start border-b border-border/40 px-2">
+      <div className="flex justify-start border-b border-border/40 px-2 pt-3 md:pt-0">
         <div className="flex gap-4 sm:gap-8">
           <button
             onClick={() => setActiveTab('overview')}
@@ -364,11 +364,11 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
           {/* Recommendations Section */}
           {visibleRecommendations.length > 0 && (
             <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-3 md:mb-4">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600">
+              <div className="flex items-start md:items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 shrink-0">
                   <Sparkles className="w-5 h-5" />
                 </div>
-                <div>
+                <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3">
                   <h2 className="text-xl font-bold text-foreground">あなたへのおすすめ</h2>
                   <p className="text-sm text-muted-foreground">登録情報に基づいた提案</p>
                 </div>
