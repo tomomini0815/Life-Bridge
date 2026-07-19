@@ -27,7 +27,10 @@ export const GeminiService = {
         console.warn("[DEBUG] Gemini API Key Used:", maskedKey);
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel(
+            { model: "gemini-1.5-flash" },
+            { apiVersion: "v1" }
+        );
 
         // 1. Construct System Prompt based on Mode and Context
         const contextInfo = {
@@ -198,7 +201,10 @@ IMPORTANT RULES:
         if (!apiKey) throw new Error("API Key missing");
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel(
+            { model: "gemini-1.5-flash" },
+            { apiVersion: "v1" }
+        );
 
         try {
             const config: any = {};
