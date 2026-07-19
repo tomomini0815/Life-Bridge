@@ -58,19 +58,7 @@ export const recommendationService = {
 
         // 2. Profile-based Static Recommendations
 
-        // If profile is incomplete (only check name to allow 0 income users to dismiss)
-        if (!profile.name) {
-            // Simple check for default values - might be improved
-            recommendations.push({
-                id: 'update-profile',
-                title: 'プロフィールを完成させましょう',
-                description: '正確な情報入力で、より最適な提案が可能になります。',
-                type: 'task',
-                urgency: 'low',
-                link: '/settings',
-                actionLabel: '設定へ'
-            });
-        }
+        // Profile completion task has been moved to the dashboard layout header
 
         getAdvancedRecommendations(profile, recommendations);
 

@@ -147,6 +147,7 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<'overview' | 'timeline'>('overview');
   const [userName, setUserName] = useState('ゲスト');
+  const [profile, setProfile] = useState<any>(null);
   const [expandedRecId, setExpandedRecId] = useState<string | null>(null);
 
   // Recommendations
@@ -160,13 +161,15 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
     };
 
     // Initial load
-    const profile = profileService.getProfile();
-    setUserName(profile.name || 'ゲスト');
-    fetchRecommendations(profile);
+    const initialProfile = profileService.getProfile();
+    setUserName(initialProfile.name || 'ゲスト');
+    setProfile(initialProfile);
+    fetchRecommendations(initialProfile);
 
     // Subscribe to changes
     const unsubscribe = profileService.subscribe((updatedProfile) => {
       setUserName(updatedProfile.name || 'ゲスト');
+      setProfile(updatedProfile);
       fetchRecommendations(updatedProfile);
     });
 
@@ -362,133 +365,49 @@ export function DashboardHome({ onSelectEvent, onNavigate, completedTasks, userU
           </div>
 
           {/* Recommendations Section */}
-          {visibleRecommendations.length > 0 && (
+          {visibleRecommendations.length > 0 && profile?.name && profile.name !== 'ゲスト' && (
             <div className="glass-medium rounded-3xl p-4 md:p-5 border-2 border-indigo-200/30 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 dark:from-indigo-900/10 dark:to-purple-900/10 shadow-soft mb-3 md:mb-4">
-              <div className="flex items-start md:items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 shrink-0">
-                  <Sparkles className="w-5 h-5" />
+              <div className="flex flex-col md:flex-row items-center gap-4 md:gap-6">
+                {/* Left Header Column */}
+                <div className="flex flex-row md:flex-col items-center md:items-start gap-3 md:w-52 shrink-0 md:border-r border-indigo-100/50 dark:border-indigo-900/30 md:pr-4">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-600 shrink-0">
+                    <Sparkles className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-foreground leading-tight">あなたへのおすすめ</h2>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">登録情報に基づいた提案</p>
+                  </div>
                 </div>
-                <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-3">
-                  <h2 className="text-xl font-bold text-foreground">あなたへのおすすめ</h2>
-                  <p className="text-sm text-muted-foreground">登録情報に基づいた提案</p>
-                </div>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {visibleRecommendations.map((rec) => (
-                  <div key={rec.id} className="bg-white/60 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-indigo-100 dark:border-indigo-900/30 hover:border-indigo-300 transition-all duration-300">
-                    <div className="flex items-start justify-between mb-3">
+                {/* Right Area: Inline Text Links */}
+                <div className="flex-1 flex flex-row flex-wrap items-center gap-x-6 gap-y-2">
+                  {visibleRecommendations.map((rec) => (
+                    <button
+                      key={rec.id}
+                      onClick={() => {
+                        if (rec.link === '/settings') {
+                          onNavigate('settings');
+                        } else if (rec.link?.includes('benefits')) {
+                          onNavigate('simulator');
+                        } else if (rec.link) {
+                          window.open(rec.link, '_blank');
+                        }
+                      }}
+                      className="inline-flex items-center gap-2 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors text-xs font-bold text-foreground bg-transparent border-none p-0 cursor-pointer whitespace-nowrap shrink-0 group"
+                    >
                       <span className={cn(
-                        "px-2 py-1 rounded-md text-xs font-bold",
+                        "px-1.5 py-0.5 rounded text-[9px] font-bold",
                         rec.type === 'benefit' ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" :
                           rec.type === 'procedure' ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
                             "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400"
                       )}>
-                        {rec.type === 'benefit' ? '給付金' : rec.type === 'procedure' ? '手続き' : 'タスク'}
+                        {rec.type === 'benefit' ? '給付金' : rec.type === 'procedure' ? '手続き' : '設定'}
                       </span>
-                      {rec.urgency === 'high' && (
-                        <span className="flex items-center gap-1 text-xs font-bold text-red-500">
-                          <AlertTriangle className="w-3 h-3" /> 要確認
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 className="font-bold text-foreground mb-2">{rec.title}</h3>
-                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-                      {rec.description}
-                    </p>
-
-                    <div className="flex items-center justify-between mt-2">
-                      <button
-                        onClick={() => {
-                          if (rec.link === '/settings') {
-                            onNavigate('settings');
-                          } else if (rec.link?.includes('benefits')) {
-                            onNavigate('simulator');
-                          } else if (rec.link) {
-                            window.open(rec.link, '_blank');
-                          }
-                        }}
-                        className="inline-flex items-center text-sm font-bold text-indigo-600 hover:text-indigo-700 transition-colors bg-transparent border-none p-0 cursor-pointer"
-                      >
-                        {rec.actionLabel || '移動する'} <ArrowRight className="w-4 h-4 ml-1" />
-                      </button>
-
-                      {rec.details && (
-                        <button
-                          onClick={() => setExpandedRecId(expandedRecId === rec.id ? null : rec.id)}
-                          className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors bg-transparent border-none p-0 cursor-pointer"
-                        >
-                          {expandedRecId === rec.id ? '閉じる' : '詳細'}
-                          {expandedRecId === rec.id ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />}
-                        </button>
-                      )}
-                    </div>
-
-                    {rec.details && expandedRecId === rec.id && (
-                      <div className="mt-4 pt-4 border-t border-indigo-100 dark:border-white/10 space-y-3 animate-in fade-in slide-in-from-top-1">
-                        <div>
-                          <p className="text-xs font-bold text-foreground mb-1">概要</p>
-                          <p className="text-xs text-muted-foreground leading-relaxed">
-                            {rec.details.description}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-foreground mb-1">計算式</p>
-                          <p className="text-xs text-muted-foreground bg-white/50 dark:bg-white/5 p-2 rounded-md font-mono whitespace-pre-line">
-                            {rec.details.calculation}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-xs font-bold text-foreground mb-1">給付要件</p>
-                          <p className="text-xs text-muted-foreground whitespace-pre-line">
-                            {rec.details.requirements}
-                          </p>
-                        </div>
-
-                        {/* Nested Accordion for Application Guide */}
-                        <div className="pt-2">
-                          <details className="group rounded-lg border border-border/50 bg-background/50 open:bg-background open:ring-1 open:ring-primary/20">
-                            <summary className="flex cursor-pointer items-center justify-between p-3 text-xs font-bold text-foreground">
-                              <div className="flex items-center gap-2">
-                                申請手続きガイド（必要書類・手順）
-                              </div>
-                              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
-                            </summary>
-                            <div className="px-3 pb-3 pt-0">
-                              <div className="space-y-3 pt-2">
-                                {/* Required Documents */}
-                                {rec.requiredDocuments && rec.requiredDocuments.length > 0 && (
-                                  <div>
-                                    <p className="mb-2 text-xs font-bold text-foreground/80">📋 必要書類</p>
-                                    <ul className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                                      {rec.requiredDocuments.map((doc, idx) => (
-                                        <li key={idx} className="flex items-center gap-2 rounded-md bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
-                                          <span className="h-1.5 w-1.5 rounded-full bg-primary/50" />
-                                          {doc}
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </div>
-                                )}
-
-                                {/* Application Steps */}
-                                {rec.details.applicationSteps && (
-                                  <div>
-                                    <p className="mb-1 text-xs font-bold text-foreground/80">📝 手続きの流れ</p>
-                                    <p className="text-xs leading-relaxed text-muted-foreground bg-primary/5 p-2 rounded-md">
-                                      {rec.details.applicationSteps}
-                                    </p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </details>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                      <span className="underline-offset-4 group-hover:underline leading-none">{rec.title}</span>
+                      <ArrowRight className="w-3.5 h-3.5 opacity-65 group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}

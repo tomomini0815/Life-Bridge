@@ -13,7 +13,7 @@ import { HelpPage } from '@/components/HelpPage';
 import { ReverseScheduler } from '@/components/ReverseScheduler';
 import { DecisionBoard } from '@/components/DecisionBoard';
 import { LifeBridgeLogo } from '@/components/ui/LifeBridgeLogo';
-import { Search, Bell, User, ScanLine, Sparkles, UserCog } from 'lucide-react';
+import { Search, Bell, User, ScanLine, Sparkles, UserCog, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { lifeEvents } from '@/data/lifeEvents';
 import { DocumentScanner } from '@/components/DocumentScanner';
@@ -34,6 +34,7 @@ export function DashboardLayout() {
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
   const [activePage, setActivePage] = useState<string | null>(null);
   const [userName, setUserName] = useState('ゲスト');
+  const [profile, setProfile] = useState<any>(null);
   const [completedTasks, setCompletedTasks] = useState<Record<string, string[]>>({
     marriage: [],
     birth: [],
@@ -62,11 +63,13 @@ export function DashboardLayout() {
   useEffect(() => {
     profileService.setUserId(user?.id || null);
 
-    const profile = profileService.getProfile();
-    setUserName(profile.name || 'ゲスト');
+    const initialProfile = profileService.getProfile();
+    setUserName(initialProfile.name || 'ゲスト');
+    setProfile(initialProfile);
 
     const unsubscribeProfile = profileService.subscribe((updatedProfile) => {
       setUserName(updatedProfile.name || 'ゲスト');
+      setProfile(updatedProfile);
     });
 
     // Load completed tasks and urgent tasks from localStorage
@@ -264,11 +267,23 @@ export function DashboardLayout() {
                   <SidebarTrigger className="-ml-4 bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7 [&_svg]:text-slate-600 dark:[&_svg]:text-slate-300" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
                   {activeEvent === null && activePage === null && (
-                    <div className="flex flex-col animate-fade-in select-none">
-                      <h1 className="text-sm font-bold text-foreground leading-tight">こんにちは、{userName}さん</h1>
-                      <p className="text-[10px] text-muted-foreground hidden lg:block leading-none mt-0.5">
-                        人生の転機は、新しい物語の始まりです。複雑な手続きのナビゲートのお手伝いいたします。
-                      </p>
+                    <div className="flex items-center gap-3 animate-fade-in select-none">
+                      <div className="flex flex-col">
+                        <h1 className="text-sm font-bold text-foreground leading-tight">こんにちは、{userName}さん</h1>
+                        <p className="text-[10px] text-muted-foreground hidden lg:block leading-none mt-0.5">
+                          人生の転機は、新しい物語の始まりです。複雑な手続きのナビゲートのお手伝いいたします。
+                        </p>
+                      </div>
+                      {(!profile || !profile.name || profile.name === 'ゲスト') && (
+                        <button
+                          onClick={() => handleSelectPage('settings')}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 dark:bg-amber-950/30 border border-amber-200/50 dark:border-amber-900/30 text-[10px] font-bold text-amber-700 dark:text-amber-400 hover:bg-amber-100 transition-colors shadow-sm shrink-0 cursor-pointer border-none"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                          プロフィールを完成させましょう
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
