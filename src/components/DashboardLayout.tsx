@@ -33,6 +33,7 @@ export function DashboardLayout() {
   const { user } = useAuth();
   const [activeEvent, setActiveEvent] = useState<LifeEventType | null>(null);
   const [activePage, setActivePage] = useState<string | null>(null);
+  const [userName, setUserName] = useState('ゲスト');
   const [completedTasks, setCompletedTasks] = useState<Record<string, string[]>>({
     marriage: [],
     birth: [],
@@ -60,6 +61,13 @@ export function DashboardLayout() {
   // Sync user ID with ProfileService and load completed tasks
   useEffect(() => {
     profileService.setUserId(user?.id || null);
+
+    const profile = profileService.getProfile();
+    setUserName(profile.name || 'ゲスト');
+
+    const unsubscribeProfile = profileService.subscribe((updatedProfile) => {
+      setUserName(updatedProfile.name || 'ゲスト');
+    });
 
     // Load completed tasks and urgent tasks from localStorage
     if (user?.id) {
@@ -89,6 +97,10 @@ export function DashboardLayout() {
         setPriorityEvents([]);
       }
     }
+
+    return () => {
+      unsubscribeProfile();
+    };
   }, [user]);
 
   // Persist completed tasks and urgent tasks when they change
@@ -234,7 +246,7 @@ export function DashboardLayout() {
           {/* Top Header - Fixed on scroll */}
           <header className="fixed md:sticky top-0 left-0 right-0 z-50 h-16 shrink-0 border-b border-border bg-background/80 backdrop-blur-md shadow-sm transition-colors duration-300">
             <div className="h-full px-4 flex items-center justify-between gap-2">
-              {/* Left: Site Name (Mobile) / Sidebar Trigger + Search (Desktop) */}
+              {/* Left: Site Name (Mobile) / Sidebar Trigger + Greeting (Desktop) */}
               <div className="flex items-center gap-2 flex-1">
                 {/* Mobile: Site Name */}
                 <button
@@ -247,87 +259,22 @@ export function DashboardLayout() {
                   </span>
                 </button>
 
-                {/* Desktop: Sidebar Trigger + Search */}
+                {/* Desktop: Sidebar Trigger + Greeting */}
                 <div className="hidden md:flex items-center gap-2 flex-1">
                   <SidebarTrigger className="-ml-4 bg-white dark:bg-zinc-800 hover:bg-slate-50 dark:hover:bg-zinc-700 border border-slate-200 dark:border-zinc-700 shadow-sm w-9 h-9 [&_svg]:w-7 [&_svg]:h-7 [&_svg]:text-slate-600 dark:[&_svg]:text-slate-300" />
                   <Separator orientation="vertical" className="mr-2 h-4" />
-                  <div className="relative w-96 group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                    <Input
-                      placeholder="知りたいこと、やりたいことは何ですか..."
-                      className="pl-10 h-10 w-full rounded-full bg-background border-input focus:border-primary focus:ring-primary/20 shadow-sm transition-all duration-300"
-                      onChange={(e) => {
-                        const query = e.target.value;
-                        if (query.length > 0) {
-                          const results = SearchService.getInstance().search(query);
-                          setSearchResults(results);
-                          setIsSearchOpen(true);
-                        } else {
-                          setSearchResults([]);
-                          setIsSearchOpen(false);
-                        }
-                      }}
-                      onFocus={() => {
-                        if (searchResults.length > 0) setIsSearchOpen(true);
-                      }}
-                      onBlur={() => {
-                        // Delay closing to allow clicking on results
-                        setTimeout(() => setIsSearchOpen(false), 200);
-                      }}
-                    />
-
-                    {/* Search Results Dropdown */}
-                    {isSearchOpen && searchResults.length > 0 && (
-                      <div className="absolute top-12 left-0 w-full bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-lg overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
-                        <div className="max-h-[60vh] overflow-y-auto py-2">
-                          {searchResults.map((result) => (
-                            <button
-                              key={`${result.type}-${result.id}`}
-                              className="w-full text-left px-4 py-3 hover:bg-muted/50 transition-colors flex items-start gap-3 group/item"
-                              onClick={() => {
-                                if (result.type === 'page' && result.path) {
-                                  handleSelectPage(result.path);
-                                } else if (result.type === 'event' && result.eventId) {
-                                  handleSelectEvent(result.eventId);
-                                } else if (result.type === 'task' && result.eventId) {
-                                  handleSelectEvent(result.eventId);
-                                  // Optional: Scroll to task or highlight it
-                                }
-                                setIsSearchOpen(false);
-                              }}
-                            >
-                              <div className="mt-0.5 shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-lg">
-                                {result.icon || (result.type === 'page' ? '📄' : '🔍')}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="text-sm font-medium text-foreground group-hover/item:text-primary transition-colors truncate">
-                                  {result.title}
-                                </div>
-                                <div className="text-xs text-muted-foreground truncate">
-                                  {result.description}
-                                </div>
-                                <div className="mt-1 flex items-center gap-1.5">
-                                  <span className={cn(
-                                    "text-[10px] px-1.5 py-0.5 rounded-full font-medium border",
-                                    result.type === 'event' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                                      result.type === 'task' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                        "bg-slate-50 text-slate-600 border-slate-100"
-                                  )}>
-                                    {result.type === 'event' ? 'ライフイベント' :
-                                      result.type === 'task' ? 'タスク' : 'ページ'}
-                                  </span>
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {activeEvent === null && activePage === null && (
+                    <div className="flex flex-col animate-fade-in select-none">
+                      <h1 className="text-sm font-bold text-foreground leading-tight">こんにちは、{userName}さん</h1>
+                      <p className="text-[10px] text-muted-foreground hidden lg:block leading-none mt-0.5">
+                        人生の転機は、新しい物語の始まりです。複雑な手続きのナビゲートのお手伝いいたします。
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Right: Hamburger Menu + Icons (Mobile) / Action Buttons (Desktop) */}
+              {/* Right: Hamburger Menu + Icons (Mobile) / Action Buttons + Search (Desktop) */}
               <div className="flex items-center gap-2">
                 {/* Mobile: Notification + Account + Hamburger Menu */}
                 <div className="md:hidden flex items-center gap-2">
@@ -351,8 +298,85 @@ export function DashboardLayout() {
                   <SidebarTrigger className="w-11 h-11 p-0 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors [&_svg]:w-7 [&_svg]:h-7" />
                 </div>
 
-                {/* Desktop: Action Buttons */}
+                {/* Desktop: Action Buttons & Search */}
                 <div className="hidden md:flex items-center gap-3">
+                  {/* Search Bar (Moved from Left, compacted to w-72) */}
+                  <div className="relative w-72 group">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input
+                      placeholder="検索..."
+                      className="pl-10 h-9 w-full rounded-full bg-background border-input focus:border-primary focus:ring-primary/20 shadow-sm transition-all duration-300 text-xs"
+                      onChange={(e) => {
+                        const query = e.target.value;
+                        if (query.length > 0) {
+                          const results = SearchService.getInstance().search(query);
+                          setSearchResults(results);
+                          setIsSearchOpen(true);
+                        } else {
+                          setSearchResults([]);
+                          setIsSearchOpen(false);
+                        }
+                      }}
+                      onFocus={() => {
+                        if (searchResults.length > 0) setIsSearchOpen(true);
+                      }}
+                      onBlur={() => {
+                        // Delay closing to allow clicking on results
+                        setTimeout(() => setIsSearchOpen(false), 200);
+                      }}
+                    />
+
+                    {/* Search Results Dropdown */}
+                    {isSearchOpen && searchResults.length > 0 && (
+                      <div className="absolute top-11 right-0 w-80 bg-background/95 backdrop-blur-md border border-border rounded-xl shadow-lg overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="max-h-[60vh] overflow-y-auto py-2">
+                          {searchResults.map((result) => (
+                            <button
+                              key={`${result.type}-${result.id}`}
+                              className="w-full text-left px-4 py-2.5 hover:bg-muted/50 transition-colors flex items-start gap-3 group/item"
+                              onMouseDown={(e) => {
+                                // Prevent input blur from closing the dropdown before select triggers
+                                e.preventDefault();
+                                
+                                if (result.type === 'page' && result.path) {
+                                  handleSelectPage(result.path);
+                                } else if (result.type === 'event' && result.eventId) {
+                                  handleSelectEvent(result.eventId);
+                                } else if (result.type === 'task' && result.eventId) {
+                                  handleSelectEvent(result.eventId);
+                                }
+                                setIsSearchOpen(false);
+                              }}
+                            >
+                              <div className="mt-0.5 shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-sm">
+                                {result.icon || (result.type === 'page' ? '📄' : '🔍')}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="text-xs font-semibold text-foreground group-hover/item:text-primary transition-colors truncate">
+                                  {result.title}
+                                </div>
+                                <div className="text-[10px] text-muted-foreground truncate">
+                                  {result.description}
+                                </div>
+                                <div className="mt-0.5 flex items-center gap-1.5">
+                                  <span className={cn(
+                                    "text-[9px] px-1.5 py-0.5 rounded-full font-medium border",
+                                    result.type === 'event' ? "bg-blue-50 text-blue-600 border-blue-100 dark:bg-blue-950/20 dark:text-blue-400 dark:border-blue-900/30" :
+                                      result.type === 'task' ? "bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30" :
+                                        "bg-slate-50 text-slate-600 border-slate-100 dark:bg-slate-850 dark:text-slate-400 dark:border-slate-800"
+                                  )}>
+                                    {result.type === 'event' ? 'ライフイベント' :
+                                      result.type === 'task' ? 'タスク' : 'ページ'}
+                                  </span>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <Button
                     variant="ghost"
                     size="icon"
