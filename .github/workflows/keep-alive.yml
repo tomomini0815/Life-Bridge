@@ -1,0 +1,41 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # 毎日日本時間の午前9:00（UTC 00:00）に実行
+    - cron: '0 0 * * *'
+  workflow_dispatch: # GitHubのUIから手動実行も可能にする
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase REST API
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
+            echo "Error: Missing environment variables VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in GitHub Secrets."
+            exit 1
+          fi
+          
+          echo "Sending ping to Supabase REST API..."
+          # 末尾のスラッシュを取り除いたクリーンなURLを作成し、スキーマ一覧を取得するAPIエンドポイントを叩く
+          CLEAN_URL=$(echo "$SUPABASE_URL" | sed 's/\/$//')
+          
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X GET "$CLEAN_URL/rest/v1/" \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+          
+          echo "Response HTTP Status: $response"
+          
+          # HTTPステータスが200番台、または認証エラーやリクエストエラー（400番台）であっても、
+          # APIサーバーへの到達が確認できればデータベースへのアクティビティとしてカウントされます。
+          # 500番台（サーバーエラー）のみ失敗と判定します。
+          if [ "$response" -ge 200 ] && [ "$response" -lt 500 ]; then
+            echo "Successfully pinged Supabase API (HTTP status $response). Database is active!"
+          else
+            echo "Failed to connect to Supabase. HTTP Status Code: $response"
+            exit 1
+          fi
