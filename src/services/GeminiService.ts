@@ -20,6 +20,12 @@ export const GeminiService = {
         const apiKey = getApiKey();
         if (!apiKey) throw new Error("API Key missing");
 
+        // Secure debug log of API Key used in production
+        const maskedKey = apiKey.length > 8 
+            ? `${apiKey.substring(0, 4)}...${apiKey.substring(apiKey.length - 4)}` 
+            : 'too_short';
+        console.log("[DEBUG] Gemini API Key Used:", maskedKey);
+
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
