@@ -121,9 +121,14 @@ function HexagonCard({ image, title, subtitle, description, icon: Icon, onClick,
 export function LandingPageTest({ events, onSelectEvent, onOpenChat }: LandingPageProps) {
     const navigate = useNavigate();
     const [dimensions, setDimensions] = useState({ width: 1920, height: 1080 });
+    const [isMobile, setIsMobile] = useState(false);
 
     useEffect(() => {
-        const handleResize = () => setDimensions({ width: window.innerWidth, height: window.innerHeight });
+        setIsMobile(window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+        const handleResize = () => {
+            setDimensions({ width: window.innerWidth, height: window.innerHeight });
+            setIsMobile(window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent));
+        };
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
@@ -133,14 +138,18 @@ export function LandingPageTest({ events, onSelectEvent, onOpenChat }: LandingPa
             {/* Navigation (Fixed) */}
 
             <div className="fixed inset-0 z-0 select-none pointer-events-none">
-                <MeshGradient
-                    width={dimensions.width}
-                    height={dimensions.height}
-                    colors={["#b2dfdb", "#80cbc4", "#c8e6c9", "#a5d6a7", "#e0f2f1", "#ffffff"]}
-                    distortion={0.5}
-                    swirl={0.4}
-                    speed={0.4}
-                />
+                {!isMobile ? (
+                    <MeshGradient
+                        width={dimensions.width}
+                        height={dimensions.height}
+                        colors={["#b2dfdb", "#80cbc4", "#c8e6c9", "#a5d6a7", "#e0f2f1", "#ffffff"]}
+                        distortion={0.5}
+                        swirl={0.4}
+                        speed={0.4}
+                    />
+                ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-teal-50 via-emerald-50 to-slate-50" />
+                )}
                 {/* Overlay to ensure text readability */}
                 <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]" />
             </div>
