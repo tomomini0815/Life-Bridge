@@ -169,26 +169,45 @@ IMPORTANT RULES:
             return response.text();
         } catch (error: any) {
             console.error("Gemini Error:", error);
-            // ... (Error handling logic from previous implementation)
-            // Parse error to provide specific feedback
             const errorMessage = error?.message || error?.toString() || '';
             const errorStatus = error?.status || error?.statusCode;
 
-            // Check for specific error types
-            if (errorStatus === 429 || errorMessage.includes('429') || errorMessage.includes('quota') || errorMessage.includes('RESOURCE_EXHAUSTED')) {
-                throw new Error('RATE_LIMIT: API利用制限に達しました。しばらく待ってから再度お試しください。');
-            }
-
-            if (errorStatus === 401 || errorStatus === 403 || errorMessage.includes('API key') || errorMessage.includes('authentication')) {
+            // 1. Check for Auth / API key errors first
+            if (
+                errorStatus === 401 ||
+                errorStatus === 403 ||
+                errorMessage.includes('API key') ||
+                errorMessage.includes('API_KEY') ||
+                errorMessage.includes('authentication') ||
+                errorMessage.includes('unauthorized') ||
+                errorMessage.includes('Forbidden')
+            ) {
                 throw new Error('AUTH_ERROR: APIキーが無効です。設定を確認してください。');
             }
 
-            if (errorMessage.includes('network') || errorMessage.includes('fetch') || errorMessage.includes('ENOTFOUND')) {
-                throw new Error('NETWORK_ERROR: ネットワークエラーが発生しました。インターネット接続を確認してください。');
+            // 2. Check for Rate Limit errors
+            if (
+                errorStatus === 429 ||
+                errorMessage.includes('429') ||
+                errorMessage.includes('quota') ||
+                errorMessage.includes('RESOURCE_EXHAUSTED')
+            ) {
+                throw new Error('RATE_LIMIT: API利用制限に達しました。しばらく待ってから再度お試しください。');
             }
 
+            // 3. Safety block errors
             if (errorMessage.includes('safety') || errorMessage.includes('blocked')) {
                 throw new Error('SAFETY_BLOCK: 安全性フィルターによりブロックされました。別の表現でお試しください。');
+            }
+
+            // 4. True network / connectivity errors (avoiding false positive on "Error fetching from")
+            if (
+                errorMessage.includes('Failed to fetch') ||
+                errorMessage.includes('NetworkError') ||
+                errorMessage.includes('ENOTFOUND') ||
+                (errorMessage.includes('network') && !errorMessage.includes('Error fetching from'))
+            ) {
+                throw new Error('NETWORK_ERROR: ネットワークエラーが発生しました。インターネット接続を確認してください。');
             }
 
             // Generic error

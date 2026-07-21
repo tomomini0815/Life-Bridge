@@ -199,30 +199,21 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
       const mode = isEmpathyMode ? 'empathy' : 'normal';
 
       // Try Gemini first if enabled
-      if (GeminiService.isEnabled()) {
-        try {
-          responseContent = await GeminiService.sendMessage(
-            userMsg.content,
-            messages,
-            currentContext,
-            mode
-          );
-        } catch (err: any) {
-          const errorMsg = err?.message || '';
-          console.warn("Gemini error:", errorMsg);
-
-          // If it's a rate limit or specific error, show it to user
-          if (errorMsg.includes('RATE_LIMIT:') || errorMsg.includes('AUTH_ERROR:') ||
-            errorMsg.includes('NETWORK_ERROR:') || errorMsg.includes('SAFETY_BLOCK:')) {
-            // Extract the user-friendly message after the error code
-            const userMessage = errorMsg.split(': ')[1] || errorMsg;
-            throw new Error(userMessage);
+        if (GeminiService.isEnabled()) {
+          try {
+            responseContent = await GeminiService.sendMessage(
+              userMsg.content,
+              messages,
+              currentContext,
+              mode
+            );
+          } catch (err: any) {
+            const errorMsg = err?.message || '';
+            console.warn("Gemini error (falling back to rule-based AI):", errorMsg);
+            // Fallback to rule-based concierge
+            responseContent = '';
           }
-
-          // Otherwise, use fallback
-          responseContent = '';
         }
-      }
 
       // Use Gemini response or fallback to rule-based
       if (responseContent) {
@@ -393,15 +384,7 @@ export function ChatWidget({ currentContext = 'general', onSelectEvent, external
             responseContent = await GeminiService.sendMessage(action, messages, currentContext, mode);
           } catch (err: any) {
             const errorMsg = err?.message || '';
-            console.warn("Gemini error for action:", errorMsg);
-
-            // If it's a specific error, show it to user
-            if (errorMsg.includes('RATE_LIMIT:') || errorMsg.includes('AUTH_ERROR:') ||
-              errorMsg.includes('NETWORK_ERROR:') || errorMsg.includes('SAFETY_BLOCK:')) {
-              const userMessage = errorMsg.split(': ')[1] || errorMsg;
-              throw new Error(userMessage);
-            }
-
+            console.warn("Gemini error for action (falling back to rule-based AI):", errorMsg);
             responseContent = '';
           }
         }
