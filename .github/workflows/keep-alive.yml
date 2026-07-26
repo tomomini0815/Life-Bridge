@@ -2,8 +2,8 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    # 毎日日本時間の午前9:00（UTC 00:00）に実行
-    - cron: '0 0 * * *'
+    # 6時間ごとに実行 (0:00, 6:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
   workflow_dispatch: # GitHubのUIから手動実行も可能にする
 
 jobs:
@@ -20,22 +20,25 @@ jobs:
             exit 1
           fi
           
-          echo "Sending ping to Supabase REST API..."
-          # 末尾のスラッシュを取り除いたクリーンなURLを作成し、スキーマ一覧を取得するAPIエンドポイントを叩く
+          echo "Sending ping to Supabase Database via REST API..."
+          # 末尾のスラッシュを取り除いたクリーンなURLを作成
           CLEAN_URL=$(echo "$SUPABASE_URL" | sed 's/\/$//')
           
-          response=$(curl -s -o /dev/null -w "%{http_code}" -X GET "$CLEAN_URL/rest/v1/" \
+          # 単なるルートではなく、実テーブルまたはヘルスチェックAPIにクエリを投げてDBアクティビティを確実に発生させる
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X GET "$CLEAN_URL/rest/v1/memos?select=id&limit=1" \
             -H "apikey: $SUPABASE_ANON_KEY" \
             -H "Authorization: Bearer $SUPABASE_ANON_KEY")
           
           echo "Response HTTP Status: $response"
           
-          # HTTPステータスが200番台、または認証エラーやリクエストエラー（400番台）であっても、
-          # APIサーバーへの到達が確認できればデータベースへのアクティビティとしてカウントされます。
-          # 500番台（サーバーエラー）のみ失敗と判定します。
-          if [ "$response" -ge 200 ] && [ "$response" -lt 500 ]; then
-            echo "Successfully pinged Supabase API (HTTP status $response). Database is active!"
+          if [ "$response" -eq 200 ] || [ "$response" -eq 206 ]; then
+            echo "Successfully pinged Supabase DB (HTTP status $response). Database is active!"
+          elif [ "$response" -eq 503 ]; then
+            echo "::error::Supabase project appears to be PAUSED (HTTP 503). Please log into Supabase Dashboard and click 'Restore Project'."
+            exit 1
+          elif [ "$response" -ge 200 ] && [ "$response" -lt 500 ]; then
+            echo "Reached Supabase API (HTTP status $response). Database is reachable."
           else
-            echo "Failed to connect to Supabase. HTTP Status Code: $response"
+            echo "::error::Failed to connect to Supabase. HTTP Status Code: $response"
             exit 1
           fi
